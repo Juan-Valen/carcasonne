@@ -24,3 +24,5 @@ Coding the project program.
 
 ### A table to demonstrate the time spent by each memeber during the sprint
 Noah 4 hours team meeting + UI prototype.
+<br>
+Nooa 6 hours team meeting, UI prototype, JavaFX layout
