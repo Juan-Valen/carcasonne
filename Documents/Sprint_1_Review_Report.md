@@ -4,7 +4,10 @@
 Complete course tasks.
 
 ### Completed User Stories / Tasks
-None.
+This is typical for an early sprint where the team is still orienting itself. Work was done, but no user stories reached the “Done” stage, likely due to a few things.
+Prioritizing course-related assignments,
+needing more time to set up tools and align on the project direction
+ and spending time on early design and experimentation instead of coding features
 
 ### Demo Summary
 Visual proof of concept of the program UI.
@@ -20,3 +23,4 @@ Complete assignments more urgently and communicate responsibilties more clearly.
 Coding the project program.
 
 ### A table to demonstrate the time spent by each memeber during the sprint
+Noah 4 hours team meeting + UI prototype.
