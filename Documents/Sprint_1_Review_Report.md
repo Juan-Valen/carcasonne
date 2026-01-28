@@ -4,11 +4,7 @@
 Complete course tasks.
 
 ### Completed User Stories / Tasks
-This is typical for an early sprint where the team is still orienting itself. Work was done, but no user stories reached the “Done” stage, likely due to a few things.
-Prioritizing course-related assignments,
-needing more time to set up tools and align on the project direction
- and spending time on early design and experimentation instead of coding features
-
+Not much. This is typical for an early sprint where the team is still orienting itself. 
 ### Demo Summary
 Visual proof of concept of the program UI.
 
