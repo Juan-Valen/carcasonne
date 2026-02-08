@@ -1,5 +1,7 @@
 package carcassonne;
 
+import carcassonne.UI.GameView;
+
 /**
  * Hello world!
  *
@@ -8,6 +10,6 @@ public class App
 {
     public static void main( String[] args )
     {
-        System.out.println( "Hello World!" );
+        GameView.launch(GameView.class, args);
     }
 }
