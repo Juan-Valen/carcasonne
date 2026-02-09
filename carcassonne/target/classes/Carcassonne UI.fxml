@@ -3,10 +3,26 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="672.0" prefWidth="769.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1">
+<HBox fx:controller="carcassonne.UI.GameView" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="857.0" prefWidth="1113.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <ScrollPane fx:id="gridScreen" pannable="true" prefWidth="400.0">
+      <ScrollPane fx:id="gridScreen" pannable="true" prefHeight="672.0" prefWidth="428.0">
       </ScrollPane>
-      <AnchorPane prefHeight="672.0" prefWidth="298.0" HBox.hgrow="ALWAYS" />
+      <VBox prefHeight="857.0" prefWidth="686.0">
+         <children>
+            <VBox prefHeight="447.0" prefWidth="285.0" />
+            <Pane prefHeight="297.0" prefWidth="686.0">
+               <children>
+                  <Pane layoutX="223.0" layoutY="44.0" prefHeight="175.0" prefWidth="233.0" style="-fx-background-color: red;" />
+               </children>
+            </Pane>
+            <AnchorPane prefHeight="312.0" prefWidth="285.0">
+               <children>
+                  <Button mnemonicParsing="false" text="Open Secondary" onAction="#openSecondary" AnchorPane.leftAnchor="30.0" AnchorPane.topAnchor="30.0" />
+                  <Button mnemonicParsing="false" text="Button" AnchorPane.leftAnchor="604.0" AnchorPane.topAnchor="30.0" />
+                  <Button mnemonicParsing="false" text="Button" AnchorPane.bottomAnchor="30.0" AnchorPane.rightAnchor="30.0" />
+               </children>
+            </AnchorPane>
+         </children>
+      </VBox>
    </children>
 </HBox>
