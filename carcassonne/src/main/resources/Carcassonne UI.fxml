@@ -2,27 +2,48 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.*?>
 
-<HBox fx:controller="carcassonne.UI.GameView" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="857.0" prefWidth="1113.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1">
+<HBox fx:id="rootContainer" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="carcassonne.UI.GameView">
    <children>
-      <ScrollPane fx:id="gridScreen" pannable="true" prefHeight="672.0" prefWidth="428.0">
+      <ScrollPane fx:id="gridScreen" pannable="true" prefHeight="672.0" prefWidth="500.0" HBox.hgrow="ALWAYS">
       </ScrollPane>
-      <VBox prefHeight="857.0" prefWidth="686.0">
-         <children>
-            <VBox prefHeight="447.0" prefWidth="285.0" />
-            <Pane prefHeight="297.0" prefWidth="686.0">
-               <children>
-                  <Pane layoutX="223.0" layoutY="44.0" prefHeight="175.0" prefWidth="233.0" style="-fx-background-color: red;" />
-               </children>
-            </Pane>
-            <AnchorPane prefHeight="312.0" prefWidth="285.0">
-               <children>
-                  <Button mnemonicParsing="false" text="Open Secondary" onAction="#openSecondary" AnchorPane.leftAnchor="30.0" AnchorPane.topAnchor="30.0" />
-                  <Button mnemonicParsing="false" text="Button" AnchorPane.leftAnchor="604.0" AnchorPane.topAnchor="30.0" />
+       <VBox prefHeight="857.0" HBox.hgrow="ALWAYS">
+           <VBox prefWidth="285.0" VBox.vgrow="ALWAYS">
+            <children>
+               <HBox prefWidth="200.0" VBox.vgrow="ALWAYS">
+                  <children>
+                     <Label text="Label" />
+                  </children>
+               </HBox>
+               <HBox prefWidth="200.0" VBox.vgrow="ALWAYS">
+                  <children>
+                     <Label text="Label" />
+                  </children>
+               </HBox>
+               <HBox VBox.vgrow="ALWAYS">
+                  <children>
+                     <Label text="Label" />
+                  </children>
+               </HBox>
+               <HBox prefWidth="200.0" VBox.vgrow="ALWAYS">
+                  <children>
+                     <Label text="Label" />
+                  </children>
+               </HBox>
+            </children></VBox>
+         <StackPane prefHeight="150.0" prefWidth="200.0">
+            <children>
+                  <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#f8c255" height="200.0" stroke="BLACK" strokeType="INSIDE" width="200.0" />
+            </children>
+         </StackPane>
+           <AnchorPane prefWidth="285.0" VBox.vgrow="ALWAYS">
+              <children>
+                  <Button mnemonicParsing="false" onAction="#openSecondary" text="Open Secondary" AnchorPane.leftAnchor="30.0" AnchorPane.topAnchor="30.0" />
+                  <Button mnemonicParsing="false" text="Button" AnchorPane.rightAnchor="30.0" AnchorPane.topAnchor="30.0" />
                   <Button mnemonicParsing="false" text="Button" AnchorPane.bottomAnchor="30.0" AnchorPane.rightAnchor="30.0" />
-               </children>
-            </AnchorPane>
-         </children>
-      </VBox>
+              </children>
+           </AnchorPane>
+       </VBox>
    </children>
 </HBox>

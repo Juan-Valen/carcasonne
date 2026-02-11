@@ -5,50 +5,41 @@ import javafx.fxml.FXML;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
-import javafx.stage.Stage;
 
-public class GameView {
+public class GameView extends View{
 
     int gridSize = 144;
-    private Stage primaryStage;
     private boolean layoutRetryScheduled = false;
+    private double cellPortionOfScreen = 0.1; // Portion of the screen width that the one cell in the grid takes up (0.0 to 1.0)
+
+    // Drag detection fields
+    private double dragStartX = 0;
+    private double dragStartY = 0;
+    private static final double DRAG_THRESHOLD = 5.0; // Pixels; if mouse moves more than this, it's a drag
+
 
     @FXML
     public ScrollPane gridScreen;
 
-    // Called by FXMLLoader after @FXML injections
-    @FXML
-    public void initialize() {
-        System.out.println("GameView.initialize() called");
-
-        // Defer heavy work until the scene is shown or until MainApp calls initGrid()
-        Platform.runLater(() -> {
-            System.out.println("Platform.runLater in initialize(): gridScreen=" + (gridScreen != null));
-            if (gridScreen != null && gridScreen.getContent() == null) {
-                // If the primary stage was already set by the launcher, use it; otherwise initGrid will still work.
-                initGrid();
-            }
-        });
+    @Override
+    protected void onAfterStageAvailable() {
+        System.out.println("GameView.onAfterStageAvailable() called");
+        initGrid();
     }
 
-    // Optional setter from the application so controller can access stage metrics
-    public void setPrimaryStage(Stage stage) {
-        this.primaryStage = stage;
-    }
-
-    // Public entry to (re)build the grid; safe to call after the scene is shown
-    public void initGrid() {
-        System.out.println("initGrid() called, gridSize=" + gridSize + ", primaryStage=" + (primaryStage != null));
+    /**
+     * Builds the grid. Called automatically after the view is added to a stage.
+     */
+    private void initGrid() {
+        System.out.println("initGrid() called, gridSize=" + gridSize);
         GridPane gameGrid = new GridPane();
 
         gameGrid.gridLinesVisibleProperty().setValue(true);
 
         double totalWidth = Double.NaN; // start unknown
         try {
-            if (primaryStage != null) {
-                totalWidth = primaryStage.getWidth();
-            }
-            if (Double.isNaN(totalWidth) && gridScreen != null && gridScreen.getScene() != null && gridScreen.getScene().getWindow() != null) {
+            // Get width from the scene's window
+            if (gridScreen != null && gridScreen.getScene() != null && gridScreen.getScene().getWindow() != null) {
                 totalWidth = gridScreen.getScene().getWindow().getWidth();
             }
             // Also try ScrollPane viewport width if available
@@ -71,7 +62,7 @@ public class GameView {
             return;
         }
 
-        double cellSize = totalWidth / 4.0; // Adjust cell size based on window width
+        double cellSize = totalWidth * cellPortionOfScreen; // Adjust cell size based on window width
 
         System.out.println("Calculated cellSize=" + cellSize + " (totalWidth=" + totalWidth + ")");
 
@@ -79,8 +70,26 @@ public class GameView {
             for (int col = 0; col < gridSize; col++) {
                 Pane cell = new Pane();
                 cell.setPrefSize(cellSize, cellSize); // Set preferred size for each cell
-                // Make cells visible during debugging: light border and white background
-                cell.setStyle("-fx-border-color: lightgray; -fx-background-color: white;");
+
+                // Track mouse press to detect if this is a drag or a click
+                cell.setOnMousePressed(event -> {
+                    dragStartX = event.getSceneX();
+                    dragStartY = event.getSceneY();
+                });
+
+                // Only trigger click action if it wasn't a drag
+                cell.setOnMouseClicked(event -> {
+                    double dragDistance = Math.hypot(
+                        event.getSceneX() - dragStartX,
+                        event.getSceneY() - dragStartY
+                    );
+
+                    // Only fire click action if drag distance is less than threshold
+                    if (dragDistance < DRAG_THRESHOLD) {
+                        cell.setStyle("-fx-background-color: lightblue;");
+                    }
+                });
+
                 gameGrid.add(cell, col, row);
             }
         }
@@ -112,7 +121,7 @@ public class GameView {
     @FXML
     public void openSecondary() {
         try {
-            carcassonne.MainApp.getInstance().showScene("/SecondaryView.fxml");
+            carcassonne.MainApp.getInstance().showScene("/StartView.fxml");
         } catch (Exception e) {
             e.printStackTrace();
         }
