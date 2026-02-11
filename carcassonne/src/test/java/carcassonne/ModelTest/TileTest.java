@@ -11,22 +11,30 @@ import static org.junit.jupiter.api.Assertions.*;
 public class TileTest {
     Tile tile = new Tile(0, new int[]{1, 2, 3, 4});
 
-    @DisplayName("Test getSideType")
-    @Test
-    public void testGetSideType()
+    @ParameterizedTest(name = "The tile side {0} is {1}")
+    @CsvSource({ "0, 1", "2, 3", "3, 4" })
+    public void testGetSideType(int input, int expectedOutput)
     {
-        assertEquals(1, tile.getSideType(0), "Wrong side for 0");
-        assertEquals(3, tile.getSideType(2), "Wrong side for 2");
-        assertEquals(2, tile.getSideType(5), "Wrong side for 5");
+        assertEquals(expectedOutput, tile.getSideType(input), "Wrong side for " + expectedOutput);
     }
 
+    @ParameterizedTest(name = "The tile side {0} should throw exception")
+    @CsvSource({ "-1", "5", "10000" })
+    public void testSideOutOfRange(int input)
+    {
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> tile.getSideType(input));
+        assertEquals("Side must be in range 0 to 3", exception.getMessage());
+    }
+
+    @DisplayName("Test tile rotation")
+    @Test
     public void testRotateTile()
     {
-        assertEquals(1, tile.getSideType(0), "Wrong side for flip 0");
-        tile.rotateTile(1);
-        assertEquals(2, tile.getSideType(0), "Wrong side for flip 1");
-        tile.rotateTile(5);
-        assertEquals(3, tile.getSideType(0), "Wrong side for flip 5");
+        tile.rotateTile(true);
+        assertEquals(2,tile.getSideType(0), "Wrong rotation");
+        tile.rotateTile(false);
+        tile.rotateTile(false);
+        assertEquals(4,tile.getSideType(0), "Wrong rotation");
     }
 
 }
