@@ -19,11 +19,13 @@ public class Game {
     /// Current state of the game board
     private Board board;
 
-    /// Indexes who player's turn it is
+    /// Indexes whose player's turn it is
     private int activePlayer;
 
     /// Number of available spots to play the current tile
     private int availableSpots;
+
+
 
     public Player getActivePlayer()
     {
@@ -34,4 +36,21 @@ public class Game {
     {
         return deck.getFirst();
     }
+
+    public Board getBoard()
+    {
+        return board;
+    }
+
+    public void placeTile(int x, int y) throws IllegalArgumentException
+    {
+        Spot spot = board.getSpot(x, y);
+        if(spot.hasTile()) throw new IllegalArgumentException("Chosen spot already has a tile");
+        spot.setTile(deck.removeFirst());
+        board.updateSpots(spot);
+    }
+
+
+
+
 }

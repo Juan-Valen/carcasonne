@@ -1,4 +1,4 @@
 package carcassonne.Model;
 
-public class Mepple {
+public class Meple {
 }

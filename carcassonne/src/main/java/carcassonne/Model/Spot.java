@@ -1,6 +1,8 @@
 package carcassonne.Model;
 
-public class Spot {
+public class Spot
+{
+
     private int x;
     private int y;
     private Tile tile;
@@ -18,6 +20,11 @@ public class Spot {
 
     public int getY() {
         return y;
+    }
+
+    public boolean hasTile()
+    {
+        return tile != null;
     }
 
     public Tile getTile()

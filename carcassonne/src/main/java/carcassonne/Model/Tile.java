@@ -28,15 +28,20 @@ public class Tile {
         return type;
     }
 
-    public int getSideType(int side) throws IllegalArgumentException
+    public int getOrientation()
     {
-        if(side < 0 || side > 3) throw new IllegalArgumentException("Side must be in range 0 to 3");
+        return orientation;
+    }
+
+    public int getSideType(int side) throws IndexOutOfBoundsException
+    {
+        if(side < 0 || side > 3) throw new IndexOutOfBoundsException("Side must be in range 0 to 3");
         return sides[(side + orientation) % 4];
     }
 
-    public void rotateTile(boolean isRight)
+    public void rotateTile(boolean toRight)
     {
-        orientation += isRight ? 1 : 3; // -1 ≡ 3 [4]
+        orientation += toRight ? 1 : 3; // -1 ≡ 3 [4]
         orientation %= 4;
     }
 }
