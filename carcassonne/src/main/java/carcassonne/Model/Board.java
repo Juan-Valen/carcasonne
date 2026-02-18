@@ -24,6 +24,10 @@ public class Board {
         }
 
         availableSpots = new ArrayList<>();
+
+        // Middle spot can receive a tile
+        availableSpots.add(board[72][72]);
+
         takenSpots = new ArrayList<>();
 
     }
