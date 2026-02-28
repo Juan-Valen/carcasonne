@@ -39,6 +39,14 @@ public class Board {
         return board[x][y];
     }
 
+    public boolean isSpotInBoard(Spot spot)
+    {
+        int x = spot.getX();
+        int y = spot.getY();
+        if(x<0 || x>144 || y<0 || y>144) return false;
+        return board[x][y] == spot;
+    }
+
     public void updateSpots(Spot spot) throws IllegalArgumentException
     {
         if(takenSpots.contains(spot)) throw new IllegalArgumentException("Spot already played");

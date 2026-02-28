@@ -3,10 +3,13 @@ package carcassonne.ModelTest;
 import carcassonne.Model.Board;
 
 import carcassonne.Model.Spot;
+import carcassonne.Model.Tile;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -33,6 +36,16 @@ public class BoardTest
         assertEquals("Coordinates can't exceed board size", exception.getMessage());
     }
 
+    @DisplayName("Test UpdateSpot")
+    @Test
+    public void testUpdateSpot()
+    {
+        List<Spot> spots = board.getAvailableSpots();
+        assertEquals(1, spots.size(), "List should only contain the middle spot");
+        assertEquals(board.getSpot(72, 72), spots.getFirst());
+//        Tile centerTile = new Tile(0, new int[]{1,2,3,4});
 
+
+    }
 
 }

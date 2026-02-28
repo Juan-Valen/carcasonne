@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="Black">
+    <option name="sdkName" value="Python 3.13 (carcassonne)" />
+  </component>
   <component name="KubernetesApiPersistence">{}</component>
-  <component name="KubernetesApiProvider"><![CDATA[{
-  "isMigrated": true
-}]]></component>
-  <component name="ProjectRootManager">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_25" project-jdk-name="Python 3.13 (carcassonne)" project-jdk-type="Python SDK">
     <output url="file://$PROJECT_DIR$/out" />
   </component>
 </project>
