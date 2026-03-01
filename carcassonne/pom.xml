@@ -4,7 +4,11 @@
   <groupId>carcassonne</groupId>
   <artifactId>carcassonne</artifactId>
   <packaging>jar</packaging>
-  <version>1.0-SNAPSHOT</version>
+    <properties>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+    </properties>
+    <version>1.0-SNAPSHOT</version>
   <name>carcassonne</name>
   <url>http://maven.apache.org</url>
   <dependencies>
@@ -14,5 +18,9 @@
       <version>3.8.1</version>
       <scope>test</scope>
     </dependency>
+    <dependency> <groupId>org.openjfx</groupId> <artifactId>javafx</artifactId> <version>20.0.1</version> <type>pom</type> </dependency>
+    <dependency> <groupId>org.openjfx</groupId> <artifactId>javafx-graphics</artifactId> <version>21.0.2</version> </dependency>
+    <dependency> <groupId>org.openjfx</groupId> <artifactId>javafx-fxml</artifactId> <version>20.0.1</version> </dependency>
+    <dependency> <groupId>org.openjfx</groupId> <artifactId>javafx-controls</artifactId> <version>20.0.1</version> </dependency>
   </dependencies>
 </project>
