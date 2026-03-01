@@ -1,5 +1,7 @@
 package carcassonne.UI;
 
+import carcassonne.controller.GameController;
+import carcassonne.controller.GameController.Cell;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.ScrollPane;
@@ -29,6 +31,9 @@ class CellData {
 
 public class GameView extends View {
 
+    // Reference to game controller
+    private final GameController gameController = GameController.getInstance();
+
     int gridSize = 144;
     private boolean layoutRetryScheduled = false;
     private double cellPortionOfScreen = 0.1; // Portion of the screen width that the one cell in the grid takes up (0.0 to 1.0)
@@ -44,7 +49,7 @@ public class GameView extends View {
 
     // Viewport-based rendering (virtual scrolling)
     private double cellSize = 0;
-    private Map<String, Pane> visibleCells = new HashMap<>(); // Map of "row,col" to Pane for currently visible cells
+    private Map<Cell, Pane> visibleCells = new HashMap<>(); // Map of Cell to Pane for currently visible cells
     private int lastRenderedMinRow = -1;
     private int lastRenderedMaxRow = -1;
     private int lastRenderedMinCol = -1;
@@ -52,7 +57,7 @@ public class GameView extends View {
     private static final int RENDER_BUFFER = 2; // Extra cells to render outside viewport for smoother scrolling
 
     // Cell state persistence (survives when cell goes off-screen)
-    private Map<String, CellData> allCellStates = new HashMap<>(); // Persistent state for all cells ("row,col" -> CellData)
+    private Map<Cell, CellData> allCellStates = new HashMap<>(); // Persistent state for all cells (Cell -> CellData)
 
     // Scroll constraints based on selected tiles
     private int minSelectedRow = Integer.MAX_VALUE;
@@ -321,10 +326,10 @@ public class GameView extends View {
         System.out.println("renderCellRange() - gridPane has " + currentGameGrid.getChildren().size() + " children before update");
 
         // Remove cells that are no longer visible
-        Set<String> newVisibleKeys = new HashSet<>();
+        Set<Cell> newVisibleKeys = new HashSet<>();
         for (int row = minRow; row <= maxRow; row++) {
             for (int col = minCol; col <= maxCol; col++) {
-                newVisibleKeys.add(row + "," + col);
+                newVisibleKeys.add(new Cell(row, col));
             }
         }
 
@@ -344,12 +349,12 @@ public class GameView extends View {
         int cellsAdded = 0;
         for (int row = minRow; row <= maxRow; row++) {
             for (int col = minCol; col <= maxCol; col++) {
-                String key = row + "," + col;
-                if (!visibleCells.containsKey(key)) {
+                Cell cellKey = new Cell(row, col);
+                if (!visibleCells.containsKey(cellKey)) {
                     try {
-                        Pane cell = createCell(row, col);
-                        visibleCells.put(key, cell);
-                        currentGameGrid.add(cell, col, row);
+                        Pane cellPane = createCell(row, col);
+                        visibleCells.put(cellKey, cellPane);
+                        currentGameGrid.add(cellPane, col, row);
                         cellsAdded++;
                         if (cellsAdded <= 5) {  // Log first few additions
                             System.out.println("  Added cell at [" + row + "," + col + "]");
@@ -382,17 +387,14 @@ public class GameView extends View {
         maxSelectedCol = Integer.MIN_VALUE;
 
         // Find the bounds of all selected cells
-        for (String key : allCellStates.keySet()) {
-            CellData data = allCellStates.get(key);
+        for (Map.Entry<Cell, CellData> entry : allCellStates.entrySet()) {
+            CellData data = entry.getValue();
             if (data.isSelected) {
-                String[] parts = key.split(",");
-                int row = Integer.parseInt(parts[0]);
-                int col = Integer.parseInt(parts[1]);
-
-                minSelectedRow = Math.min(minSelectedRow, row);
-                maxSelectedRow = Math.max(maxSelectedRow, row);
-                minSelectedCol = Math.min(minSelectedCol, col);
-                maxSelectedCol = Math.max(maxSelectedCol, col);
+                Cell cell = entry.getKey();
+                minSelectedRow = Math.min(minSelectedRow, cell.row);
+                maxSelectedRow = Math.max(maxSelectedRow, cell.row);
+                minSelectedCol = Math.min(minSelectedCol, cell.col);
+                maxSelectedCol = Math.max(maxSelectedCol, cell.col);
             }
         }
 
@@ -505,13 +507,31 @@ public class GameView extends View {
         cell.setMaxSize(cellSize, cellSize);
 
         // Get or create persistent state for this cell
-        String cellKey = row + "," + col;
+        Cell cellKey = new Cell(row, col);
         CellData cellData = allCellStates.computeIfAbsent(cellKey, k -> new CellData());
 
-        // Restore selection state from persistent storage
-        if (cellData.isSelected) {
+        // Check if this cell has a tile placed (from GameController)
+        boolean isTilePlaced = gameController.getPlacedTiles().contains(cellKey);
+
+        // Check if this cell is placeable (from GameController)
+        boolean isPlaceable = gameController.getPlaceableCells().contains(cellKey);
+
+        // Set visual style based on cell state
+        if (isTilePlaced) {
+            // Tile is placed - show as occupied (green background)
+            cell.setStyle("-fx-background-color: lightgreen; -fx-border-color: gray;");
+            cellData.isSelected = true;
+            selectedCells.add(cell);
+        } else if (isPlaceable) {
+            // Cell is placeable - show as available (yellow background)
+            cell.setStyle("-fx-background-color: lightyellow; -fx-border-color: gray;");
+        } else if (cellData.isSelected) {
+            // Restore selection state from persistent storage (light blue)
             cell.setStyle("-fx-background-color: lightblue;");
             selectedCells.add(cell);
+        } else {
+            // Default empty cell
+            cell.setStyle("-fx-border-color: lightgray;");
         }
 
         // Track mouse press to detect if this is a drag or a click
@@ -530,20 +550,30 @@ public class GameView extends View {
             // Only fire click action if drag distance is less than threshold
             if (dragDistance < DRAG_THRESHOLD) {
                 System.out.println("Cell clicked at [" + row + "," + col + "]");
-                // Toggle selection: if cell is already selected, deselect it; otherwise select it
-                if (selectedCells.contains(cell)) {
-                    // Deselect
-                    selectedCells.remove(cell);
-                    cell.setStyle("");
-                    cellData.isSelected = false;
-                    System.out.println("Cell deselected at [" + row + "," + col + "]");
-                } else {
-                    // Select
-                    selectedCells.add(cell);
-                    cell.setStyle("-fx-background-color: lightblue;");
-                    cellData.isSelected = true;
-                    System.out.println("Cell selected at [" + row + "," + col + "]");
+
+                // Check if tile is already placed
+                if (gameController.getPlacedTiles().contains(cellKey)) {
+                    System.out.println("Tile already placed at [" + row + "," + col + "]");
+                    return;
                 }
+
+                // Check if this is a valid placement location
+                if (!isPlaceable && !gameController.getPlacedTiles().isEmpty()) {
+                    System.out.println("Cannot place tile at [" + row + "," + col + "] - not adjacent to existing tiles");
+                    return;
+                }
+
+                // Place tile using GameController
+                gameController.placeTile(row, col);
+                System.out.println("Tile placed at [" + row + "," + col + "]");
+
+                // Update visual state
+                selectedCells.add(cell);
+                cell.setStyle("-fx-background-color: lightgreen; -fx-border-color: gray;");
+                cellData.isSelected = true;
+
+                // Refresh all visible cells to update placeable highlights
+                refreshVisibleCells();
 
                 // Update scroll constraints based on new selection
                 updateScrollConstraints();
@@ -552,5 +582,29 @@ public class GameView extends View {
         });
 
         return cell;
+    }
+
+    /**
+     * Refreshes all currently visible cells to update their visual state
+     * (e.g., after placing a tile, to update which cells are now placeable).
+     */
+    private void refreshVisibleCells() {
+        // Clear current visible cells and re-render the same range
+        if (lastRenderedMinRow != -1) {
+            // Store current range
+            int minRow = lastRenderedMinRow;
+            int maxRow = lastRenderedMaxRow;
+            int minCol = lastRenderedMinCol;
+            int maxCol = lastRenderedMaxCol;
+
+            // Clear visible cells
+            for (Pane pane : visibleCells.values()) {
+                currentGameGrid.getChildren().remove(pane);
+            }
+            visibleCells.clear();
+
+            // Re-render the same range
+            renderCellRange(minRow, maxRow, minCol, maxCol);
+        }
     }
 }
