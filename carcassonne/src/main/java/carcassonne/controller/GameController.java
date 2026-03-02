@@ -58,6 +58,7 @@ public class GameController {
         Cell cell = new Cell(row, col);
         cell.tileId = getCurrentTileId(); // Placeholder for getting the current tile ID from the game state
         cell.placed = true;
+        cell.rotation = currentRotation;
         getNextTile(); // Update the current tile to the next tile after placing
         PlacedTilePositions.add(cell);
     }
@@ -66,7 +67,19 @@ public class GameController {
         // Placeholder function to get the current tile ID from the game state
         // This should return the ID of the tile that is currently being placed
 
-        return currentTile; // Placeholder for getting the current tile from the model
+        return currentTileId; // Placeholder for getting the current tile from the model
+    }
+
+    public void rotateTile () {
+        if (!(currentRotation >= 3)) {
+            currentRotation += 1;
+        } else {
+            currentRotation = 0;
+        }
+    }
+
+    public int getCurrentRotation() {
+        return currentRotation;
     }
 
     public Set<Cell> getPlaceableCells() {
@@ -81,7 +94,8 @@ public class GameController {
 
     public void getNextTile() {
         // This should return the next tile based on the game state
-        currentTile = getNextTileFromModel(); // Placeholder for getting the next tile from the model
+        currentTileId = getNextTileFromModel(); // Placeholder for getting the next tile from the model
+        currentRotation = 0; // Reset rotation for the new tile
     }
 
     public Cell getCellAt(int row, int col) {
@@ -103,7 +117,9 @@ public class GameController {
 
     List<Character> keys = Arrays.asList('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X'); // Example list of tile identifiers, should be replaced with actual tile data from the model
 
-    private Character currentTile = getNextTileFromModel(); // Placeholder for the current tile, should be set based on the game state
+    private Character currentTileId = getNextTileFromModel(); // Placeholder for the current tile, should be set based on the game state
+
+    private int currentRotation = 0; // Placeholder for the current tile rotation, should be set based on the game state
 
     private Set<Cell> calculatePlaceableCells() {
         // Placeholder function in the controller, should be implemented in the model to calculate the placeable tiles based on the current game state

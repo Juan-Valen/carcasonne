@@ -157,6 +157,22 @@ public class GameView extends View {
         initGrid();
     }
 
+    @FXML
+    public void openSecondary() {
+        try {
+            carcassonne.MainApp.getInstance().showScene("/StartView.fxml");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    public void rotateCurrentTile() {
+        System.out.println("rotateCurrentTile() called");
+        gameController.rotateTile();
+        displayCurrentPlacingTile();
+    }
+
     /**
      * Builds the grid. Called automatically after the view is added to a stage.
      * Uses viewport-based rendering to only create cells visible on screen.
@@ -241,14 +257,6 @@ public class GameView extends View {
         }
     }
 
-    @FXML
-    public void openSecondary() {
-        try {
-            carcassonne.MainApp.getInstance().showScene("/StartView.fxml");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
     /**
      * Adds listeners for scroll events to update which cells are visible.
@@ -690,7 +698,12 @@ public class GameView extends View {
         if (isTilePlaced) {
             // Tile is placed - show as occupied (green background)
             newPane.setStyle("-fx-background-color: lightgreen; -fx-border-color: gray;");
-            newPane.getChildren().add(new ImageView(tileIdToImage.get(gameController.getCellAt(row, col).tileId))); // Show tile image if placed
+            ImageView image = new ImageView(tileIdToImage.get(gameController.getCellAt(row, col).tileId));
+            image.rotateProperty().set(gameController.getCellAt(row, col).rotation*90); // Rotate based on tile's rotation state
+            image.setPreserveRatio(true);
+            image.setSmooth(true);
+            newPane.getChildren().add(image); // Show tile image if placed
+
 
         } else if (isPlaceable) {
             // Cell is placeable - show as available (yellow background)
@@ -805,10 +818,10 @@ public class GameView extends View {
             Image tileImage = tileIdToImage.get(currentTileId);
             if (tileImage != null) {
                 ImageView imageView = new ImageView(tileImage);
-//                imageView.setFitWidth(150);
-//                imageView.setFitHeight(150);
                 imageView.setPreserveRatio(true);
                 imageView.setSmooth(true);
+
+                imageView.rotateProperty().set(gameController.getCurrentRotation()*90); // Rotate based on current rotation state
 
                 nextTilePane.getChildren().clear();
                 nextTilePane.getChildren().add(imageView);
