@@ -32,9 +32,10 @@
                   </children>
                </HBox>
             </children></VBox>
-         <StackPane prefHeight="150.0" prefWidth="200.0">
+         <StackPane fx:id="nextTilePane" prefHeight="150.0" prefWidth="200.0">
             <children>
                   <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#f8c255" height="200.0" stroke="BLACK" strokeType="INSIDE" width="200.0" />
+               <Pane prefHeight="200.0" prefWidth="200.0" />
             </children>
          </StackPane>
            <AnchorPane prefWidth="285.0" VBox.vgrow="ALWAYS">

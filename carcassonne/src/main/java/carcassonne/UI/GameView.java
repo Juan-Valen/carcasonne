@@ -5,14 +5,11 @@ import carcassonne.controller.GameController.Cell;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.layout.ColumnConstraints;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.RowConstraints;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.*;
+
+import java.util.*;
 
 /**
  * Data model for a single cell in the grid.
@@ -20,6 +17,8 @@ import java.util.Set;
  */
 class CellData {
     public boolean isSelected = false;
+
+    public Character tileId = null; // ID of the tile placed in this cell, null if no tile
 
     public CellData() {
     }
@@ -36,7 +35,8 @@ public class GameView extends View {
 
     int gridSize = 144;
     private boolean layoutRetryScheduled = false;
-    private double cellPortionOfScreen = 0.1; // Portion of the screen width that the one cell in the grid takes up (0.0 to 1.0)
+
+    private double cellPortionOfScreen = 0.1; // Portion of the screen width that the one cell in the grid takes up when using dynamic cell size instead of tile image size (0.0 to 1.0)
 
     // Drag detection fields
     private double dragStartX = 0;
@@ -65,12 +65,95 @@ public class GameView extends View {
     private int minSelectedCol = Integer.MAX_VALUE;
     private int maxSelectedCol = Integer.MIN_VALUE;
 
+    // Flag to prevent infinite recursion when enforceScrollConstraints modifies scroll values
+    private boolean isEnforcingConstraints = false;
+
+    Map<Character, Image> tileIdToImage = new HashMap<>(); // Cache for tile images based on tile ID
+
+    // Initializer block to populate the tile image cache
+    {
+        tileIdToImage.put('A', loadImage("images/Base_Game_C3_Tile_A.png"));
+        tileIdToImage.put('B', loadImage("images/Base_Game_C3_Tile_B.png"));
+        tileIdToImage.put('C', loadImage("images/Base_Game_C3_Tile_C.png"));
+        tileIdToImage.put('D', loadImage("images/Base_Game_C3_Tile_D.png"));
+        tileIdToImage.put('E', loadImage("images/Base_Game_C3_Tile_E.png"));
+        tileIdToImage.put('F', loadImage("images/Base_Game_C3_Tile_F.png"));
+        tileIdToImage.put('G', loadImage("images/Base_Game_C3_Tile_G.png"));
+        tileIdToImage.put('H', loadImage("images/Base_Game_C3_Tile_H.png"));
+        tileIdToImage.put('I', loadImage("images/Base_Game_C3_Tile_I.png"));
+        tileIdToImage.put('J', loadImage("images/Base_Game_C3_Tile_J.png"));
+        tileIdToImage.put('K', loadImage("images/Base_Game_C3_Tile_K.png"));
+        tileIdToImage.put('L', loadImage("images/Base_Game_C3_Tile_L.png"));
+        tileIdToImage.put('M', loadImage("images/Base_Game_C3_Tile_M.png"));
+        tileIdToImage.put('N', loadImage("images/Base_Game_C3_Tile_N.png"));
+        tileIdToImage.put('O', loadImage("images/Base_Game_C3_Tile_O.png"));
+        tileIdToImage.put('P', loadImage("images/Base_Game_C3_Tile_P.png"));
+        tileIdToImage.put('Q', loadImage("images/Base_Game_C3_Tile_Q.png"));
+        tileIdToImage.put('R', loadImage("images/Base_Game_C3_Tile_R.png"));
+        tileIdToImage.put('S', loadImage("images/Base_Game_C3_Tile_S.png"));
+        tileIdToImage.put('T', loadImage("images/Base_Game_C3_Tile_T.png"));
+        tileIdToImage.put('U', loadImage("images/Base_Game_C3_Tile_U.png"));
+        tileIdToImage.put('V', loadImage("images/Base_Game_C3_Tile_V.png"));
+        tileIdToImage.put('W', loadImage("images/Base_Game_C3_Tile_W.png"));
+        tileIdToImage.put('X', loadImage("images/Base_Game_C3_Tile_X.png"));
+    }
+
+    {
+//        tileIdToImage.put('A', new Image("C:\\Users\\Omistaja\\IdeaProjects\\carcasonne\\carcassonne\\src\\main\\resources\\images\\Base_Game_C3_Tile_A.png"));
+//        tileIdToImage.put('B', new Image("C:\\Users\\Omistaja\\IdeaProjects\\carcasonne\\carcassonne\\src\\main\\resources\\images\\Base_Game_C3_Tile_B.png"));
+//        tileIdToImage.put('C', new Image(("C:\\Users\\Omistaja\\IdeaProjects\\carcasonne\\carcassonne\\src\\main\\resources\\images\\Base_Game_C3_Tile_C.png")));
+//        tileIdToImage.put('D', new Image(("C:\\Users\\Omistaja\\IdeaProjects\\carcasonne\\carcassonne\\src\\main\\resources\\images\\Base_Game_C3_Tile_D.png")));
+//        tileIdToImage.put('E', new Image(("C:\\Users\\Omistaja\\IdeaProjects\\carcasonne\\carcassonne\\src\\main\\resources\\images\\Base_Game_C3_Tile_E.png")));
+//        tileIdToImage.put('F', new Image(("C:\\Users\\Omistaja\\IdeaProjects\\carcasonne\\carcassonne\\src\\main\\resources\\images\\Base_Game_C3_Tile_F.png")));
+//        tileIdToImage.put('G', new Image(("C:\\Users\\Omistaja\\IdeaProjects\\carcasonne\\carcassonne\\src\\main\\resources\\images\\Base_Game_C3_Tile_G.png")));
+//        tileIdToImage.put('H', new Image(("C:\\Users\\Omistaja\\IdeaProjects\\carcasonne\\carcassonne\\src\\main\\resources\\images\\Base_Game_C3_Tile_H.png")));
+//        tileIdToImage.put('I', new Image(("C:\\Users\\Omistaja\\IdeaProjects\\carcasonne\\carcassonne\\src\\main\\resources\\images\\Base_Game_C3_Tile_I.png")));
+//        tileIdToImage.put('J', new Image(("C:\\Users\\Omistaja\\IdeaProjects\\carcasonne\\carcassonne\\src\\main\\resources\\images\\Base_Game_C3_Tile_J.png")));
+//        tileIdToImage.put('K', new Image(("C:\\Users\\Omistaja\\IdeaProjects\\carcasonne\\carcassonne\\src\\main\\resources\\images\\Base_Game_C3_Tile_K.png")));
+//        tileIdToImage.put('L', new Image(("C:\\Users\\Omistaja\\IdeaProjects\\carcasonne\\carcassonne\\src\\main\\resources\\images\\Base_Game_C3_Tile_L.png")));
+//        tileIdToImage.put('M', new Image(("C:\\Users\\Omistaja\\IdeaProjects\\carcasonne\\carcassonne\\src\\main\\resources\\images\\Base_Game_C3_Tile_M.png")));
+//        tileIdToImage.put('N', new Image(("C:\\Users\\Omistaja\\IdeaProjects\\carcasonne\\carcassonne\\src\\main\\resources\\images\\Base_Game_C3_Tile_N.png")));
+//        tileIdToImage.put('O', new Image(("C:\\Users\\Omistaja\\IdeaProjects\\carcasonne\\carcassonne\\src\\main\\resources\\images\\Base_Game_C3_Tile_O.png")));
+//        tileIdToImage.put('P', new Image(("C:\\Users\\Omistaja\\IdeaProjects\\carcasonne\\carcassonne\\src\\main\\resources\\images\\Base_Game_C3_Tile_P.png")));
+//        tileIdToImage.put('Q', new Image(("C:\\Users\\Omistaja\\IdeaProjects\\carcasonne\\carcassonne\\src\\main\\resources\\images\\Base_Game_C3_Tile_Q.png")));
+//        tileIdToImage.put('R', new Image(("C:\\Users\\Omistaja\\IdeaProjects\\carcasonne\\carcassonne\\src\\main\\resources\\images\\Base_Game_C3_Tile_R.png")));
+//        tileIdToImage.put('S', new Image(("C:\\Users\\Omistaja\\IdeaProjects\\carcasonne\\carcassonne\\src\\main\\resources\\images\\Base_Game_C3_Tile_S.png")));
+//        tileIdToImage.put('T', new Image(("C:\\Users\\Omistaja\\IdeaProjects\\carcasonne\\carcassonne\\src\\main\\resources\\images\\Base_Game_C3_Tile_T.png")));
+//        tileIdToImage.put('U', new Image(("C:\\Users\\Omistaja\\IdeaProjects\\carcasonne\\carcassonne\\src\\main\\resources\\images\\Base_Game_C3_Tile_U.png")));
+//        tileIdToImage.put('V', new Image(("C:\\Users\\Omistaja\\IdeaProjects\\carcasonne\\carcassonne\\src\\main\\resources\\images\\Base_Game_C3_Tile_V.png")));
+//        tileIdToImage.put('W', new Image(("C:\\Users\\Omistaja\\IdeaProjects\\carcasonne\\carcassonne\\src\\main\\resources\\images\\Base_Game_C3_Tile_W.png")));
+//        tileIdToImage.put('X', new Image(("C:\\Users\\Omistaja\\IdeaProjects\\carcasonne\\carcassonne\\src\\main\\resources\\images\\Base_Game_C3_Tile_X.png")));
+}
+
+    /**
+     * Helper method to load an image from the classpath resources.
+     * Uses the proper resource URL loading mechanism.
+     */
+    private Image loadImage(String resourcePath) {
+        try {
+            var resource = getClass().getResource("/" + resourcePath);
+            if (resource != null) {
+                return new Image(resource.toExternalForm());
+            } else {
+                System.out.println("WARNING: Resource not found: /" + resourcePath);
+                return null;
+            }
+        } catch (Exception e) {
+            System.out.println("ERROR loading image /" + resourcePath + ": " + e.getMessage());
+            return null;
+        }
+    }
+
     @FXML
     public ScrollPane gridScreen;
 
+    @FXML
+    public StackPane nextTilePane;
+
+
     @Override
     protected void onAfterStageAvailable() {
-        System.out.println("GameView.onAfterStageAvailable() called");
+        displayCurrentPlacingTile();
         initGrid();
     }
 
@@ -110,7 +193,9 @@ public class GameView extends View {
             return;
         }
 
-        cellSize = totalWidth * cellPortionOfScreen; // Adjust cell size based on window width
+        cellSize = tileIdToImage.get('A').getWidth(); // Use actual tile image width to determine cell size
+        System.out.println("Initial cellSize based on tile image: " + cellSize);
+//        cellSize = totalWidth * cellPortionOfScreen; // Adjust cell size based on window width
 
         System.out.println("Calculated cellSize=" + cellSize + " (totalWidth=" + totalWidth + ")");
 
@@ -142,6 +227,9 @@ public class GameView extends View {
                     // Initial render of visible cells
                     updateVisibleCells();
 
+                    // Check if scrolling should be enabled after initial render
+                    updateScrollingState();
+
                     // Listen for scroll changes to update visible cells
                     addScrollListeners();
                 } catch (Exception ex) {
@@ -163,68 +251,6 @@ public class GameView extends View {
     }
 
     /**
-     * Gets the set of all currently selected cells.
-     *
-     * @return a Set containing all selected Pane cells
-     */
-    public Set<Pane> getSelectedCells() {
-        return new HashSet<>(selectedCells);
-    }
-
-    /**
-     * Gets the number of currently selected cells.
-     *
-     * @return the count of selected cells
-     */
-    public int getSelectedCellCount() {
-        return selectedCells.size();
-    }
-
-    /**
-     * Checks if a cell is currently selected.
-     *
-     * @param cell the Pane to check
-     * @return true if the cell is selected, false otherwise
-     */
-    public boolean isCellSelected(Pane cell) {
-        return selectedCells.contains(cell);
-    }
-
-    /**
-     * Clears all selected cells (removes light blue background).
-     */
-    public void clearSelection() {
-        for (Pane cell : selectedCells) {
-            cell.setStyle("");
-        }
-        selectedCells.clear();
-    }
-
-    /**
-     * Selects a specific cell programmatically.
-     *
-     * @param cell the Pane to select
-     */
-    public void selectCell(Pane cell) {
-        if (cell != null && !selectedCells.contains(cell)) {
-            selectedCells.add(cell);
-            cell.setStyle("-fx-background-color: lightblue;");
-        }
-    }
-
-    /**
-     * Deselects a specific cell programmatically.
-     *
-     * @param cell the Pane to deselect
-     */
-    public void deselectCell(Pane cell) {
-        if (cell != null && selectedCells.contains(cell)) {
-            selectedCells.remove(cell);
-            cell.setStyle("");
-        }
-    }
-
-    /**
      * Adds listeners for scroll events to update which cells are visible.
      */
     private void addScrollListeners() {
@@ -232,10 +258,18 @@ public class GameView extends View {
             return;
         }
 
+        // Initially disable scrolling (no tiles placed yet)
+        updateScrollingState();
+
         // Listen for horizontal scroll
         gridScreen.hvalueProperty().addListener((obs, oldVal, newVal) -> {
-            // Check if scroll constraints should be enforced
-            if (minSelectedRow != Integer.MAX_VALUE) {
+            // Skip if we're already enforcing constraints (prevents infinite recursion)
+            if (isEnforcingConstraints) {
+                return;
+            }
+
+            // Enforce constraints if tiles are placed (but don't disable panning)
+            if (!gameController.getPlacedTiles().isEmpty()) {
                 enforceScrollConstraints();
             }
             updateVisibleCells();
@@ -243,8 +277,13 @@ public class GameView extends View {
 
         // Listen for vertical scroll
         gridScreen.vvalueProperty().addListener((obs, oldVal, newVal) -> {
-            // Check if scroll constraints should be enforced
-            if (minSelectedRow != Integer.MAX_VALUE) {
+            // Skip if we're already enforcing constraints (prevents infinite recursion)
+            if (isEnforcingConstraints) {
+                return;
+            }
+
+            // Enforce constraints if tiles are placed (but don't disable panning)
+            if (!gameController.getPlacedTiles().isEmpty()) {
                 enforceScrollConstraints();
             }
             updateVisibleCells();
@@ -253,7 +292,24 @@ public class GameView extends View {
         // Listen for viewport size changes (window resize)
         gridScreen.viewportBoundsProperty().addListener((obs, oldVal, newVal) -> {
             updateVisibleCells();
+            updateScrollingState();  // Re-check if scrolling should be enabled after resize
         });
+    }
+
+    /**
+     * Enables or disables scrolling based on whether tiles exceed the viewport.
+     * Scrolling (panning) is enabled once tiles are placed.
+     * Constraints are enforced separately when tiles fit within viewport.
+     */
+    private void updateScrollingState() {
+        if (gridScreen == null) {
+            return;
+        }
+
+        // Enable panning once tiles are placed (even if they span entire viewport)
+        boolean hasTilesPlaced = !gameController.getPlacedTiles().isEmpty();
+        gridScreen.setPannable(hasTilesPlaced);
+        System.out.println("updateScrollingState() - panning " + (hasTilesPlaced ? "ENABLED" : "DISABLED"));
     }
 
     /**
@@ -377,8 +433,8 @@ public class GameView extends View {
     }
 
     /**
-     * Recalculates the scroll constraints based on currently selected tiles.
-     * Finds the minimum and maximum row/column of all selected cells.
+     * Recalculates the scroll constraints based on currently placed tiles.
+     * Only enforces constraints if the placed tiles extend beyond the viewport.
      */
     private void updateScrollConstraints() {
         minSelectedRow = Integer.MAX_VALUE;
@@ -386,11 +442,9 @@ public class GameView extends View {
         minSelectedCol = Integer.MAX_VALUE;
         maxSelectedCol = Integer.MIN_VALUE;
 
-        // Find the bounds of all selected cells
-        for (Map.Entry<Cell, CellData> entry : allCellStates.entrySet()) {
-            CellData data = entry.getValue();
-            if (data.isSelected) {
-                Cell cell = entry.getKey();
+        // Find the bounds of all placed cells
+        for (Cell cell : gameController.getPlacedTiles()) {
+            if (cell.placed) {
                 minSelectedRow = Math.min(minSelectedRow, cell.row);
                 maxSelectedRow = Math.max(maxSelectedRow, cell.row);
                 minSelectedCol = Math.min(minSelectedCol, cell.col);
@@ -399,16 +453,123 @@ public class GameView extends View {
         }
 
         if (minSelectedRow == Integer.MAX_VALUE) {
-            System.out.println("updateScrollConstraints() - no cells selected, constraints disabled");
+            System.out.println("updateScrollConstraints() - no tiles placed, constraints disabled");
         } else {
-            System.out.println("updateScrollConstraints() - Selected tile bounds: rows [" + minSelectedRow + "-" + maxSelectedRow +
+            System.out.println("updateScrollConstraints() - Placed tile bounds: rows [" + minSelectedRow + "-" + maxSelectedRow +
                 "] cols [" + minSelectedCol + "-" + maxSelectedCol + "]");
         }
     }
 
     /**
+     * Checks if the placeable tiles exceed the current viewport.
+     * Returns true if placeable cells extend beyond ANY viewport edge.
+     * Returns false if tiles span across the entire viewport (can't fit them all).
+     */
+    private boolean shouldEnforceScrollConstraints() {
+        if (gridScreen == null || currentGameGrid == null || cellSize <= 0) {
+            return false;
+        }
+
+        javafx.geometry.Bounds viewportBounds = gridScreen.getViewportBounds();
+        if (viewportBounds == null || viewportBounds.getWidth() <= 0 || viewportBounds.getHeight() <= 0) {
+            return false;
+        }
+
+        // Get the bounds of all placeable cells (including the first tile at center if no tiles placed yet)
+        int minPlaceableRow = Integer.MAX_VALUE;
+        int maxPlaceableRow = Integer.MIN_VALUE;
+        int minPlaceableCol = Integer.MAX_VALUE;
+        int maxPlaceableCol = Integer.MIN_VALUE;
+
+        Set<Cell> placeableCells = gameController.getPlaceableCells();
+
+        // If no tiles placed yet, the center cell is placeable
+        if (gameController.getPlacedTiles().isEmpty()) {
+            int center = gridSize / 2;
+            minPlaceableRow = center;
+            maxPlaceableRow = center;
+            minPlaceableCol = center;
+            maxPlaceableCol = center;
+        } else {
+            // Check all placeable cells
+            for (Cell cell : placeableCells) {
+                minPlaceableRow = Math.min(minPlaceableRow, cell.row);
+                maxPlaceableRow = Math.max(maxPlaceableRow, cell.row);
+                minPlaceableCol = Math.min(minPlaceableCol, cell.col);
+                maxPlaceableCol = Math.max(maxPlaceableCol, cell.col);
+            }
+        }
+
+        // If no placeable cells found, don't enforce constraints
+        if (minPlaceableRow == Integer.MAX_VALUE) {
+            System.out.println("shouldEnforceScrollConstraints() - no placeable cells found");
+            return false;
+        }
+
+        // Calculate grid and viewport dimensions
+        double gridWidth = currentGameGrid.getPrefWidth();
+        double gridHeight = currentGameGrid.getPrefHeight();
+        double viewportWidth = viewportBounds.getWidth();
+        double viewportHeight = viewportBounds.getHeight();
+
+        // Calculate the current scroll position (in pixels from top-left of grid)
+        double scrollOffsetX = gridScreen.getHvalue() * Math.max(0, gridWidth - viewportWidth);
+        double scrollOffsetY = gridScreen.getVvalue() * Math.max(0, gridHeight - viewportHeight);
+
+        // Calculate pixel boundaries of the placeable area
+        double minPixelX = minPlaceableCol * cellSize;
+        double maxPixelX = (maxPlaceableCol + 1) * cellSize;
+        double minPixelY = minPlaceableRow * cellSize;
+        double maxPixelY = (maxPlaceableRow + 1) * cellSize;
+
+        // Calculate the total span of placeable tiles
+        double totalPlaceableWidth = maxPixelX - minPixelX;
+        double totalPlaceableHeight = maxPixelY - minPixelY;
+
+        // If placeable tiles span more than the viewport can show, disable constraints
+        // (you can't show all tiles at once anyway, so free scrolling is better)
+        if (totalPlaceableWidth >= viewportWidth || totalPlaceableHeight >= viewportHeight) {
+            System.out.println("shouldEnforceScrollConstraints() - placeable tiles span entire viewport:");
+            System.out.println("  Placeable span: " + String.format("%.1f", totalPlaceableWidth) + "x" + String.format("%.1f", totalPlaceableHeight) +
+                             " vs viewport: " + String.format("%.1f", viewportWidth) + "x" + String.format("%.1f", viewportHeight));
+            System.out.println("  Result: scrolling DISABLED (tiles can't all fit on screen)");
+            return false;
+        }
+
+        // Calculate the right and bottom edges of the current viewport
+        double viewportMaxX = scrollOffsetX + viewportWidth;
+        double viewportMaxY = scrollOffsetY + viewportHeight;
+
+        // Check if placeable tiles extend beyond ANY edge of the viewport
+        // Tiles exceed if:
+        // - ANY placeable tile is left of viewport left edge OR
+        // - ANY placeable tile is right of viewport right edge OR
+        // - ANY placeable tile is above viewport top edge OR
+        // - ANY placeable tile is below viewport bottom edge
+        boolean exceedsLeft = minPixelX < scrollOffsetX;
+        boolean exceedsRight = maxPixelX > viewportMaxX;
+        boolean exceedsTop = minPixelY < scrollOffsetY;
+        boolean exceedsBottom = maxPixelY > viewportMaxY;
+        boolean tilesExceedViewport = exceedsLeft || exceedsRight || exceedsTop || exceedsBottom;
+
+        System.out.println("shouldEnforceScrollConstraints() - checking if scrolling needed:");
+        System.out.println("  Placeable bounds: rows [" + minPlaceableRow + "-" + maxPlaceableRow +
+                         "] cols [" + minPlaceableCol + "-" + maxPlaceableCol + "]");
+        System.out.println("  Placeable pixels: X[" + String.format("%.1f", minPixelX) + "-" + String.format("%.1f", maxPixelX) +
+                         "] Y[" + String.format("%.1f", minPixelY) + "-" + String.format("%.1f", maxPixelY) + "]");
+        System.out.println("  Viewport pixels: X[" + String.format("%.1f", scrollOffsetX) + "-" + String.format("%.1f", viewportMaxX) +
+                         "] Y[" + String.format("%.1f", scrollOffsetY) + "-" + String.format("%.1f", viewportMaxY) + "]");
+        System.out.println("  Exceeds: left=" + exceedsLeft + " right=" + exceedsRight + " top=" + exceedsTop + " bottom=" + exceedsBottom);
+        System.out.println("  Result: scrolling " + (tilesExceedViewport ? "ENABLED" : "DISABLED"));
+
+        return tilesExceedViewport;
+    }
+
+
+    /**
      * Enforces scroll constraints to prevent scrolling more than one tile beyond the selected tiles.
-     * Clamps the scroll position to allow viewing only one tile beyond the edge of selected tiles.
+     * Ensures leftmost/rightmost/topmost/bottommost placeable tiles stay visible with 1-tile buffer.
+     * This applies even when tiles span the entire viewport in a direction.
      */
     private void enforceScrollConstraints() {
         if (gridScreen == null || currentGameGrid == null || cellSize <= 0) {
@@ -439,56 +600,66 @@ public class GameView extends View {
             return;
         }
 
-        // Calculate pixel boundaries for the allowed viewing region
-        // We can show one cell before minSelected and one cell after maxSelected
+        // Get current scroll position in pixels
+        double currentScrollPixelX = gridScreen.getHvalue() * maxScrollPixelX;
+        double currentScrollPixelY = gridScreen.getVvalue() * maxScrollPixelY;
 
-        // LEFT boundary: Can scroll to show one cell before minSelectedCol
-        // This means the left edge of viewport can be at (minSelectedCol - 1) * cellSize
-        double minPixelX = Math.max(0, (minSelectedCol - 1) * cellSize);
+        // Calculate pixel boundaries for the allowed viewing region (with 1 cell buffer)
+        double minPlaceablePixelX = Math.max(0, (minSelectedCol - 1) * cellSize);
+        double maxPlaceablePixelX = Math.min(gridWidth, (maxSelectedCol + 2) * cellSize);
+        double minPlaceablePixelY = Math.max(0, (minSelectedRow - 1) * cellSize);
+        double maxPlaceablePixelY = Math.min(gridHeight, (maxSelectedRow + 2) * cellSize);
 
-        // RIGHT boundary: Can scroll to show one cell after maxSelectedCol
-        // The RIGHT edge of viewport should not go beyond (maxSelectedCol + 2) * cellSize
-        // So the LEFT edge of viewport cannot be further than (maxSelectedCol + 2) * cellSize - viewportWidth
-        double maxPixelX = Math.min(maxScrollPixelX, (maxSelectedCol + 2) * cellSize - viewportWidth);
+        // Calculate the scroll range that keeps all placeable tiles (with buffer) visible
+        // The viewport left edge can be at most at minPlaceablePixelX (shows leftmost tile + buffer)
+        // The viewport left edge must be at least at (maxPlaceablePixelX - viewportWidth) (shows rightmost tile + buffer)
+        double minAllowedScrollX = Math.max(0, maxPlaceablePixelX - viewportWidth);
+        double maxAllowedScrollX = Math.min(maxScrollPixelX, minPlaceablePixelX);
 
-        // TOP boundary: Can scroll to show one cell before minSelectedRow
-        double minPixelY = Math.max(0, (minSelectedRow - 1) * cellSize);
+        double minAllowedScrollY = Math.max(0, maxPlaceablePixelY - viewportHeight);
+        double maxAllowedScrollY = Math.min(maxScrollPixelY, minPlaceablePixelY);
 
-        // BOTTOM boundary: Can scroll to show one cell after maxSelectedRow
-        // The BOTTOM edge of viewport should not go beyond (maxSelectedRow + 2) * cellSize
-        // So the TOP edge of viewport cannot be further than (maxSelectedRow + 2) * cellSize - viewportHeight
-        double maxPixelY = Math.min(maxScrollPixelY, (maxSelectedRow + 2) * cellSize - viewportHeight);
-
-        // Convert pixel values to scroll values (0 to 1)
-        double minHvalue = minPixelX / maxScrollPixelX;
-        double maxHvalue = maxPixelX / maxScrollPixelX;
-        double minVvalue = minPixelY / maxScrollPixelY;
-        double maxVvalue = maxPixelY / maxScrollPixelY;
-
-        // Get current scroll position
-        double currentHvalue = gridScreen.getHvalue();
-        double currentVvalue = gridScreen.getVvalue();
-
-        // Clamp to allowed range
-        double constrainedHvalue = Math.max(minHvalue, Math.min(currentHvalue, maxHvalue));
-        double constrainedVvalue = Math.max(minVvalue, Math.min(currentVvalue, maxVvalue));
-
-        System.out.println("Scroll constraint check:");
-        System.out.println("  Current: H=" + String.format("%.3f", currentHvalue) + " V=" + String.format("%.3f", currentVvalue));
-        System.out.println("  Allowed: H[" + String.format("%.3f", minHvalue) + "-" + String.format("%.3f", maxHvalue) + "]" +
-                         " V[" + String.format("%.3f", minVvalue) + "-" + String.format("%.3f", maxVvalue) + "]");
-        System.out.println("  Selected cells: rows [" + minSelectedRow + "-" + maxSelectedRow + "] cols [" + minSelectedCol + "-" + maxSelectedCol + "]");
-        System.out.println("  Pixel constraints: X[" + String.format("%.1f", minPixelX) + "-" + String.format("%.1f", maxPixelX) + "]" +
-                         " Y[" + String.format("%.1f", minPixelY) + "-" + String.format("%.1f", maxPixelY) + "]");
-
-        // Apply constraints by setting clamped values
-        if (constrainedHvalue != currentHvalue) {
-            System.out.println("  Clamping H from " + String.format("%.3f", currentHvalue) + " to " + String.format("%.3f", constrainedHvalue));
-            gridScreen.setHvalue(constrainedHvalue);
+        // If min > max, it means tiles span more than viewport can show
+        // In this case, allow scrolling between the extremes to see different parts
+        if (minAllowedScrollX > maxAllowedScrollX) {
+            // Tiles span wider than viewport - clamp to show edges with buffer
+            minAllowedScrollX = Math.max(0, minPlaceablePixelX);
+            maxAllowedScrollX = Math.min(maxScrollPixelX, maxPlaceablePixelX - viewportWidth);
         }
-        if (constrainedVvalue != currentVvalue) {
-            System.out.println("  Clamping V from " + String.format("%.3f", currentVvalue) + " to " + String.format("%.3f", constrainedVvalue));
-            gridScreen.setVvalue(constrainedVvalue);
+
+        if (minAllowedScrollY > maxAllowedScrollY) {
+            // Tiles span taller than viewport - clamp to show edges with buffer
+            minAllowedScrollY = Math.max(0, minPlaceablePixelY);
+            maxAllowedScrollY = Math.min(maxScrollPixelY, maxPlaceablePixelY - viewportHeight);
+        }
+
+        // Clamp current scroll to allowed range
+        double newScrollPixelX = Math.max(minAllowedScrollX, Math.min(currentScrollPixelX, maxAllowedScrollX));
+        double newScrollPixelY = Math.max(minAllowedScrollY, Math.min(currentScrollPixelY, maxAllowedScrollY));
+
+        // Convert back to scroll values (0 to 1)
+        double newHvalue = newScrollPixelX / maxScrollPixelX;
+        double newVvalue = newScrollPixelY / maxScrollPixelY;
+
+        // Apply if changed, using flag to prevent infinite recursion
+        if (Math.abs(newHvalue - gridScreen.getHvalue()) > 0.001) {
+            System.out.println("Enforcing horizontal constraint: " + String.format("%.3f", gridScreen.getHvalue()) +
+                             " -> " + String.format("%.3f", newHvalue) +
+                             " (allowed range: " + String.format("%.3f", minAllowedScrollX / maxScrollPixelX) +
+                             " - " + String.format("%.3f", maxAllowedScrollX / maxScrollPixelX) + ")");
+            isEnforcingConstraints = true;
+            gridScreen.setHvalue(newHvalue);
+            isEnforcingConstraints = false;
+        }
+
+        if (Math.abs(newVvalue - gridScreen.getVvalue()) > 0.001) {
+            System.out.println("Enforcing vertical constraint: " + String.format("%.3f", gridScreen.getVvalue()) +
+                             " -> " + String.format("%.3f", newVvalue) +
+                             " (allowed range: " + String.format("%.3f", minAllowedScrollY / maxScrollPixelY) +
+                             " - " + String.format("%.3f", maxAllowedScrollY / maxScrollPixelY) + ")");
+            isEnforcingConstraints = true;
+            gridScreen.setVvalue(newVvalue);
+            isEnforcingConstraints = false;
         }
     }
 
@@ -501,47 +672,42 @@ public class GameView extends View {
      * @return a Pane representing one grid cell
      */
     private Pane createCell(int row, int col) {
-        Pane cell = new Pane();
-        cell.setPrefSize(cellSize, cellSize);
-        cell.setMinSize(cellSize, cellSize);
-        cell.setMaxSize(cellSize, cellSize);
+        Pane newPane = new Pane();
+        newPane.setPrefSize(cellSize, cellSize);
+        newPane.setMinSize(cellSize, cellSize);
+        newPane.setMaxSize(cellSize, cellSize);
 
-        // Get or create persistent state for this cell
-        Cell cellKey = new Cell(row, col);
-        CellData cellData = allCellStates.computeIfAbsent(cellKey, k -> new CellData());
+        // Get or create persistent state for this newPane
+        Cell currentCell = gameController.getCellAt(row, col);
 
-        // Check if this cell has a tile placed (from GameController)
-        boolean isTilePlaced = gameController.getPlacedTiles().contains(cellKey);
+        // Check if this newPane has a tile placed (from GameController)
+        boolean isTilePlaced = gameController.getPlacedTiles().contains(currentCell);
 
-        // Check if this cell is placeable (from GameController)
-        boolean isPlaceable = gameController.getPlaceableCells().contains(cellKey);
+        // Check if this newPane is placeable (from GameController)
+        boolean isPlaceable = gameController.getPlaceableCells().contains(currentCell) || (gameController.getPlacedTiles().isEmpty() && row == gridSize / 2 && col == gridSize / 2); // First tile can be placed at center
 
-        // Set visual style based on cell state
+        // Set visual style based on newPane state
         if (isTilePlaced) {
             // Tile is placed - show as occupied (green background)
-            cell.setStyle("-fx-background-color: lightgreen; -fx-border-color: gray;");
-            cellData.isSelected = true;
-            selectedCells.add(cell);
+            newPane.setStyle("-fx-background-color: lightgreen; -fx-border-color: gray;");
+            newPane.getChildren().add(new ImageView(tileIdToImage.get(gameController.getCellAt(row, col).tileId))); // Show tile image if placed
+
         } else if (isPlaceable) {
             // Cell is placeable - show as available (yellow background)
-            cell.setStyle("-fx-background-color: lightyellow; -fx-border-color: gray;");
-        } else if (cellData.isSelected) {
-            // Restore selection state from persistent storage (light blue)
-            cell.setStyle("-fx-background-color: lightblue;");
-            selectedCells.add(cell);
+            newPane.setStyle("-fx-background-color: lightyellow; -fx-border-color: gray;");
         } else {
-            // Default empty cell
-            cell.setStyle("-fx-border-color: lightgray;");
+            // Default empty newPane
+            newPane.setStyle("-fx-border-color: lightgray;");
         }
 
         // Track mouse press to detect if this is a drag or a click
-        cell.setOnMousePressed(event -> {
+        newPane.setOnMousePressed(event -> {
             dragStartX = event.getSceneX();
             dragStartY = event.getSceneY();
         });
 
         // Only trigger click action if it wasn't a drag
-        cell.setOnMouseClicked(event -> {
+        newPane.setOnMouseClicked(event -> {
             double dragDistance = Math.hypot(
                     event.getSceneX() - dragStartX,
                     event.getSceneY() - dragStartY
@@ -552,7 +718,7 @@ public class GameView extends View {
                 System.out.println("Cell clicked at [" + row + "," + col + "]");
 
                 // Check if tile is already placed
-                if (gameController.getPlacedTiles().contains(cellKey)) {
+                if (gameController.getPlacedTiles().contains(currentCell)) {
                     System.out.println("Tile already placed at [" + row + "," + col + "]");
                     return;
                 }
@@ -563,25 +729,39 @@ public class GameView extends View {
                     return;
                 }
 
+                if (gameController.getPlacedTiles().isEmpty()) {
+                    if (row != gridSize / 2 || col != gridSize / 2) {
+                        System.out.println("First tile must be placed at the center [" + (gridSize / 2) + "," + (gridSize / 2) + "]");
+                        return;
+                    }
+                }
+
+                // Update visual state immediately to give feedback (will be refreshed again in updateVisibleCells)
+                newPane.setStyle("-fx-background-color: lightgreen; -fx-border-color: gray;");
+
                 // Place tile using GameController
                 gameController.placeTile(row, col);
                 System.out.println("Tile placed at [" + row + "," + col + "]");
 
-                // Update visual state
-                selectedCells.add(cell);
-                cell.setStyle("-fx-background-color: lightgreen; -fx-border-color: gray;");
-                cellData.isSelected = true;
+                displayCurrentPlacingTile();
 
                 // Refresh all visible cells to update placeable highlights
                 refreshVisibleCells();
 
-                // Update scroll constraints based on new selection
+                // Update scroll constraints based on new tile placement
                 updateScrollConstraints();
-                enforceScrollConstraints();
+
+                // Enable scrolling if tiles now exceed the viewport
+                updateScrollingState();
+
+                // Only enforce constraints if tiles now exceed the viewport
+                if (shouldEnforceScrollConstraints()) {
+                    enforceScrollConstraints();
+                }
             }
         });
 
-        return cell;
+        return newPane;
     }
 
     /**
@@ -605,6 +785,36 @@ public class GameView extends View {
 
             // Re-render the same range
             renderCellRange(minRow, maxRow, minCol, maxCol);
+
+            // Update scrolling state after re-rendering (placeable cells may have changed)
+            updateScrollingState();
+        }
+    }
+
+    private void displayCurrentPlacingTile() {
+        if (nextTilePane == null) {
+            return;
+        }
+
+        try {
+            Character currentTileId = gameController.getCurrentTileId();
+            if (currentTileId == null) {
+                return;
+            }
+
+            Image tileImage = tileIdToImage.get(currentTileId);
+            if (tileImage != null) {
+                ImageView imageView = new ImageView(tileImage);
+//                imageView.setFitWidth(150);
+//                imageView.setFitHeight(150);
+                imageView.setPreserveRatio(true);
+                imageView.setSmooth(true);
+
+                nextTilePane.getChildren().clear();
+                nextTilePane.getChildren().add(imageView);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }

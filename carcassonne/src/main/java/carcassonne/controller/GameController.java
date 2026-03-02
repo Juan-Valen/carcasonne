@@ -19,7 +19,9 @@ public class GameController {
     public static class Cell {
         public final int row;
         public final int col;
-        public int tileId; // ID of the tile placed in this cell
+        public Character tileId = null; // ID of the tile placed in this cell
+        public boolean placed = false; // Whether a tile has been placed in this cell
+        public int rotation = 0; // Rotation of the tile in this cell (0, 90, 180, 270)
 
         public Cell(int row, int col) {
             this.row = row;
@@ -47,7 +49,6 @@ public class GameController {
 
     private int gridSize = 144; // Default grid size
 
-    private Set<Cell> PlacedTilePositions = new HashSet<>();
 
     public int getGridSize() {
         return gridSize;
@@ -56,13 +57,16 @@ public class GameController {
     public void placeTile (int row, int col) {
         Cell cell = new Cell(row, col);
         cell.tileId = getCurrentTileId(); // Placeholder for getting the current tile ID from the game state
+        cell.placed = true;
+        getNextTile(); // Update the current tile to the next tile after placing
         PlacedTilePositions.add(cell);
     }
 
-    public int getCurrentTileId() {
+    public Character getCurrentTileId() {
         // Placeholder function to get the current tile ID from the game state
         // This should return the ID of the tile that is currently being placed
-        return 0; // Replace with actual logic to retrieve the current tile ID
+
+        return currentTile; // Placeholder for getting the current tile from the model
     }
 
     public Set<Cell> getPlaceableCells() {
@@ -75,6 +79,31 @@ public class GameController {
         return new HashSet<>(PlacedTilePositions);
     }
 
+    public void getNextTile() {
+        // This should return the next tile based on the game state
+        currentTile = getNextTileFromModel(); // Placeholder for getting the next tile from the model
+    }
+
+    public Cell getCellAt(int row, int col) {
+        Cell cell = new Cell(row, col);
+        for (Cell existingCell : PlacedTilePositions) {
+            if (existingCell.equals(cell)) {
+                return existingCell; // Return the cell with the tile ID
+            }
+        }
+        cell.placed = false;
+        return cell;
+    }
+
+    // Stuff that should be in the model but is here for testing purposes, should be moved to the model later
+
+    private Set<Cell> PlacedTilePositions = new HashSet<>();
+
+    final Random random = new Random();
+
+    List<Character> keys = Arrays.asList('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X'); // Example list of tile identifiers, should be replaced with actual tile data from the model
+
+    private Character currentTile = getNextTileFromModel(); // Placeholder for the current tile, should be set based on the game state
 
     private Set<Cell> calculatePlaceableCells() {
         // Placeholder function in the controller, should be implemented in the model to calculate the placeable tiles based on the current game state
@@ -111,5 +140,10 @@ public class GameController {
         }
 
         return placeableTiles;
+    }
+
+    private Character getNextTileFromModel() {
+        // Random instance for picking random tiles
+            return keys.get(random.nextInt(keys.size()));
     }
 }
