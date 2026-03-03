@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox fx:id="rootContainer" alignment="CENTER" prefHeight="186.0" prefWidth="288.0" spacing="10.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="carcassonne.UI.SecondaryView">
+    <children>
+        <Label text="Carcassonne" />
+        <Button onAction="#onBack" text="Start" VBox.vgrow="ALWAYS" />
+      <Button mnemonicParsing="false" text="Settings" VBox.vgrow="ALWAYS" />
+    </children>
+</VBox>
