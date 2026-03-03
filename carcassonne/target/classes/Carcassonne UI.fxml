@@ -8,9 +8,9 @@
    <children>
       <ScrollPane fx:id="gridScreen" hbarPolicy="NEVER" pannable="true" prefHeight="672.0" prefWidth="500.0" vbarPolicy="NEVER" HBox.hgrow="ALWAYS">
       </ScrollPane>
-       <VBox prefHeight="857.0" HBox.hgrow="ALWAYS">
-           <VBox fx:id="playerUiBox" prefHeight="194.0" prefWidth="499.0" VBox.vgrow="ALWAYS" />
-         <StackPane fx:id="nextTilePane" prefHeight="150.0" prefWidth="200.0">
+       <VBox alignment="CENTER" prefHeight="857.0" HBox.hgrow="ALWAYS">
+           <VBox fx:id="playerUiBox" alignment="CENTER" prefHeight="194.0" prefWidth="499.0" VBox.vgrow="ALWAYS" />
+         <StackPane fx:id="nextTilePane" maxWidth="-Infinity" minWidth="-Infinity" VBox.vgrow="NEVER">
             <children>
                   <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#f8c255" height="200.0" stroke="BLACK" strokeType="INSIDE" width="200.0" />
                <Pane prefHeight="200.0" prefWidth="200.0" />
