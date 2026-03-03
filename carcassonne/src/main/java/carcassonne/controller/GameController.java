@@ -49,9 +49,22 @@ public class GameController {
 
     private int gridSize = 144; // Default grid size
 
+    private int maxPlayers = 5; // Maximum number of players
 
     public int getGridSize() {
         return gridSize;
+    }
+
+    public int getMaxPlayers() {
+        return maxPlayers;
+    }
+
+    public void setCurrentPlayerCount(int currentPlayerCount) {
+        setCurrentPlayerCountToModel(currentPlayerCount); // Update the player count in the model
+    }
+
+    public int getCurrentPlayerCount() {
+        return getCurrentPlayerCountFromModel(); // Get the current player count from the model
     }
 
     public void placeTile (int row, int col) {
@@ -111,6 +124,8 @@ public class GameController {
 
     // Stuff that should be in the model but is here for testing purposes, should be moved to the model later
 
+    private int currentPlayerCount = 2; // the current number of players
+
     private Set<Cell> PlacedTilePositions = new HashSet<>();
 
     final Random random = new Random();
@@ -120,6 +135,16 @@ public class GameController {
     private Character currentTileId = getNextTileFromModel(); // Placeholder for the current tile, should be set based on the game state
 
     private int currentRotation = 0; // Placeholder for the current tile rotation, should be set based on the game state
+
+    private int getCurrentPlayerCountFromModel() {
+        // Placeholder function to get the current player count from the game state
+        return currentPlayerCount; // Should return the actual player count from the model
+    }
+
+    private void setCurrentPlayerCountToModel(int currentPlayerCount) {
+        // Placeholder function to set the current player count in the game state
+        this.currentPlayerCount = currentPlayerCount; // Should update the actual player count in the model
+    }
 
     private Set<Cell> calculatePlaceableCells() {
         // Placeholder function in the controller, should be implemented in the model to calculate the placeable tiles based on the current game state

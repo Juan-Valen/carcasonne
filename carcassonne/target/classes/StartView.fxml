@@ -2,11 +2,21 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
-<VBox fx:id="rootContainer" alignment="CENTER" prefHeight="186.0" prefWidth="288.0" spacing="10.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="carcassonne.UI.SecondaryView">
+<VBox fx:id="rootContainer" alignment="CENTER" prefHeight="186.0" prefWidth="288.0" spacing="10.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="carcassonne.UI.StartView">
     <children>
-        <Label text="Carcassonne" />
-        <Button onAction="#onBack" text="Start" VBox.vgrow="ALWAYS" />
+        <Label text="Carcassonne" textFill="#067dfc">
+         <font>
+            <Font name="System Bold" size="15.0" />
+         </font></Label>
+      <VBox alignment="CENTER" fillWidth="false" VBox.vgrow="NEVER">
+         <children>
+            <Label fx:id="enterPlayerNumPrompt" text="Enter number of players" />
+            <Spinner fx:id="playerNumSpinner" prefWidth="50.0" />
+              <Button onAction="#onBack" text="Start" VBox.vgrow="ALWAYS" />
+         </children>
+      </VBox>
       <Button mnemonicParsing="false" text="Settings" VBox.vgrow="ALWAYS" />
     </children>
 </VBox>

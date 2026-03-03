@@ -4,10 +4,15 @@ import carcassonne.controller.GameController;
 import carcassonne.controller.GameController.Cell;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
+import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.PhongMaterial;
+import javafx.scene.shape.Sphere;
 
 import java.util.*;
 
@@ -33,7 +38,7 @@ public class GameView extends View {
     // Reference to game controller
     private final GameController gameController = GameController.getInstance();
 
-    int gridSize = 144;
+    int gridSize = gameController.getGridSize();
     private boolean layoutRetryScheduled = false;
 
     private double cellPortionOfScreen = 0.1; // Portion of the screen width that the one cell in the grid takes up when using dynamic cell size instead of tile image size (0.0 to 1.0)
@@ -55,9 +60,6 @@ public class GameView extends View {
     private int lastRenderedMinCol = -1;
     private int lastRenderedMaxCol = -1;
     private static final int RENDER_BUFFER = 2; // Extra cells to render outside viewport for smoother scrolling
-
-    // Cell state persistence (survives when cell goes off-screen)
-    private Map<Cell, CellData> allCellStates = new HashMap<>(); // Persistent state for all cells (Cell -> CellData)
 
     // Scroll constraints based on selected tiles
     private int minSelectedRow = Integer.MAX_VALUE;
@@ -150,11 +152,27 @@ public class GameView extends View {
     @FXML
     public StackPane nextTilePane;
 
+    @FXML
+    public VBox playerUiBox;
 
     @Override
     protected void onAfterStageAvailable() {
         displayCurrentPlacingTile();
         initGrid();
+    }
+
+    @Override
+    protected void initialize() {
+        super.initialize();
+        System.out.println("GameView.initialize() called");
+    }
+
+    @Override
+    public void onViewShow() {
+        super.onViewShow();
+        Platform.runLater(() -> {
+            this.createPlayerInfoBoxes(gameController.getCurrentPlayerCount(), playerUiBox);
+        });
     }
 
     @FXML
@@ -828,6 +846,25 @@ public class GameView extends View {
             }
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    private void createPlayerInfoBoxes(int playerCount, VBox container) {
+        container.getChildren().clear();
+        for (int i = 1; i <= playerCount; i++) {
+            HBox hbox = new HBox();
+            Sphere sphere = new Sphere(10);
+            switch (i) {
+                case 1 -> sphere.setMaterial(new PhongMaterial(Color.RED));
+                case 2 -> sphere.setMaterial(new PhongMaterial(Color.BLUE));
+                case 3 -> sphere.setMaterial(new PhongMaterial(Color.GREEN));
+                case 4 -> sphere.setMaterial(new PhongMaterial(Color.YELLOW));
+                case 5 -> sphere.setMaterial(new PhongMaterial(Color.ORANGE));
+                default -> sphere.setMaterial(new PhongMaterial(Color.GRAY));
+            }
+            hbox.getChildren().add(new Label("Player " + i));
+            hbox.getChildren().add(sphere);
+            container.getChildren().add(hbox);
         }
     }
 }
