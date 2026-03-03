@@ -1,5 +1,6 @@
 package carcassonne;
 
+import carcassonne.UI.View;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -51,6 +52,11 @@ public class MainApp extends Application {
         primaryStage.setTitle("Carcassonne Game");
         primaryStage.setScene(scene);
         primaryStage.show();
+
+        Object ctrl = controllers.get(resource);
+        if (ctrl instanceof View) {
+            ((View) ctrl).onViewShow();
+        }
     }
 
     public Stage getPrimaryStage() { return primaryStage; }

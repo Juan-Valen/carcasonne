@@ -22,6 +22,7 @@ public class GameController {
         public Character tileId = null; // ID of the tile placed in this cell
         public boolean placed = false; // Whether a tile has been placed in this cell
         public int rotation = 0; // Rotation of the tile in this cell (0, 90, 180, 270)
+        public int meeple = -1; // Meeple placement on the tile in this cell (0 = top, 1 = right, 2 = bottom, 3 = left, -1 = no meeple)
 
         public Cell(int row, int col) {
             this.row = row;
@@ -49,9 +50,22 @@ public class GameController {
 
     private int gridSize = 144; // Default grid size
 
+    private int maxPlayers = 5; // Maximum number of players
 
     public int getGridSize() {
         return gridSize;
+    }
+
+    public int getMaxPlayers() {
+        return maxPlayers;
+    }
+
+    public void setCurrentPlayerCount(int currentPlayerCount) {
+        setCurrentPlayerCountToModel(currentPlayerCount); // Update the player count in the model
+    }
+
+    public int getCurrentPlayerCount() {
+        return getCurrentPlayerCountFromModel(); // Get the current player count from the model
     }
 
     public void placeTile (int row, int col) {
@@ -59,6 +73,7 @@ public class GameController {
         cell.tileId = getCurrentTileId(); // Placeholder for getting the current tile ID from the game state
         cell.placed = true;
         cell.rotation = currentRotation;
+        cell.meeple = getCurrentMeeplePlacement(); // Placeholder for getting the current meeple placement from the game state
         getNextTile(); // Update the current tile to the next tile after placing
         PlacedTilePositions.add(cell);
     }
@@ -80,6 +95,17 @@ public class GameController {
 
     public int getCurrentRotation() {
         return currentRotation;
+    }
+
+    public void setCurrentMeeplePlacement(int position) {
+        // 0 = top, 1 = right, 2 = bottom, 3 = left, -1 = no meeple
+        // Placeholder function to set the current meeple placement in the game state
+        setCurrentMeeplePlacementToModel(position);
+    }
+
+    public int getCurrentMeeplePlacement() {
+        // 0 = top, 1 = right, 2 = bottom, 3 = left, -1 = no meeple
+        return getCurrentMeeplePlacementFromModel();
     }
 
     public Set<Cell> getPlaceableCells() {
@@ -111,6 +137,8 @@ public class GameController {
 
     // Stuff that should be in the model but is here for testing purposes, should be moved to the model later
 
+    private int currentPlayerCount = 2; // the current number of players
+
     private Set<Cell> PlacedTilePositions = new HashSet<>();
 
     final Random random = new Random();
@@ -120,6 +148,30 @@ public class GameController {
     private Character currentTileId = getNextTileFromModel(); // Placeholder for the current tile, should be set based on the game state
 
     private int currentRotation = 0; // Placeholder for the current tile rotation, should be set based on the game state
+
+    private int currentMeeplePlacement = -1; // Placeholder for the current meeple placement, should be set based on the game state
+
+    private void setCurrentMeeplePlacementToModel(int currentMeeplePlacement) {
+        // 0 = top, 1 = right, 2 = bottom, 3 = left, -1 = no meeple
+        // Placeholder function to set the current meeple placement in the game state
+        this.currentMeeplePlacement = currentMeeplePlacement; // Should update the actual meeple placement in the model
+    }
+
+    private int getCurrentMeeplePlacementFromModel() {
+        // 0 = top, 1 = right, 2 = bottom, 3 = left, -1 = no meeple
+        // Placeholder function to get the current meeple placement from the game state
+        return currentMeeplePlacement; // Should return the actual meeple placement from the model
+    }
+
+    private int getCurrentPlayerCountFromModel() {
+        // Placeholder function to get the current player count from the game state
+        return currentPlayerCount; // Should return the actual player count from the model
+    }
+
+    private void setCurrentPlayerCountToModel(int currentPlayerCount) {
+        // Placeholder function to set the current player count in the game state
+        this.currentPlayerCount = currentPlayerCount; // Should update the actual player count in the model
+    }
 
     private Set<Cell> calculatePlaceableCells() {
         // Placeholder function in the controller, should be implemented in the model to calculate the placeable tiles based on the current game state

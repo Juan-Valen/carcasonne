@@ -4,10 +4,14 @@ import carcassonne.controller.GameController;
 import carcassonne.controller.GameController.Cell;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
+import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 
 import java.util.*;
 
@@ -33,7 +37,7 @@ public class GameView extends View {
     // Reference to game controller
     private final GameController gameController = GameController.getInstance();
 
-    int gridSize = 144;
+    int gridSize = gameController.getGridSize();
     private boolean layoutRetryScheduled = false;
 
     private double cellPortionOfScreen = 0.1; // Portion of the screen width that the one cell in the grid takes up when using dynamic cell size instead of tile image size (0.0 to 1.0)
@@ -55,9 +59,6 @@ public class GameView extends View {
     private int lastRenderedMinCol = -1;
     private int lastRenderedMaxCol = -1;
     private static final int RENDER_BUFFER = 2; // Extra cells to render outside viewport for smoother scrolling
-
-    // Cell state persistence (survives when cell goes off-screen)
-    private Map<Cell, CellData> allCellStates = new HashMap<>(); // Persistent state for all cells (Cell -> CellData)
 
     // Scroll constraints based on selected tiles
     private int minSelectedRow = Integer.MAX_VALUE;
@@ -150,11 +151,27 @@ public class GameView extends View {
     @FXML
     public StackPane nextTilePane;
 
+    @FXML
+    public VBox playerUiBox;
 
     @Override
     protected void onAfterStageAvailable() {
         displayCurrentPlacingTile();
         initGrid();
+    }
+
+    @Override
+    protected void initialize() {
+        super.initialize();
+        System.out.println("GameView.initialize() called");
+    }
+
+    @Override
+    public void onViewShow() {
+        super.onViewShow();
+        Platform.runLater(() -> {
+            this.createPlayerInfoBoxes(gameController.getCurrentPlayerCount(), playerUiBox);
+        });
     }
 
     @FXML
@@ -677,10 +694,10 @@ public class GameView extends View {
      *
      * @param row the row index of the cell
      * @param col the column index of the cell
-     * @return a Pane representing one grid cell
+     * @return a StackPane representing one grid cell
      */
     private Pane createCell(int row, int col) {
-        Pane newPane = new Pane();
+        StackPane newPane = new StackPane();
         newPane.setPrefSize(cellSize, cellSize);
         newPane.setMinSize(cellSize, cellSize);
         newPane.setMaxSize(cellSize, cellSize);
@@ -704,6 +721,10 @@ public class GameView extends View {
             image.setSmooth(true);
             newPane.getChildren().add(image); // Show tile image if placed
 
+            int meeplePosition = gameController.getCellAt(row, col).meeple;
+            if (meeplePosition != -1) {
+                displayMeepleOnCell(newPane, meeplePosition);
+            }
 
         } else if (isPlaceable) {
             // Cell is placeable - show as available (yellow background)
@@ -820,14 +841,131 @@ public class GameView extends View {
                 ImageView imageView = new ImageView(tileImage);
                 imageView.setPreserveRatio(true);
                 imageView.setSmooth(true);
-
                 imageView.rotateProperty().set(gameController.getCurrentRotation()*90); // Rotate based on current rotation state
 
                 nextTilePane.getChildren().clear();
                 nextTilePane.getChildren().add(imageView);
+                displayMeeplePlacementOptions(nextTilePane, imageView);
+
             }
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    private void displayMeeplePlacementOptions(StackPane stackPane, ImageView tileImage) {
+        double radius = tileImage.getImage().getHeight() * 0.1;
+        Circle topCircle = new Circle(radius);
+        Circle bottomCircle = new Circle(radius);
+        Circle leftCircle = new Circle(radius);
+        Circle rightCircle = new Circle(radius);
+
+        topCircle.setFill(Color.BLUE.darker());
+        bottomCircle.setFill(Color.BLUE.darker());
+        leftCircle.setFill(Color.BLUE.darker());
+        rightCircle.setFill(Color.BLUE.darker());
+
+        stackPane.getChildren().add(topCircle);
+        stackPane.getChildren().add(bottomCircle);
+        stackPane.getChildren().add(leftCircle);
+        stackPane.getChildren().add(rightCircle);
+
+        // Set alignment of the circles within the StackPane
+        // Use javafx.geometry.Pos for positioning: TOP_LEFT, TOP_CENTER, TOP_RIGHT,
+        // CENTER_LEFT, CENTER, CENTER_RIGHT, BOTTOM_LEFT, BOTTOM_CENTER, BOTTOM_RIGHT
+        stackPane.setAlignment(topCircle, javafx.geometry.Pos.TOP_CENTER);
+        stackPane.setAlignment(bottomCircle, javafx.geometry.Pos.BOTTOM_CENTER);
+        stackPane.setAlignment(leftCircle, javafx.geometry.Pos.CENTER_LEFT);
+        stackPane.setAlignment(rightCircle, javafx.geometry.Pos.CENTER_RIGHT);
+
+        handleMeeplePlacement(stackPane, topCircle, bottomCircle, leftCircle, rightCircle);
+    }
+
+    // Handles logic and click handlers for placing a meeple on the currently placing tile
+    private void handleMeeplePlacement (StackPane stackPane, Circle topCircle, Circle bottomCircle, Circle leftCircle, Circle rightCircle) {
+        gameController.setCurrentMeeplePlacement(-1); // -1 means no meeple, 0-3 for top/right/bottom/left
+        final Circle[] selectedCircle = new Circle[1]; // selectedCircle[0] is current selection
+
+        Runnable resetColors = () -> {
+            topCircle.setFill(Color.BLUE.darker());
+            bottomCircle.setFill(Color.BLUE.darker());
+            leftCircle.setFill(Color.BLUE.darker());
+            rightCircle.setFill(Color.BLUE.darker());
+        };
+
+        java.util.function.Consumer<Circle> toggleSelection = clicked -> {
+            if (selectedCircle[0] == clicked) {
+                selectedCircle[0] = null;   // unselect if clicked again
+                resetColors.run();
+                gameController.setCurrentMeeplePlacement(
+                        -1 // no meeple
+                );
+            } else {
+                selectedCircle[0] = clicked;
+                resetColors.run();
+                gameController.setCurrentMeeplePlacement(
+                        clicked == topCircle ? 0 :
+                        clicked == rightCircle ? 1 :
+                        clicked == bottomCircle ? 2 :
+                        clicked == leftCircle ? 3 : -1
+                );
+                clicked.setFill(Color.LIGHTBLUE);
+            }
+        };
+
+        topCircle.setOnMouseClicked(e -> {
+            System.out.println("Top section clicked for meeple placement");
+            toggleSelection.accept(topCircle);
+        });
+
+        bottomCircle.setOnMouseClicked(e -> {
+            System.out.println("Bottom section clicked for meeple placement");
+            toggleSelection.accept(bottomCircle);
+        });
+
+        leftCircle.setOnMouseClicked(e -> {
+            System.out.println("Left section clicked for meeple placement");
+            toggleSelection.accept(leftCircle);
+        });
+
+        rightCircle.setOnMouseClicked(e -> {
+            System.out.println("Right section clicked for meeple placement");
+            toggleSelection.accept(rightCircle);
+        });
+    }
+
+    private void displayMeepleOnCell(StackPane pane, int meeplePosition) {
+        double radius = pane.getPrefWidth() * 0.1;
+        Circle meepleCircle = new Circle(radius);
+        meepleCircle.setFill(Color.BLUE.darker());
+        pane.getChildren().add(meepleCircle);
+
+        // Position the meeple based on the specified position (0=top, 1=right, 2=bottom, 3=left)
+        switch (meeplePosition) {
+            case 0 -> pane.setAlignment(meepleCircle, javafx.geometry.Pos.TOP_CENTER);
+            case 1 -> pane.setAlignment(meepleCircle, javafx.geometry.Pos.CENTER_RIGHT);
+            case 2 -> pane.setAlignment(meepleCircle, javafx.geometry.Pos.BOTTOM_CENTER);
+            case 3 -> pane.setAlignment(meepleCircle, javafx.geometry.Pos.CENTER_LEFT);
+            default -> pane.setAlignment(meepleCircle, javafx.geometry.Pos.CENTER); // Fallback to center if invalid
+        }
+    }
+
+    private void createPlayerInfoBoxes(int playerCount, VBox container) {
+        container.getChildren().clear();
+        for (int i = 1; i <= playerCount; i++) {
+            HBox hbox = new HBox();
+            Circle circle = new Circle(10);
+            switch (i) {
+                case 1 -> circle.setFill(Color.RED);
+                case 2 -> circle.setFill(Color.BLUE);
+                case 3 -> circle.setFill(Color.GREEN);
+                case 4 -> circle.setFill(Color.YELLOW);
+                case 5 -> circle.setFill(Color.ORANGE);
+                default -> circle.setFill(Color.GRAY);
+            }
+            hbox.getChildren().add(new Label("Player " + i));
+            hbox.getChildren().add(circle);
+            container.getChildren().add(hbox);
         }
     }
 }

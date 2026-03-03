@@ -96,6 +96,10 @@ public class View {
         // Subclasses can override this to perform additional setup after the stage is available
     }
 
+    public void onViewShow() {
+        System.out.println("View.onViewShow() called for " + this.getClass().getSimpleName());
+        // Subclasses can override this to perform actions when the view is shown
+    }
 }
 
 
