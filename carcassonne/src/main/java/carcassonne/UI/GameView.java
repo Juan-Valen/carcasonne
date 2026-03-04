@@ -4,7 +4,6 @@ import carcassonne.controller.GameController;
 import carcassonne.controller.GameController.Cell;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
@@ -170,7 +169,7 @@ public class GameView extends View {
     public void onViewShow() {
         super.onViewShow();
         Platform.runLater(() -> {
-            this.createPlayerInfoBoxes(gameController.getCurrentPlayerCount(), playerUiBox);
+            this.renderPlayerInfoBoxes(gameController.getCurrentPlayerCount(), playerUiBox);
         });
     }
 
@@ -723,7 +722,8 @@ public class GameView extends View {
 
             int meeplePosition = gameController.getCellAt(row, col).meeple;
             if (meeplePosition != -1) {
-                displayMeepleOnCell(newPane, meeplePosition);
+                int playerNumber = gameController.getCellAt(row, col).player;
+                displayMeepleOnCell(newPane, meeplePosition, playerNumber);
             }
 
         } else if (isPlaceable) {
@@ -777,7 +777,11 @@ public class GameView extends View {
                 gameController.placeTile(row, col);
                 System.out.println("Tile placed at [" + row + "," + col + "]");
 
+                // display the next tile image
                 displayCurrentPlacingTile();
+
+                // redraw player info boxes to update scores and current player
+                renderPlayerInfoBoxes(gameController.getCurrentPlayerCount(), playerUiBox);
 
                 // Refresh all visible cells to update placeable highlights
                 refreshVisibleCells();
@@ -860,10 +864,19 @@ public class GameView extends View {
         Circle leftCircle = new Circle(radius);
         Circle rightCircle = new Circle(radius);
 
-        topCircle.setFill(Color.BLUE.darker());
-        bottomCircle.setFill(Color.BLUE.darker());
-        leftCircle.setFill(Color.BLUE.darker());
-        rightCircle.setFill(Color.BLUE.darker());
+        Color playerColor = switch (gameController.getCurrentPlayingPlayer()) {
+            case 1 -> Color.RED;
+            case 2 -> Color.BLUE;
+            case 3 -> Color.GREEN;
+            case 4 -> Color.YELLOW;
+            case 5 -> Color.ORANGE;
+            default -> Color.GRAY;
+        };
+
+        topCircle.setFill(playerColor.darker());
+        bottomCircle.setFill(playerColor.darker());
+        leftCircle.setFill(playerColor.darker());
+        rightCircle.setFill(playerColor.darker());
 
         stackPane.getChildren().add(topCircle);
         stackPane.getChildren().add(bottomCircle);
@@ -887,13 +900,31 @@ public class GameView extends View {
         final Circle[] selectedCircle = new Circle[1]; // selectedCircle[0] is current selection
 
         Runnable resetColors = () -> {
-            topCircle.setFill(Color.BLUE.darker());
-            bottomCircle.setFill(Color.BLUE.darker());
-            leftCircle.setFill(Color.BLUE.darker());
-            rightCircle.setFill(Color.BLUE.darker());
+            Color playerColor = switch (gameController.getCurrentPlayingPlayer()) {
+                case 1 -> Color.RED;
+                case 2 -> Color.BLUE;
+                case 3 -> Color.GREEN;
+                case 4 -> Color.YELLOW;
+                case 5 -> Color.ORANGE;
+                default -> Color.GRAY;
+            };
+
+            topCircle.setFill(playerColor.darker());
+            bottomCircle.setFill(playerColor.darker());
+            leftCircle.setFill(playerColor.darker());
+            rightCircle.setFill(playerColor.darker());
         };
 
         java.util.function.Consumer<Circle> toggleSelection = clicked -> {
+            Color lighterColor = switch (gameController.getCurrentPlayingPlayer()) {
+                case 1 -> Color.RED.brighter();
+                case 2 -> Color.BLUE.brighter();
+                case 3 -> Color.GREEN.brighter();
+                case 4 -> Color.YELLOW.brighter();
+                case 5 -> Color.ORANGE.brighter();
+                default -> Color.LIGHTGRAY;
+            };
+
             if (selectedCircle[0] == clicked) {
                 selectedCircle[0] = null;   // unselect if clicked again
                 resetColors.run();
@@ -909,7 +940,7 @@ public class GameView extends View {
                         clicked == bottomCircle ? 2 :
                         clicked == leftCircle ? 3 : -1
                 );
-                clicked.setFill(Color.LIGHTBLUE);
+                clicked.setFill(lighterColor);
             }
         };
 
@@ -934,10 +965,19 @@ public class GameView extends View {
         });
     }
 
-    private void displayMeepleOnCell(StackPane pane, int meeplePosition) {
+    private void displayMeepleOnCell(StackPane pane, int meeplePosition , int player) {
+        Color playerColor = switch (player) {
+            case 1 -> Color.RED;
+            case 2 -> Color.BLUE;
+            case 3 -> Color.GREEN;
+            case 4 -> Color.YELLOW;
+            case 5 -> Color.ORANGE;
+            default -> Color.GRAY;
+        };
+
         double radius = pane.getPrefWidth() * 0.1;
         Circle meepleCircle = new Circle(radius);
-        meepleCircle.setFill(Color.BLUE.darker());
+        meepleCircle.setFill(playerColor.darker());
         pane.getChildren().add(meepleCircle);
 
         // Position the meeple based on the specified position (0=top, 1=right, 2=bottom, 3=left)
@@ -950,22 +990,42 @@ public class GameView extends View {
         }
     }
 
-    private void createPlayerInfoBoxes(int playerCount, VBox container) {
+    private void renderPlayerInfoBoxes(int playerCount, VBox container) {
         container.getChildren().clear();
+        container.setSpacing(10); // Add spacing between player boxes
+
         for (int i = 1; i <= playerCount; i++) {
-            HBox hbox = new HBox();
-            Circle circle = new Circle(10);
-            switch (i) {
-                case 1 -> circle.setFill(Color.RED);
-                case 2 -> circle.setFill(Color.BLUE);
-                case 3 -> circle.setFill(Color.GREEN);
-                case 4 -> circle.setFill(Color.YELLOW);
-                case 5 -> circle.setFill(Color.ORANGE);
-                default -> circle.setFill(Color.GRAY);
-            }
+            HBox hbox = new HBox(10); // Add spacing between label and circle
+            hbox.setStyle("-fx-alignment: center;"); // Center content horizontally and vertically
             hbox.getChildren().add(new Label("Player " + i));
-            hbox.getChildren().add(circle);
+
+            for (int j = 0; j < gameController.getPlayerMeepleCount(i); j++) {
+                Circle circle = new Circle(10);
+                switch (i) {
+                    case 1 -> circle.setFill(Color.RED);
+                    case 2 -> circle.setFill(Color.BLUE);
+                    case 3 -> circle.setFill(Color.GREEN);
+                    case 4 -> circle.setFill(Color.YELLOW);
+                    case 5 -> circle.setFill(Color.ORANGE);
+                    default -> circle.setFill(Color.GRAY);
+                }
+
+                hbox.getChildren().add(circle);
+            }
+
+            // Make each HBox grow to fill equal vertical space
+            VBox.setVgrow(hbox, javafx.scene.layout.Priority.ALWAYS);
+
+            if (gameController.getCurrentPlayingPlayer() == i) {
+                hbox.setStyle("-fx-background-color: lightblue; -fx-alignment: center;"); // Highlight current player
+            }
+
             container.getChildren().add(hbox);
         }
+
+        // Add empty space at the bottom
+        Region spacer = new Region();
+        VBox.setVgrow(spacer, javafx.scene.layout.Priority.ALWAYS);
+        container.getChildren().add(spacer);
     }
 }

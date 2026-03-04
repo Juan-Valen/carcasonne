@@ -23,6 +23,7 @@ public class GameController {
         public boolean placed = false; // Whether a tile has been placed in this cell
         public int rotation = 0; // Rotation of the tile in this cell (0, 90, 180, 270)
         public int meeple = -1; // Meeple placement on the tile in this cell (0 = top, 1 = right, 2 = bottom, 3 = left, -1 = no meeple)
+        public int player = -1; // Player who placed the tile/meeple in this cell, -1 if no tile/meeple
 
         public Cell(int row, int col) {
             this.row = row;
@@ -52,6 +53,8 @@ public class GameController {
 
     private int maxPlayers = 5; // Maximum number of players
 
+    private int maxMeeples = 5; // Maximum number of meeples per player, adjust as needed
+
     public int getGridSize() {
         return gridSize;
     }
@@ -68,13 +71,30 @@ public class GameController {
         return getCurrentPlayerCountFromModel(); // Get the current player count from the model
     }
 
+    public int getCurrentPlayingPlayer() {
+        return getCurrentPlayingPlayerFromModel(); // Get the current playing player from the model
+    }
+
+    public void setNextPlayingPlayer() {
+        setNextPlayingPlayerInModel();
+    }
+
     public void placeTile (int row, int col) {
         Cell cell = new Cell(row, col);
         cell.tileId = getCurrentTileId(); // Placeholder for getting the current tile ID from the game state
         cell.placed = true;
         cell.rotation = currentRotation;
-        cell.meeple = getCurrentMeeplePlacement(); // Placeholder for getting the current meeple placement from the game state
+        if (getCurrentMeeplePlacement() != -1 && getPlayerMeepleCount(getCurrentPlayingPlayer()) > 0) {
+            cell.meeple = getCurrentMeeplePlacement(); // Placeholder for getting the current meeple placement from the game state
+        } else {
+            cell.meeple = -1; // No meeple placed
+        }
+        if (cell.meeple != -1) {
+            decrementPlayerMeepleCount(getCurrentPlayingPlayer());
+        }
+        cell.player = getCurrentPlayingPlayer();
         getNextTile(); // Update the current tile to the next tile after placing
+        setNextPlayingPlayer();
         PlacedTilePositions.add(cell);
     }
 
@@ -106,6 +126,16 @@ public class GameController {
     public int getCurrentMeeplePlacement() {
         // 0 = top, 1 = right, 2 = bottom, 3 = left, -1 = no meeple
         return getCurrentMeeplePlacementFromModel();
+    }
+
+    public void decrementPlayerMeepleCount(int player) {
+            // Update the model with the new meeple count for the player
+        decrementPlayerMeepleCountInModel(player);
+    }
+
+    public int getPlayerMeepleCount(int player) {
+        // Placeholder function to get the current meeple count for a player from the game state
+        return getPlayerMeepleCountFromModel(player);
     }
 
     public Set<Cell> getPlaceableCells() {
@@ -151,10 +181,47 @@ public class GameController {
 
     private int currentMeeplePlacement = -1; // Placeholder for the current meeple placement, should be set based on the game state
 
+    private int currentPlayingPlayer = 1; // Placeholder for the current playing player, should be set based on the game state
+
+    private int [] playerMeepleCounts = null; // Placeholder for tracking the number of meeples each player has, should be managed in the model
+
+    private int getCurrentPlayingPlayerFromModel() {
+        // Placeholder function to get the current playing player from the game state
+        return currentPlayingPlayer; // Should return the actual current playing player from the model
+    }
+
+    private void setNextPlayingPlayerInModel() {
+        // Placeholder function to set the next playing player in the game state
+        if  (currentPlayingPlayer == currentPlayerCount) {
+            currentPlayingPlayer = 1; // Loop back to the first player
+        } else {
+            currentPlayingPlayer += 1; // Move to the next player
+        }
+    }
+
     private void setCurrentMeeplePlacementToModel(int currentMeeplePlacement) {
         // 0 = top, 1 = right, 2 = bottom, 3 = left, -1 = no meeple
         // Placeholder function to set the current meeple placement in the game state
         this.currentMeeplePlacement = currentMeeplePlacement; // Should update the actual meeple placement in the model
+    }
+
+    private int getPlayerMeepleCountFromModel(int player) {
+        if (playerMeepleCounts == null) {
+            playerMeepleCounts = new int[currentPlayerCount];
+            Arrays.fill(playerMeepleCounts, maxMeeples); // Assuming each player starts with 7 meeples, adjust as needed
+        }
+        // Placeholder function to get the current meeple count for a player from the game state
+        if (player >= 1 && player <= currentPlayerCount) {
+            return playerMeepleCounts[player - 1]; // Return meeple count for the player
+        }
+        return 0; // Return 0 if player number is invalid
+    }
+
+    private void decrementPlayerMeepleCountInModel(int player) {
+        // Placeholder function to decrement the meeple count for a player in the game state
+        if (player >= 1 && player <= currentPlayerCount) {
+            playerMeepleCounts[player - 1] = Math.max(0, playerMeepleCounts[player - 1] - 1); // Decrement meeple count for the player, ensuring it doesn't go below 0
+        }
     }
 
     private int getCurrentMeeplePlacementFromModel() {
