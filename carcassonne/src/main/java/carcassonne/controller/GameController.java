@@ -1,5 +1,7 @@
 package carcassonne.controller;
 
+import carcassonne.UI.GameView;
+
 import java.util.*;
 
 public class GameController {
@@ -15,6 +17,12 @@ public class GameController {
         }
         return instance;
     }
+
+    private GameView view; // Reference to the view, can be used to update the UI based on game state changes
+
+    public void setView(GameView view) {
+        this.view = view;
+    };
 
     public static class Cell {
         public final int row;
@@ -55,31 +63,22 @@ public class GameController {
 
     private int maxMeeples = 5; // Maximum number of meeples per player, adjust as needed
 
-    public int getGridSize() {
-        return gridSize;
-    }
-
-    public int getMaxPlayers() {
-        return maxPlayers;
-    }
-
-    public void setCurrentPlayerCount(int currentPlayerCount) {
-        setCurrentPlayerCountToModel(currentPlayerCount); // Update the player count in the model
-    }
-
-    public int getCurrentPlayerCount() {
-        return getCurrentPlayerCountFromModel(); // Get the current player count from the model
-    }
-
-    public int getCurrentPlayingPlayer() {
-        return getCurrentPlayingPlayerFromModel(); // Get the current playing player from the model
-    }
-
-    public void setNextPlayingPlayer() {
-        setNextPlayingPlayerInModel();
+    public void initView() {
+        // Initialize the view with the current game state
+        if (view != null) {
+            // Update the player info boxes in the view based on the current player count
+            view.renderPlayerInfoBoxes(getCurrentPlayerCount(),view.playerUiBox);
+            // Initialize the grid in the view
+            view.initGrid();
+            // Listen for scroll changes to update visible cells
+            view.addScrollListeners();
+        }
     }
 
     public void placeTile (int row, int col) {
+        // enable panning of grid if it was previously disabled due to no tiles being placed
+        view.updateScrollingState(true);
+
         Cell cell = new Cell(row, col);
         cell.tileId = getCurrentTileId(); // Placeholder for getting the current tile ID from the game state
         cell.placed = true;
@@ -96,16 +95,26 @@ public class GameController {
         getNextTile(); // Update the current tile to the next tile after placing
         setNextPlayingPlayer();
         PlacedTilePositions.add(cell);
+
+        // display the next tile image
+        view.displayCurrentPlacingTile();
+
+        // Refresh all visible cells to update placeable highlights
+        view.refreshVisibleCells();
+
+        // redraw player info boxes to update scores and current player
+        view.renderPlayerInfoBoxes(getCurrentPlayerCount(), view.playerUiBox);
+
+        // Update scroll constraints based on new tile placement
+        view.updateScrollConstraints(getPlacedTiles());
+
+        // Only enforce constraints if tiles now exceed the viewport
+        if (view.shouldEnforceScrollConstraints(getPlacedTiles(), getPlaceableCells())) {
+            view.enforceScrollConstraints();
+        }
     }
 
-    public Character getCurrentTileId() {
-        // Placeholder function to get the current tile ID from the game state
-        // This should return the ID of the tile that is currently being placed
-
-        return currentTileId; // Placeholder for getting the current tile from the model
-    }
-
-    public void rotateTile () {
+    public void rotateTile() {
         if (!(currentRotation >= 3)) {
             currentRotation += 1;
         } else {
@@ -113,48 +122,97 @@ public class GameController {
         }
     }
 
-    public int getCurrentRotation() {
+    // Handles events from scrolling or resizing the window, enforces scroll constraints and updates visible cells
+    public void handleScroll(Boolean isEnforcingConstraints) {
+        // Skip if we're already enforcing constraints (prevents infinite recursion due to function scrolls causing more scrolls)
+        if (isEnforcingConstraints) {
+            return;
+        }
+
+        // Enforce constraints if tiles are placed (but don't disable panning)
+        if (getPlacedTiles().isEmpty()) {
+            view.enforceScrollConstraints();
+        }
+        int[] visibleCellsEdges = view.updateVisibleCells();
+        // Render new visible cells if scroll resulted in a change of visible cells
+        if (visibleCellsEdges != null) {
+            view.renderCellRange(visibleCellsEdges[0], visibleCellsEdges[1], visibleCellsEdges[2], visibleCellsEdges[3]);
+        }
+    }
+
+    private int getGridSize() {
+        return gridSize;
+    }
+
+    private int getMaxPlayers() {
+        return maxPlayers;
+    }
+
+    private void setCurrentPlayerCount(int currentPlayerCount) {
+        setCurrentPlayerCountToModel(currentPlayerCount); // Update the player count in the model
+    }
+
+    private int getCurrentPlayerCount() {
+        return getCurrentPlayerCountFromModel(); // Get the current player count from the model
+    }
+
+    private int getCurrentPlayingPlayer() {
+        return getCurrentPlayingPlayerFromModel(); // Get the current playing player from the model
+    }
+
+    private void setNextPlayingPlayer() {
+        setNextPlayingPlayerInModel();
+    }
+
+    private Character getCurrentTileId() {
+        // Placeholder function to get the current tile ID from the game state
+        // This should return the ID of the tile that is currently being placed
+
+        return currentTileId; // Placeholder for getting the current tile from the model
+    }
+
+    private int getCurrentRotation() {
         return currentRotation;
     }
 
-    public void setCurrentMeeplePlacement(int position) {
+    private void setCurrentMeeplePlacement(int position) {
         // 0 = top, 1 = right, 2 = bottom, 3 = left, -1 = no meeple
         // Placeholder function to set the current meeple placement in the game state
         setCurrentMeeplePlacementToModel(position);
     }
 
-    public int getCurrentMeeplePlacement() {
+    private int getCurrentMeeplePlacement() {
         // 0 = top, 1 = right, 2 = bottom, 3 = left, -1 = no meeple
         return getCurrentMeeplePlacementFromModel();
     }
 
-    public void decrementPlayerMeepleCount(int player) {
+    private void decrementPlayerMeepleCount(int player) {
             // Update the model with the new meeple count for the player
         decrementPlayerMeepleCountInModel(player);
     }
 
-    public int getPlayerMeepleCount(int player) {
+    private int getPlayerMeepleCount(int player) {
         // Placeholder function to get the current meeple count for a player from the game state
         return getPlayerMeepleCountFromModel(player);
     }
 
-    public Set<Cell> getPlaceableCells() {
+    private Set<Cell> getPlaceableCells() {
         Set<Cell> placeableTiles = new HashSet<>();
         placeableTiles = calculatePlaceableCells();
         return placeableTiles;
     }
 
-    public Set<Cell> getPlacedTiles() {
+    private Set<Cell> getPlacedTiles() {
         return new HashSet<>(PlacedTilePositions);
     }
 
-    public void getNextTile() {
+    private void getNextTile() {
         // This should return the next tile based on the game state
         currentTileId = getNextTileFromModel(); // Placeholder for getting the next tile from the model
         currentRotation = 0; // Reset rotation for the new tile
     }
 
-    public Cell getCellAt(int row, int col) {
+    private Cell getCellAt(int row, int col) {
         Cell cell = new Cell(row, col);
         for (Cell existingCell : PlacedTilePositions) {
             if (existingCell.equals(cell)) {

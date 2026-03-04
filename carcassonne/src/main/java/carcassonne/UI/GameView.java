@@ -4,6 +4,7 @@ import carcassonne.controller.GameController;
 import carcassonne.controller.GameController.Cell;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.geometry.Bounds;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
@@ -155,8 +156,9 @@ public class GameView extends View {
 
     @Override
     protected void onAfterStageAvailable() {
+        gameController.setView(this);
+        gameController.initView();
         displayCurrentPlacingTile();
-        initGrid();
     }
 
     @Override
@@ -168,9 +170,6 @@ public class GameView extends View {
     @Override
     public void onViewShow() {
         super.onViewShow();
-        Platform.runLater(() -> {
-            this.renderPlayerInfoBoxes(gameController.getCurrentPlayerCount(), playerUiBox);
-        });
     }
 
     @FXML
@@ -193,7 +192,7 @@ public class GameView extends View {
      * Builds the grid. Called automatically after the view is added to a stage.
      * Uses viewport-based rendering to only create cells visible on screen.
      */
-    private void initGrid() {
+    public void initGrid() {
         System.out.println("initGrid() called, gridSize=" + gridSize);
         GridPane gameGrid = new GridPane();
 
@@ -262,8 +261,6 @@ public class GameView extends View {
                     // Check if scrolling should be enabled after initial render
                     updateScrollingState();
 
-                    // Listen for scroll changes to update visible cells
-                    addScrollListeners();
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
@@ -277,7 +274,7 @@ public class GameView extends View {
     /**
      * Adds listeners for scroll events to update which cells are visible.
      */
-    private void addScrollListeners() {
+    public void addScrollListeners() {
         if (gridScreen == null) {
             return;
         }
@@ -287,82 +284,46 @@ public class GameView extends View {
 
         // Listen for horizontal scroll
         gridScreen.hvalueProperty().addListener((obs, oldVal, newVal) -> {
-            // Skip if we're already enforcing constraints (prevents infinite recursion)
-            if (isEnforcingConstraints) {
-                return;
-            }
-
-            // Enforce constraints if tiles are placed (but don't disable panning)
-            if (!gameController.getPlacedTiles().isEmpty()) {
-                enforceScrollConstraints();
-            }
-            updateVisibleCells();
+            gameController.handleScroll(isEnforcingConstraints);
         });
 
         // Listen for vertical scroll
         gridScreen.vvalueProperty().addListener((obs, oldVal, newVal) -> {
-            // Skip if we're already enforcing constraints (prevents infinite recursion)
-            if (isEnforcingConstraints) {
-                return;
-            }
-
-            // Enforce constraints if tiles are placed (but don't disable panning)
-            if (!gameController.getPlacedTiles().isEmpty()) {
-                enforceScrollConstraints();
-            }
-            updateVisibleCells();
+            gameController.handleScroll(isEnforcingConstraints);
         });
 
         // Listen for viewport size changes (window resize)
         gridScreen.viewportBoundsProperty().addListener((obs, oldVal, newVal) -> {
-            updateVisibleCells();
-            updateScrollingState();  // Re-check if scrolling should be enabled after resize
+            gameController.handleScroll(isEnforcingConstraints);
         });
     }
 
     /**
-     * Enables or disables scrolling based on whether tiles exceed the viewport.
      * Scrolling (panning) is enabled once tiles are placed.
      * Constraints are enforced separately when tiles fit within viewport.
      */
-    private void updateScrollingState() {
-        if (gridScreen == null) {
+    public void updateScrollingState(boolean hasTilesPlaced) {
+        if (gridScreen == null || gridScreen.pannableProperty().get()) {
             return;
         }
-
         // Enable panning once tiles are placed (even if they span entire viewport)
-        boolean hasTilesPlaced = !gameController.getPlacedTiles().isEmpty();
         gridScreen.setPannable(hasTilesPlaced);
         System.out.println("updateScrollingState() - panning " + (hasTilesPlaced ? "ENABLED" : "DISABLED"));
     }
 
     /**
      * Updates which cells are visible based on the current scroll position.
-     * Only creates Pane objects for cells that are in the visible viewport
      * (plus a buffer for smoother scrolling).
+     * Returns the new visible range as [minRow, maxRow, minCol, maxCol], or null if no update needed.
      */
-    private void updateVisibleCells() {
+    public int[] updateVisibleCells() {
         if (gridScreen == null || currentGameGrid == null || cellSize <= 0) {
             System.out.println("updateVisibleCells() - early return: gridScreen=" + (gridScreen != null) +
                 " currentGameGrid=" + (currentGameGrid != null) + " cellSize=" + cellSize);
-            return;
+            return null;
         }
 
-        javafx.geometry.Bounds viewportBounds = gridScreen.getViewportBounds();
-        if (viewportBounds == null || viewportBounds.getWidth() <= 0 || viewportBounds.getHeight() <= 0) {
-            System.out.println("updateVisibleCells() - invalid viewport: " + viewportBounds);
-
-            // Fallback: render center cells if viewport not ready
-            if (visibleCells.isEmpty() && lastRenderedMinRow == -1) {
-                System.out.println("updateVisibleCells() - rendering fallback cells");
-                renderCellRange(70, 75, 70, 75);
-                Platform.runLater(() -> {
-                    System.out.println("updateVisibleCells() - retrying");
-                    updateVisibleCells();
-                });
-            }
-            return;
-        }
+        Bounds viewportBounds = gridScreen.getViewportBounds();
 
         // Get current scroll position
         double gridWidth = currentGameGrid.getPrefWidth();
@@ -391,17 +352,17 @@ public class GameView extends View {
         // If the visible range hasn't changed significantly, skip update
         if (lastRenderedMinRow == minRow && lastRenderedMaxRow == maxRow &&
                 lastRenderedMinCol == minCol && lastRenderedMaxCol == maxCol) {
-            return;
+            return null; // No update needed
         }
 
         System.out.println("updateVisibleCells() - new range: rows [" + minRow + "-" + maxRow + "] cols [" + minCol + "-" + maxCol + "]");
-        renderCellRange(minRow, maxRow, minCol, maxCol);
+        return new int[]{minRow, maxRow, minCol, maxCol};
     }
 
     /**
      * Helper method to render cells in a specific range and remove cells outside that range.
      */
-    private void renderCellRange(int minRow, int maxRow, int minCol, int maxCol) {
+    public void renderCellRange(int minRow, int maxRow, int minCol, int maxCol) {
         System.out.println("renderCellRange() - rendering: rows [" + minRow + "-" + maxRow + "] cols [" + minCol + "-" + maxCol + "]");
         System.out.println("renderCellRange() - gridPane has " + currentGameGrid.getChildren().size() + " children before update");
 
@@ -460,27 +421,20 @@ public class GameView extends View {
      * Recalculates the scroll constraints based on currently placed tiles.
      * Only enforces constraints if the placed tiles extend beyond the viewport.
      */
-    private void updateScrollConstraints() {
+    public void updateScrollConstraints(Set<GameController.Cell> placedTiles) {
         minSelectedRow = Integer.MAX_VALUE;
         maxSelectedRow = Integer.MIN_VALUE;
         minSelectedCol = Integer.MAX_VALUE;
         maxSelectedCol = Integer.MIN_VALUE;
 
         // Find the bounds of all placed cells
-        for (Cell cell : gameController.getPlacedTiles()) {
+        for (Cell cell : placedTiles) {
             if (cell.placed) {
                 minSelectedRow = Math.min(minSelectedRow, cell.row);
                 maxSelectedRow = Math.max(maxSelectedRow, cell.row);
                 minSelectedCol = Math.min(minSelectedCol, cell.col);
                 maxSelectedCol = Math.max(maxSelectedCol, cell.col);
             }
-        }
-
-        if (minSelectedRow == Integer.MAX_VALUE) {
-            System.out.println("updateScrollConstraints() - no tiles placed, constraints disabled");
-        } else {
-            System.out.println("updateScrollConstraints() - Placed tile bounds: rows [" + minSelectedRow + "-" + maxSelectedRow +
-                "] cols [" + minSelectedCol + "-" + maxSelectedCol + "]");
         }
     }
 
@@ -489,7 +443,7 @@ public class GameView extends View {
      * Returns true if placeable cells extend beyond ANY viewport edge.
      * Returns false if tiles span across the entire viewport (can't fit them all).
      */
-    private boolean shouldEnforceScrollConstraints() {
+    public boolean shouldEnforceScrollConstraints(Set<GameController.Cell> placedTiles, Set<GameController.Cell> placeableCells) {
         if (gridScreen == null || currentGameGrid == null || cellSize <= 0) {
             return false;
         }
@@ -505,10 +459,8 @@ public class GameView extends View {
         int minPlaceableCol = Integer.MAX_VALUE;
         int maxPlaceableCol = Integer.MIN_VALUE;
 
-        Set<Cell> placeableCells = gameController.getPlaceableCells();
-
         // If no tiles placed yet, the center cell is placeable
-        if (gameController.getPlacedTiles().isEmpty()) {
+        if (placedTiles.isEmpty()) {
             int center = gridSize / 2;
             minPlaceableRow = center;
             maxPlaceableRow = center;
@@ -595,7 +547,7 @@ public class GameView extends View {
      * Ensures leftmost/rightmost/topmost/bottommost placeable tiles stay visible with 1-tile buffer.
      * This applies even when tiles span the entire viewport in a direction.
      */
-    private void enforceScrollConstraints() {
+    public void enforceScrollConstraints() {
         if (gridScreen == null || currentGameGrid == null || cellSize <= 0) {
             return;
         }
@@ -695,34 +647,26 @@ public class GameView extends View {
      * @param col the column index of the cell
      * @return a StackPane representing one grid cell
      */
-    private Pane createCell(int row, int col) {
+    private Pane createCell(int row, int col, int rotation, char tileId, int meeplePosition, int playerNumber, boolean isTilePlaced, boolean isPlaceable) {
         StackPane newPane = new StackPane();
         newPane.setPrefSize(cellSize, cellSize);
         newPane.setMinSize(cellSize, cellSize);
         newPane.setMaxSize(cellSize, cellSize);
 
         // Get or create persistent state for this newPane
-        Cell currentCell = gameController.getCellAt(row, col);
-
-        // Check if this newPane has a tile placed (from GameController)
-        boolean isTilePlaced = gameController.getPlacedTiles().contains(currentCell);
-
-        // Check if this newPane is placeable (from GameController)
-        boolean isPlaceable = gameController.getPlaceableCells().contains(currentCell) || (gameController.getPlacedTiles().isEmpty() && row == gridSize / 2 && col == gridSize / 2); // First tile can be placed at center
+        Cell currentCell = new Cell(row, col);
 
         // Set visual style based on newPane state
         if (isTilePlaced) {
             // Tile is placed - show as occupied (green background)
             newPane.setStyle("-fx-background-color: lightgreen; -fx-border-color: gray;");
-            ImageView image = new ImageView(tileIdToImage.get(gameController.getCellAt(row, col).tileId));
-            image.rotateProperty().set(gameController.getCellAt(row, col).rotation*90); // Rotate based on tile's rotation state
+            ImageView image = new ImageView(tileIdToImage.get(tileId));
+            image.rotateProperty().set(rotation*90); // Rotate based on tile's rotation state
             image.setPreserveRatio(true);
             image.setSmooth(true);
             newPane.getChildren().add(image); // Show tile image if placed
 
-            int meeplePosition = gameController.getCellAt(row, col).meeple;
             if (meeplePosition != -1) {
-                int playerNumber = gameController.getCellAt(row, col).player;
                 displayMeepleOnCell(newPane, meeplePosition, playerNumber);
             }
 
@@ -752,13 +696,13 @@ public class GameView extends View {
                 System.out.println("Cell clicked at [" + row + "," + col + "]");
 
                 // Check if tile is already placed
-                if (gameController.getPlacedTiles().contains(currentCell)) {
+                if (isTilePlaced) {
                     System.out.println("Tile already placed at [" + row + "," + col + "]");
                     return;
                 }
 
                 // Check if this is a valid placement location
-                if (!isPlaceable && !gameController.getPlacedTiles().isEmpty()) {
+                if (!isPlaceable) {
                     System.out.println("Cannot place tile at [" + row + "," + col + "] - not adjacent to existing tiles");
                     return;
                 }
@@ -776,26 +720,6 @@ public class GameView extends View {
                 // Place tile using GameController
                 gameController.placeTile(row, col);
                 System.out.println("Tile placed at [" + row + "," + col + "]");
-
-                // display the next tile image
-                displayCurrentPlacingTile();
-
-                // redraw player info boxes to update scores and current player
-                renderPlayerInfoBoxes(gameController.getCurrentPlayerCount(), playerUiBox);
-
-                // Refresh all visible cells to update placeable highlights
-                refreshVisibleCells();
-
-                // Update scroll constraints based on new tile placement
-                updateScrollConstraints();
-
-                // Enable scrolling if tiles now exceed the viewport
-                updateScrollingState();
-
-                // Only enforce constraints if tiles now exceed the viewport
-                if (shouldEnforceScrollConstraints()) {
-                    enforceScrollConstraints();
-                }
             }
         });
 
@@ -806,7 +730,7 @@ public class GameView extends View {
      * Refreshes all currently visible cells to update their visual state
      * (e.g., after placing a tile, to update which cells are now placeable).
      */
-    private void refreshVisibleCells() {
+    public void refreshVisibleCells() {
         // Clear current visible cells and re-render the same range
         if (lastRenderedMinRow != -1) {
             // Store current range
@@ -829,7 +753,7 @@ public class GameView extends View {
         }
     }
 
-    private void displayCurrentPlacingTile() {
+    public void displayCurrentPlacingTile() {
         if (nextTilePane == null) {
             return;
         }
@@ -990,7 +914,7 @@ public class GameView extends View {
         }
     }
 
-    private void renderPlayerInfoBoxes(int playerCount, VBox container) {
+    public void renderPlayerInfoBoxes(int playerCount, VBox container) {
         container.getChildren().clear();
         container.setSpacing(10); // Add spacing between player boxes
 
