@@ -43,6 +43,7 @@ public class TileTest {
     @Test
     public void testGets()
     {
+        tile = new Tile(0, new int[]{1, 2, 3, 4});
         assertEquals(0, tile.getOrientation(), "Wrong orientation");
         assertEquals(0, tile.getType(), "Wrong type");
     }
