@@ -47,7 +47,7 @@
             <configuration>
                 <archive>
                     <manifest>
-                        <mainClass>testing.TemperatureConverter</mainClass>
+                        <mainClass>carcassonne.MainApp</mainClass>
                     </manifest>
                 </archive>
             </configuration>
