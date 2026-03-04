@@ -24,7 +24,7 @@ public class TileTest {
     @CsvSource({ "-1", "5", "10000" })
     public void testSideOutOfRange(int input)
     {
-        IllegalArgumentException exception = assertThrows(IndexOutOfBoundsException.class, () -> tile.getSideType(input));
+        IndexOutOfBoundsException exception = assertThrows(IndexOutOfBoundsException.class, () -> tile.getSideType(input));
         assertEquals("Side must be in range 0 to 3", exception.getMessage());
     }
 
