@@ -30,7 +30,6 @@ public class StartView extends View {
         }
         System.out.println("current player count: " + playerNumSpinner.getValue());
         gameController.setCurrentPlayerCount(playerNumSpinner.getValue());
-        System.out.println("playercount in controller: " + gameController.getCurrentPlayerCount());
 
     }
 

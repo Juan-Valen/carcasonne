@@ -37,7 +37,6 @@ public class GameView extends View {
     // Reference to game controller
     private final GameController gameController = GameController.getInstance();
 
-    int gridSize = gameController.getGridSize();
     private boolean layoutRetryScheduled = false;
 
     private double cellPortionOfScreen = 0.1; // Portion of the screen width that the one cell in the grid takes up when using dynamic cell size instead of tile image size (0.0 to 1.0)
@@ -49,10 +48,10 @@ public class GameView extends View {
 
     // Multiple cell selection tracking
     private Set<Pane> selectedCells = new HashSet<>(); // All currently selected cells
-    private GridPane currentGameGrid = null; // Reference to current grid
+    public GridPane currentGameGrid = null; // Reference to current grid
 
     // Viewport-based rendering (virtual scrolling)
-    private double cellSize = 0;
+    public double cellSize = 0;
     private Map<Cell, Pane> visibleCells = new HashMap<>(); // Map of Cell to Pane for currently visible cells
     private int lastRenderedMinRow = -1;
     private int lastRenderedMaxRow = -1;
@@ -124,7 +123,7 @@ public class GameView extends View {
 //        tileIdToImage.put('V', new Image(("C:\\Users\\Omistaja\\IdeaProjects\\carcasonne\\carcassonne\\src\\main\\resources\\images\\Base_Game_C3_Tile_V.png")));
 //        tileIdToImage.put('W', new Image(("C:\\Users\\Omistaja\\IdeaProjects\\carcasonne\\carcassonne\\src\\main\\resources\\images\\Base_Game_C3_Tile_W.png")));
 //        tileIdToImage.put('X', new Image(("C:\\Users\\Omistaja\\IdeaProjects\\carcasonne\\carcassonne\\src\\main\\resources\\images\\Base_Game_C3_Tile_X.png")));
-}
+    }
 
     /**
      * Helper method to load an image from the classpath resources.
@@ -154,11 +153,13 @@ public class GameView extends View {
     @FXML
     public VBox playerUiBox;
 
+    // Coalesces high-frequency scroll callbacks into one UI update per pulse.
+    private boolean scrollUpdateQueued = false;
+
     @Override
     protected void onAfterStageAvailable() {
         gameController.setView(this);
         gameController.initView();
-        displayCurrentPlacingTile();
     }
 
     @Override
@@ -185,14 +186,13 @@ public class GameView extends View {
     public void rotateCurrentTile() {
         System.out.println("rotateCurrentTile() called");
         gameController.rotateTile();
-        displayCurrentPlacingTile();
     }
 
     /**
      * Builds the grid. Called automatically after the view is added to a stage.
      * Uses viewport-based rendering to only create cells visible on screen.
      */
-    public void initGrid() {
+    public void initGrid(int gridSize) {
         System.out.println("initGrid() called, gridSize=" + gridSize);
         GridPane gameGrid = new GridPane();
 
@@ -218,7 +218,7 @@ public class GameView extends View {
                 layoutRetryScheduled = true;
                 Platform.runLater(() -> {
                     layoutRetryScheduled = false;
-                    initGrid();
+                    initGrid(gridSize);
                 });
             }
             return;
@@ -254,13 +254,6 @@ public class GameView extends View {
                     gridScreen.setHvalue(0.5);
                     gridScreen.setVvalue(0.5);
                     System.out.println("Grid content set: " + (gridScreen.getContent() != null));
-
-                    // Initial render of visible cells
-                    updateVisibleCells();
-
-                    // Check if scrolling should be enabled after initial render
-                    updateScrollingState();
-
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
@@ -279,23 +272,25 @@ public class GameView extends View {
             return;
         }
 
-        // Initially disable scrolling (no tiles placed yet)
-        updateScrollingState();
+        Runnable queueScrollUpdate = () -> {
+            if (scrollUpdateQueued) {
+                return;
+            }
+            scrollUpdateQueued = true;
+            Platform.runLater(() -> {
+                scrollUpdateQueued = false;
+                gameController.handleScroll(isEnforcingConstraints);
+            });
+        };
 
         // Listen for horizontal scroll
-        gridScreen.hvalueProperty().addListener((obs, oldVal, newVal) -> {
-            gameController.handleScroll(isEnforcingConstraints);
-        });
+        gridScreen.hvalueProperty().addListener((obs, oldVal, newVal) -> queueScrollUpdate.run());
 
         // Listen for vertical scroll
-        gridScreen.vvalueProperty().addListener((obs, oldVal, newVal) -> {
-            gameController.handleScroll(isEnforcingConstraints);
-        });
+        gridScreen.vvalueProperty().addListener((obs, oldVal, newVal) -> queueScrollUpdate.run());
 
         // Listen for viewport size changes (window resize)
-        gridScreen.viewportBoundsProperty().addListener((obs, oldVal, newVal) -> {
-            gameController.handleScroll(isEnforcingConstraints);
-        });
+        gridScreen.viewportBoundsProperty().addListener((obs, oldVal, newVal) -> queueScrollUpdate.run());
     }
 
     /**
@@ -316,9 +311,9 @@ public class GameView extends View {
      * (plus a buffer for smoother scrolling).
      * Returns the new visible range as [minRow, maxRow, minCol, maxCol], or null if no update needed.
      */
-    public int[] updateVisibleCells() {
+    public int[] updateVisibleCellBounds(int gridSize) {
         if (gridScreen == null || currentGameGrid == null || cellSize <= 0) {
-            System.out.println("updateVisibleCells() - early return: gridScreen=" + (gridScreen != null) +
+            System.out.println("updateVisibleCellBounds() - early return: gridScreen=" + (gridScreen != null) +
                 " currentGameGrid=" + (currentGameGrid != null) + " cellSize=" + cellSize);
             return null;
         }
@@ -355,7 +350,7 @@ public class GameView extends View {
             return null; // No update needed
         }
 
-        System.out.println("updateVisibleCells() - new range: rows [" + minRow + "-" + maxRow + "] cols [" + minCol + "-" + maxCol + "]");
+        System.out.println("updateVisibleCellBounds() - new range: rows [" + minRow + "-" + maxRow + "] cols [" + minCol + "-" + maxCol + "]");
         return new int[]{minRow, maxRow, minCol, maxCol};
     }
 
@@ -363,58 +358,51 @@ public class GameView extends View {
      * Helper method to render cells in a specific range and remove cells outside that range.
      */
     public void renderCellRange(int minRow, int maxRow, int minCol, int maxCol) {
-        System.out.println("renderCellRange() - rendering: rows [" + minRow + "-" + maxRow + "] cols [" + minCol + "-" + maxCol + "]");
-        System.out.println("renderCellRange() - gridPane has " + currentGameGrid.getChildren().size() + " children before update");
-
-        // Remove cells that are no longer visible
-        Set<Cell> newVisibleKeys = new HashSet<>();
-        for (int row = minRow; row <= maxRow; row++) {
-            for (int col = minCol; col <= maxCol; col++) {
-                newVisibleKeys.add(new Cell(row, col));
-            }
-        }
-
-        visibleCells.entrySet().removeIf(entry -> {
-            if (!newVisibleKeys.contains(entry.getKey())) {
-                try {
-                    currentGameGrid.getChildren().remove(entry.getValue());
-                } catch (Exception e) {
-                    System.out.println("Error removing cell: " + e.getMessage());
-                }
-                return true;
-            }
-            return false;
-        });
-
-        // Add new cells that are now visible
-        int cellsAdded = 0;
-        for (int row = minRow; row <= maxRow; row++) {
-            for (int col = minCol; col <= maxCol; col++) {
-                Cell cellKey = new Cell(row, col);
-                if (!visibleCells.containsKey(cellKey)) {
-                    try {
-                        Pane cellPane = createCell(row, col);
-                        visibleCells.put(cellKey, cellPane);
-                        currentGameGrid.add(cellPane, col, row);
-                        cellsAdded++;
-                        if (cellsAdded <= 5) {  // Log first few additions
-                            System.out.println("  Added cell at [" + row + "," + col + "]");
-                        }
-                    } catch (Exception e) {
-                        System.out.println("Error adding cell at [" + row + "," + col + "]: " + e.getMessage());
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }
-
-        // Update tracking
-        lastRenderedMinRow = minRow;
-        lastRenderedMaxRow = maxRow;
-        lastRenderedMinCol = minCol;
-        lastRenderedMaxCol = maxCol;
-
-        System.out.println("renderCellRange() - added " + cellsAdded + " cells, total visible: " + visibleCells.size() + ", gridPane now has " + currentGameGrid.getChildren().size() + " children");
+//        System.out.println("renderCellRange() - rendering: rows [" + minRow + "-" + maxRow + "] cols [" + minCol + "-" + maxCol + "]");
+//        System.out.println("renderCellRange() - gridPane has " + currentGameGrid.getChildren().size() + " children before update");
+//
+//        // Remove cells that are no longer visible
+//        Set<Cell> newVisibleKeys = new HashSet<>();
+//        for (int row = minRow; row <= maxRow; row++) {
+//            for (int col = minCol; col <= maxCol; col++) {
+//                newVisibleKeys.add(new Cell(row, col));
+//            }
+//        }
+//
+//        visibleCells.entrySet().removeIf(entry -> {
+//            if (!newVisibleKeys.contains(entry.getKey())) {
+//                try {
+//                    currentGameGrid.getChildren().remove(entry.getValue());
+//                } catch (Exception e) {
+//                    System.out.println("Error removing cell: " + e.getMessage());
+//                }
+//                return true;
+//            }
+//            return false;
+//        });
+//
+//        // Add new cells that are now visible
+//        for (int row = minRow; row <= maxRow; row++) {
+//            for (int col = minCol; col <= maxCol; col++) {
+//                Cell cellKey = new Cell(row, col);
+//                if (!visibleCells.containsKey(cellKey)) {
+//                    try {
+//                        Pane cellPane = createCell(row, col);
+//                        visibleCells.put(cellKey, cellPane);
+//                        currentGameGrid.add(cellPane, col, row);
+//                    } catch (Exception e) {
+//                        System.out.println("Error adding cell at [" + row + "," + col + "]: " + e.getMessage());
+//                        e.printStackTrace();
+//                    }
+//                }
+//            }
+//        }
+//
+//        // Update tracking
+//        lastRenderedMinRow = minRow;
+//        lastRenderedMaxRow = maxRow;
+//        lastRenderedMinCol = minCol;
+//        lastRenderedMaxCol = maxCol;
     }
 
     /**
@@ -443,7 +431,7 @@ public class GameView extends View {
      * Returns true if placeable cells extend beyond ANY viewport edge.
      * Returns false if tiles span across the entire viewport (can't fit them all).
      */
-    public boolean shouldEnforceScrollConstraints(Set<GameController.Cell> placedTiles, Set<GameController.Cell> placeableCells) {
+    public boolean shouldEnforceScrollConstraints(Set<GameController.Cell> placedTiles, Set<GameController.Cell> placeableCells, int gridSize) {
         if (gridScreen == null || currentGameGrid == null || cellSize <= 0) {
             return false;
         }
@@ -647,7 +635,7 @@ public class GameView extends View {
      * @param col the column index of the cell
      * @return a StackPane representing one grid cell
      */
-    private Pane createCell(int row, int col, int rotation, char tileId, int meeplePosition, int playerNumber, boolean isTilePlaced, boolean isPlaceable) {
+    public Pane createCell(int row, int col, int rotation, Character tileId, int meeplePosition, int playerNumber, boolean isTilePlaced, boolean isPlaceable) {
         StackPane newPane = new StackPane();
         newPane.setPrefSize(cellSize, cellSize);
         newPane.setMinSize(cellSize, cellSize);
@@ -707,14 +695,14 @@ public class GameView extends View {
                     return;
                 }
 
-                if (gameController.getPlacedTiles().isEmpty()) {
-                    if (row != gridSize / 2 || col != gridSize / 2) {
-                        System.out.println("First tile must be placed at the center [" + (gridSize / 2) + "," + (gridSize / 2) + "]");
-                        return;
-                    }
-                }
+//                if (gameController.getPlacedTiles().isEmpty()) {
+//                    if (row != gridSize / 2 || col != gridSize / 2) {
+//                        System.out.println("First tile must be placed at the center [" + (gridSize / 2) + "," + (gridSize / 2) + "]");
+//                        return;
+//                    }
+//                }
 
-                // Update visual state immediately to give feedback (will be refreshed again in updateVisibleCells)
+                // Update visual state immediately to give feedback (will be refreshed again in updateVisibleCellBounds)
                 newPane.setStyle("-fx-background-color: lightgreen; -fx-border-color: gray;");
 
                 // Place tile using GameController
@@ -747,19 +735,15 @@ public class GameView extends View {
 
             // Re-render the same range
             renderCellRange(minRow, maxRow, minCol, maxCol);
-
-            // Update scrolling state after re-rendering (placeable cells may have changed)
-            updateScrollingState();
         }
     }
 
-    public void displayCurrentPlacingTile() {
+    public void displayCurrentPlacingTile(int rotation, Character currentTileId, int currentPlayerNumber) {
         if (nextTilePane == null) {
             return;
         }
 
         try {
-            Character currentTileId = gameController.getCurrentTileId();
             if (currentTileId == null) {
                 return;
             }
@@ -769,11 +753,11 @@ public class GameView extends View {
                 ImageView imageView = new ImageView(tileImage);
                 imageView.setPreserveRatio(true);
                 imageView.setSmooth(true);
-                imageView.rotateProperty().set(gameController.getCurrentRotation()*90); // Rotate based on current rotation state
+                imageView.rotateProperty().set(rotation*90); // Rotate based on current rotation state
 
                 nextTilePane.getChildren().clear();
                 nextTilePane.getChildren().add(imageView);
-                displayMeeplePlacementOptions(nextTilePane, imageView);
+                displayMeeplePlacementOptions(nextTilePane, imageView, currentPlayerNumber);
 
             }
         } catch (Exception e) {
@@ -781,14 +765,14 @@ public class GameView extends View {
         }
     }
 
-    private void displayMeeplePlacementOptions(StackPane stackPane, ImageView tileImage) {
+    private void displayMeeplePlacementOptions(StackPane stackPane, ImageView tileImage, int currentPlayerNumber) {
         double radius = tileImage.getImage().getHeight() * 0.1;
         Circle topCircle = new Circle(radius);
         Circle bottomCircle = new Circle(radius);
         Circle leftCircle = new Circle(radius);
         Circle rightCircle = new Circle(radius);
 
-        Color playerColor = switch (gameController.getCurrentPlayingPlayer()) {
+        Color playerColor = switch (currentPlayerNumber) {
             case 1 -> Color.RED;
             case 2 -> Color.BLUE;
             case 3 -> Color.GREEN;
@@ -815,16 +799,16 @@ public class GameView extends View {
         stackPane.setAlignment(leftCircle, javafx.geometry.Pos.CENTER_LEFT);
         stackPane.setAlignment(rightCircle, javafx.geometry.Pos.CENTER_RIGHT);
 
-        handleMeeplePlacement(stackPane, topCircle, bottomCircle, leftCircle, rightCircle);
+        handleMeeplePlacement(stackPane, topCircle, bottomCircle, leftCircle, rightCircle, currentPlayerNumber);
     }
 
     // Handles logic and click handlers for placing a meeple on the currently placing tile
-    private void handleMeeplePlacement (StackPane stackPane, Circle topCircle, Circle bottomCircle, Circle leftCircle, Circle rightCircle) {
+    private void handleMeeplePlacement (StackPane stackPane, Circle topCircle, Circle bottomCircle, Circle leftCircle, Circle rightCircle, int currentPlayerNumber) {
         gameController.setCurrentMeeplePlacement(-1); // -1 means no meeple, 0-3 for top/right/bottom/left
         final Circle[] selectedCircle = new Circle[1]; // selectedCircle[0] is current selection
 
         Runnable resetColors = () -> {
-            Color playerColor = switch (gameController.getCurrentPlayingPlayer()) {
+            Color playerColor = switch (currentPlayerNumber) {
                 case 1 -> Color.RED;
                 case 2 -> Color.BLUE;
                 case 3 -> Color.GREEN;
@@ -840,7 +824,7 @@ public class GameView extends View {
         };
 
         java.util.function.Consumer<Circle> toggleSelection = clicked -> {
-            Color lighterColor = switch (gameController.getCurrentPlayingPlayer()) {
+            Color lighterColor = switch (currentPlayerNumber) {
                 case 1 -> Color.RED.brighter();
                 case 2 -> Color.BLUE.brighter();
                 case 3 -> Color.GREEN.brighter();
@@ -914,7 +898,7 @@ public class GameView extends View {
         }
     }
 
-    public void renderPlayerInfoBoxes(int playerCount, VBox container) {
+    public void renderPlayerInfoBoxes(int currentPlayerNumber, int playerCount, VBox container, int[] playerMeepleCounts) {
         container.getChildren().clear();
         container.setSpacing(10); // Add spacing between player boxes
 
@@ -923,7 +907,7 @@ public class GameView extends View {
             hbox.setStyle("-fx-alignment: center;"); // Center content horizontally and vertically
             hbox.getChildren().add(new Label("Player " + i));
 
-            for (int j = 0; j < gameController.getPlayerMeepleCount(i); j++) {
+            for (int j = 0; j < playerMeepleCounts[i-1]; j++) {
                 Circle circle = new Circle(10);
                 switch (i) {
                     case 1 -> circle.setFill(Color.RED);
@@ -940,7 +924,7 @@ public class GameView extends View {
             // Make each HBox grow to fill equal vertical space
             VBox.setVgrow(hbox, javafx.scene.layout.Priority.ALWAYS);
 
-            if (gameController.getCurrentPlayingPlayer() == i) {
+            if (currentPlayerNumber == i) {
                 hbox.setStyle("-fx-background-color: lightblue; -fx-alignment: center;"); // Highlight current player
             }
 
