@@ -1,56 +1,148 @@
 package carcassonne.Model;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import carcassonne.DataType.Color;
+import carcassonne.DataType.TileSide;
+import javafx.scene.layout.Pane;
 
 public class Game {
     /// List of the remaining unused tiles
     private List<Tile> deck = new ArrayList<>();
-
-    /// Number of players on the game
-    private int totalPlayers;
-
+    /// Indexes whose player's turn it is
+    private int activePlayer = 0;
     /// List of all the players
-    private Player[] players;
-
+    private Player[] players = new Player[1];
     /// Is the game local (false) or online (true)
     private boolean online;
-
     /// Current state of the game board
-    private Board board;
+    private Board board = new Board();
+    private Map<Character, TileSide[]> tiles = Map.ofEntries(
+            Map.entry('A', new TileSide[] { TileSide.FIELD, TileSide.FIELD, TileSide.ROAD, TileSide.FIELD }),
+            Map.entry('B', new TileSide[] { TileSide.FIELD, TileSide.FIELD, TileSide.FIELD, TileSide.FIELD }),
+            Map.entry('C', new TileSide[] { TileSide.CITY, TileSide.CITY, TileSide.CITY, TileSide.CITY }),
+            Map.entry('D', new TileSide[] { TileSide.CITY, TileSide.ROAD, TileSide.FIELD, TileSide.ROAD }),
+            Map.entry('E', new TileSide[] { TileSide.CITY, TileSide.FIELD, TileSide.FIELD, TileSide.FIELD }),
+            Map.entry('F', new TileSide[] { TileSide.FIELD, TileSide.CITY, TileSide.FIELD, TileSide.CITY }),
+            Map.entry('G', new TileSide[] { TileSide.CITY, TileSide.FIELD, TileSide.CITY, TileSide.FIELD }),
+            Map.entry('H', new TileSide[] { TileSide.FIELD, TileSide.CITY, TileSide.FIELD, TileSide.CITY }),
+            Map.entry('I', new TileSide[] { TileSide.FIELD, TileSide.CITY, TileSide.CITY, TileSide.FIELD }),
+            Map.entry('J', new TileSide[] { TileSide.CITY, TileSide.ROAD, TileSide.ROAD, TileSide.FIELD }),
+            Map.entry('K', new TileSide[] { TileSide.ROAD, TileSide.CITY, TileSide.FIELD, TileSide.ROAD }),
+            Map.entry('L', new TileSide[] { TileSide.ROAD, TileSide.CITY, TileSide.ROAD, TileSide.ROAD }),
+            Map.entry('M', new TileSide[] { TileSide.CITY, TileSide.FIELD, TileSide.FIELD, TileSide.CITY }),
+            Map.entry('N', new TileSide[] { TileSide.CITY, TileSide.FIELD, TileSide.FIELD, TileSide.CITY }),
+            Map.entry('O', new TileSide[] { TileSide.CITY, TileSide.ROAD, TileSide.ROAD, TileSide.CITY }),
+            Map.entry('P', new TileSide[] { TileSide.CITY, TileSide.ROAD, TileSide.ROAD, TileSide.CITY }),
+            Map.entry('Q', new TileSide[] { TileSide.CITY, TileSide.CITY, TileSide.FIELD, TileSide.CITY }),
+            Map.entry('R', new TileSide[] { TileSide.CITY, TileSide.CITY, TileSide.FIELD, TileSide.CITY }),
+            Map.entry('S', new TileSide[] { TileSide.CITY, TileSide.CITY, TileSide.ROAD, TileSide.CITY }),
+            Map.entry('T', new TileSide[] { TileSide.CITY, TileSide.CITY, TileSide.ROAD, TileSide.CITY }),
+            Map.entry('U', new TileSide[] { TileSide.ROAD, TileSide.FIELD, TileSide.ROAD, TileSide.FIELD }),
+            Map.entry('V', new TileSide[] { TileSide.FIELD, TileSide.FIELD, TileSide.ROAD, TileSide.ROAD }),
+            Map.entry('W', new TileSide[] { TileSide.FIELD, TileSide.ROAD, TileSide.ROAD, TileSide.ROAD }),
+            Map.entry('X', new TileSide[] { TileSide.ROAD, TileSide.ROAD, TileSide.ROAD, TileSide.ROAD }));
 
-    /// Indexes whose player's turn it is
-    private int activePlayer;
-
-    /// Number of available spots to play the current tile
-    private int availableSpots;
-
-
-
-    public Player getActivePlayer()
-    {
-        return players[activePlayer];
+    public Game() {
+        initDeck();
     }
 
-    public Tile getCurrentTile()
-    {
+    public int getActivePlayer() {
+        return activePlayer;
+    }
+
+    public int getMaxPlayers() {
+        return players.length;
+    }
+
+    public void setMaxPlayer(int length) {
+
+        Player[] players = new Player[length];
+        for (Player player : players) {
+            player = new Player(Color.RED, "person");
+        }
+
+    }
+
+    public Tile getCurrentTile() {
         return deck.getFirst();
     }
 
-    public Board getBoard()
-    {
+    public Board getBoard() {
         return board;
     }
 
-    public void placeTile(int x, int y) throws IllegalArgumentException
-    {
-        Spot spot = board.getSpot(x, y);
-        if(spot.hasTile()) throw new IllegalArgumentException("Chosen spot already has a tile");
-        spot.setTile(deck.removeFirst());
-        board.updateSpots(spot);
+    public Spot getMin() {
+        return board.getMinSpot();
     }
 
+    public Spot getMax() {
+        return board.getMaxSpot();
+    }
 
+    public boolean hasPlacedTiles() {
+        return board.getFreeSpots().size() > 1;
+    }
 
+    public List<Spot> getAvailableSpots() {
+        int orientation = getCurrentTile().getOrientation();
+        return board.getAvailableSpots(orientation);
+    }
 
+    public void placeTile(int x, int y, Pane pane) {
+        Tile tile = board.getTile(x, y);
+        if (tile != null)
+            return;
+        tile.setPane(pane);
+        board.updateSpots(x, y, deck.removeFirst());
+    }
+
+    public void rotateTile(boolean right) {
+        deck.getFirst().rotateTile(right);
+    }
+
+    public void setNextPlayer() {
+        activePlayer = (activePlayer + 1) % (players.length - 1);
+    }
+
+    private void initDeck() {
+        Map<Character, Integer> dictionary = new HashMap<>();
+        dictionary.put('A', 2);
+        dictionary.put('B', 4);
+        dictionary.put('C', 1);
+        dictionary.put('D', 4);
+        dictionary.put('E', 5);
+        dictionary.put('F', 2);
+        dictionary.put('G', 1);
+        dictionary.put('H', 3);
+        dictionary.put('I', 2);
+        dictionary.put('J', 3);
+        dictionary.put('K', 3);
+        dictionary.put('L', 3);
+        dictionary.put('M', 2);
+        dictionary.put('N', 3);
+        dictionary.put('O', 2);
+        dictionary.put('P', 3);
+        dictionary.put('Q', 1);
+        dictionary.put('R', 3);
+        dictionary.put('S', 2);
+        dictionary.put('T', 1);
+        dictionary.put('U', 8);
+        dictionary.put('V', 9);
+        dictionary.put('W', 4);
+        dictionary.put('X', 1);
+        for (Map.Entry<Character, Integer> entry : dictionary.entrySet()) {
+            for (int i = 0; i < entry.getValue(); i++) {
+                addTileToDeck(entry.getKey());
+            }
+        }
+    }
+
+    private void addTileToDeck(char letter) {
+        TileSide[] sides = tiles.get(letter);
+        deck.add(new Tile(letter, sides));
+    }
 }

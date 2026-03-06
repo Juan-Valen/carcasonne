@@ -1,4 +1,4 @@
-package carcassonne.UI;
+package carcassonne.View;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;

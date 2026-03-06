@@ -4,7 +4,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.shape.*?>
 
-<HBox fx:id="rootContainer" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="carcassonne.UI.GameView">
+<HBox fx:id="rootContainer" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="carcassonne.View.GameView">
    <children>
       <ScrollPane fx:id="gridScreen" hbarPolicy="NEVER" pannable="true" prefHeight="672.0" prefWidth="500.0" vbarPolicy="NEVER" HBox.hgrow="ALWAYS">
       </ScrollPane>

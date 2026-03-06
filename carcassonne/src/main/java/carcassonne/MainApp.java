@@ -1,6 +1,6 @@
 package carcassonne;
 
-import carcassonne.UI.View;
+import carcassonne.View.View;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -59,7 +59,9 @@ public class MainApp extends Application {
         }
     }
 
-    public Stage getPrimaryStage() { return primaryStage; }
+    public Stage getPrimaryStage() {
+        return primaryStage;
+    }
 
     @SuppressWarnings("unchecked")
     public <T> T getController(String resource, Class<T> cls) {
