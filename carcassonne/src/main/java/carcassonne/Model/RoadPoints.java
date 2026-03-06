@@ -130,7 +130,6 @@ public class RoadPoints {
             this.side = side;
         }
     }
-
     private boolean isRoadEnd(Tile tile) {
         char t = tile.getType();
         return t == 'W' || t == 'A' || t == 'L' || t == 'S' || t == 'T' || t == 'X';
