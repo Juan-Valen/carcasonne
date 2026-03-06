@@ -12,6 +12,11 @@ public class Spot
         this.x = x;
         this.y = y;
     }
+    public Spot(int x, int y, Tile tile){
+        this.x = x;
+        this.y = y;
+        this.tile = tile;
+    }
 
     public int getX()
     {

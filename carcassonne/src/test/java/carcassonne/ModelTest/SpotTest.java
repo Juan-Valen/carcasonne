@@ -28,7 +28,7 @@ public class SpotTest
         assertFalse(spot.hasTile(), "Spot shouldn't have tile");
         assertNull(spot.getTile(), "Spot shouldn't have tile");
 
-        Tile tile = new Tile(0,new int[]{1, 2, 3, 4});
+        Tile tile = new Tile('Z',new int[]{1, 2, 3, 4});
 
         spot.setTile(tile);
 

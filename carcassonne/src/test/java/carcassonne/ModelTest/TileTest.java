@@ -9,7 +9,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class TileTest {
-    Tile tile = new Tile(0, new int[]{1, 2, 3, 4});
+    Tile tile = new Tile('Z', new int[]{1, 2, 3, 4});
 
     @DisplayName("Test getSideType")
     @ParameterizedTest(name = "The tile side {0} is {1}")
@@ -43,7 +43,7 @@ public class TileTest {
     @Test
     public void testGets()
     {
-        tile = new Tile(0, new int[]{1, 2, 3, 4});
+        tile = new Tile('Z', new int[]{1, 2, 3, 4});
         assertEquals(0, tile.getOrientation(), "Wrong orientation");
         assertEquals(0, tile.getType(), "Wrong type");
     }

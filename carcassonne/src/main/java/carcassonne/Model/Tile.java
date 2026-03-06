@@ -2,28 +2,28 @@ package carcassonne.Model;
 
 public class Tile {
     /// ID to indentify the displayed image
-    private final int type;
+    private final char type;
 
     /// List of the type of sides of the tile
     private final int[] sides;
 
-    /// Angle of the tile (1/2/3/0 -> 90°/180°/270°/360°)
+    /// Angle of the tile (0/1/2/3 -> 0°/90°/180°/270°)
     private int orientation = 0;
 
-    public Tile(int type, int[] sides)
+    public Tile(char type, int[] sides)
     {
         this.type = type;
         this.sides = sides;
     }
 
-    public Tile(int type, int[] sides, int orientation)
+    public Tile(char type, int[] sides, int orientation)
     {
         this.type = type;
         this.sides = sides;
         this.orientation = orientation;
     }
 
-    public int getType()
+    public char getType()
     {
         return type;
     }
