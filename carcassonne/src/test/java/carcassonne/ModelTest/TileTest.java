@@ -1,5 +1,6 @@
 package carcassonne.ModelTest;
 
+import carcassonne.DataType.TileSide;
 import carcassonne.Model.Tile;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -9,7 +10,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class TileTest {
-    Tile tile = new Tile('Z', new int[]{1, 2, 3, 4});
+    Tile tile = new Tile('Z', new TileSide[]{TileSide.FIELD, TileSide.ROAD, TileSide.CITY, TileSide.RIVER});
 
     @DisplayName("Test getSideType")
     @ParameterizedTest(name = "The tile side {0} is {1}")
@@ -32,10 +33,10 @@ public class TileTest {
     @Test
     public void testRotateTile()
     {
-        tile.rotateTile(true);
+        tile.rotateTile();
         assertEquals(2,tile.getSideType(0), "Wrong rotation");
-        tile.rotateTile(false);
-        tile.rotateTile(false);
+        tile.rotateTile();
+        tile.rotateTile();
         assertEquals(4,tile.getSideType(0), "Wrong rotation");
     }
 
@@ -43,7 +44,7 @@ public class TileTest {
     @Test
     public void testGets()
     {
-        tile = new Tile('Z', new int[]{1, 2, 3, 4});
+        tile = new Tile('Z', new TileSide[]{TileSide.FIELD, TileSide.ROAD, TileSide.CITY, TileSide.RIVER});
         assertEquals(0, tile.getOrientation(), "Wrong orientation");
         assertEquals(0, tile.getType(), "Wrong type");
     }

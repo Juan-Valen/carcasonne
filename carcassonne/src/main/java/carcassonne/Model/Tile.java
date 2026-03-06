@@ -5,29 +5,31 @@ import javafx.scene.layout.Pane;
 
 public class Tile {
     /// ID to indentify the displayed image
-    private final char type;
+    private char type;
     /// List of the type of sides of the tile
     private final TileSide[] sides;
     /// Angle of the tile (1/2/3/0 -> 90°/180°/270°/360°)
     private int orientation = 0;
     private Meple meple;
     private Pane pane;
+    private boolean bonusPoint;
+
 
     public Tile(char type, TileSide[] sides) {
-        this.type = type;
+        setType(type);
         this.sides = sides;
     }
 
     public Tile(char type, TileSide[] sides, Pane pane) {
 
-        this.type = type;
+        setType(type);
         this.sides = sides;
         this.pane = pane;
     }
 
     public Tile(char type, TileSide[] sides, int orientation) {
 
-        this.type = type;
+        setType(type);
         this.sides = sides;
         this.orientation = orientation;
     }
@@ -36,6 +38,12 @@ public class Tile {
     public char getType()
     {
         return type;
+    }
+
+    private void setType(char t)
+    {
+        this.type = t;
+        bonusPoint = t == 'C' || t == 'F' || t == 'M' || t == 'O' || t == 'Q' || t == 'S';
     }
 
     public void setPane(Pane pane) {
@@ -60,5 +68,8 @@ public class Tile {
 
     public Pane getPane() {
         return pane;
+    }
+    public boolean getBonusPoint(){
+        return bonusPoint;
     }
 }

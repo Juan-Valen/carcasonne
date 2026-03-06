@@ -1,5 +1,6 @@
 package carcassonne.ModelTest;
 
+import carcassonne.DataType.TileSide;
 import carcassonne.Model.Spot;
 
 import carcassonne.Model.Tile;
@@ -28,14 +29,11 @@ public class SpotTest
         assertFalse(spot.hasTile(), "Spot shouldn't have tile");
         assertNull(spot.getTile(), "Spot shouldn't have tile");
 
-        Tile tile = new Tile('Z',new int[]{1, 2, 3, 4});
+        Tile tile = new Tile('Z', new TileSide[]{TileSide.FIELD, TileSide.ROAD, TileSide.CITY, TileSide.RIVER});
 
         spot.setTile(tile);
 
         assertTrue(spot.hasTile(), "Spot should have tile");
         assertEquals(tile, spot.getTile(), "Spot didn't return the correct tile");
     }
-
-
-
 }

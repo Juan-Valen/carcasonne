@@ -1,14 +1,13 @@
 package carcassonne.Model;
 
+import carcassonne.DataType.TileSide;
 import java.util.*;
 
 public class CastlePoints {
 
     private final Board board;
 
-    public static final int CITY = 2;
-
-    // N, E, S, W
+    // N E S W
     private static final int[] dx = {0, 1, 0, -1};
     private static final int[] dy = {-1, 0, 1, 0};
 
@@ -16,83 +15,96 @@ public class CastlePoints {
         this.board = board;
     }
 
-    public int calculateCityPoints(Spot start, int startSide) {
+    public int calculateCityPoints(int startX, int startY, int startSide) {
 
-        if (!start.hasTile()) return 0;
-        if (start.getTile().getSideType(startSide) != CITY) return 0;
+        Tile startTile;
 
-        Set<String> visited = new HashSet<>();
-        Set<Spot> cityTiles = new HashSet<>();
+        try {
+            startTile = board.getTile(startX, startY);
+        } catch (Exception e) {
+            return 0;
+        }
 
-        Queue<State> queue = new LinkedList<>();
-        queue.add(new State(start, startSide));
+        if (startTile == null) return 0;
+        if (startTile.getSideType(startSide) != TileSide.CITY) return 0;
+
+        Set<String> visitedEdges = new HashSet<>();
+        Set<String> visitedTiles = new HashSet<>();
+
+        Queue<Edge> queue = new LinkedList<>();
+        queue.add(new Edge(startX, startY, startSide));
 
         boolean complete = true;
         int pennants = 0;
 
         while (!queue.isEmpty()) {
 
-            State s = queue.poll();
-            Spot spot = s.spot;
-            int entrySide = s.side;
+            Edge e = queue.poll();
 
-            String key = spot.getX() + "," + spot.getY() + "," + entrySide;
-            if (!visited.add(key)) continue;
+            int x = e.x;
+            int y = e.y;
+            int side = e.side;
 
-            Tile tile = spot.getTile();
+            String edgeKey = x + "," + y + "," + side;
+            if (!visitedEdges.add(edgeKey)) continue;
 
-            // Count tile once
-            if (cityTiles.add(spot)) {
-                if (tile.hasPennant()) {
+            Tile tile = board.getTile(x, y);
+
+            if (tile == null) continue;
+
+            String tileKey = x + "," + y;
+
+            if (visitedTiles.add(tileKey)) {
+                if (tile.getBonusPoint()) {
                     pennants++;
                 }
             }
 
-            // Explore all city exits except where we entered
-            for (int side = 0; side < 4; side++) {
+            int nx = x + dx[side];
+            int ny = y + dy[side];
 
-                if (side == entrySide) continue;
-                if (tile.getSideType(side) != CITY) continue;
+            Tile neighbor;
 
-                int nx = spot.getX() + dx[side];
-                int ny = spot.getY() + dy[side];
+            try {
+                neighbor = board.getTile(nx, ny);
+            } catch (Exception ex) {
+                complete = false;
+                continue;
+            }
 
-                Spot neighbor;
+            if (neighbor == null) {
+                complete = false;
+                continue;
+            }
 
-                try {
-                    neighbor = board.getSpot(nx, ny);
-                } catch (IllegalArgumentException ex) {
-                    complete = false;
-                    continue;
-                }
+            int opposite = (side + 2) % 4;
 
-                if (!neighbor.hasTile()) {
-                    complete = false;
-                    continue;
-                }
+            if (neighbor.getSideType(opposite) != TileSide.CITY) {
+                complete = false;
+                continue;
+            }
 
-                int opposite = (side + 2) % 4;
+            for (int nextSide = 0; nextSide < 4; nextSide++) {
 
-                if (neighbor.getTile().getSideType(opposite) != CITY) {
-                    complete = false;
-                    continue;
-                }
+                if (neighbor.getSideType(nextSide) != TileSide.CITY) continue;
 
-                queue.add(new State(neighbor, opposite));
+                queue.add(new Edge(nx, ny, nextSide));
             }
         }
 
         if (!complete) return 0;
 
-        return (cityTiles.size() * 2) + (pennants * 2);
+        return (visitedTiles.size() * 2) + (pennants * 2);
     }
 
-    private static class State {
-        Spot spot;
+    private static class Edge {
+        int x;
+        int y;
         int side;
 
-        State(Spot spot, int side) {
-            this.spot = spot;
+        Edge(int x, int y, int side) {
+            this.x = x;
+            this.y = y;
             this.side = side;
         }
     }
