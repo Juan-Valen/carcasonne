@@ -281,7 +281,7 @@ public class GameView extends View {
                 ImageView imageView = new ImageView(tileImage);
                 imageView.setPreserveRatio(true);
                 imageView.setSmooth(true);
-                imageView.rotateProperty().set(orientation * 90); // Rotate based on current rotation state
+                imageView.rotateProperty().set(-(orientation * 90)); // Rotate based on current rotation state
 
                 nextTilePane.getChildren().clear();
                 nextTilePane.getChildren().add(imageView);
@@ -420,7 +420,7 @@ public class GameView extends View {
         // Tile is placed - show as occupied (green background)
         newPane.setStyle("-fx-background-color: lightgreen; -fx-border-color: gray;");
         ImageView image = new ImageView(tileIdToImage.get(tileId));
-        image.rotateProperty().set(orientation * 90); // Rotate based on tile's rotation state
+        image.rotateProperty().set(-(orientation * 90)); // Rotate based on tile's rotation state
         image.setPreserveRatio(true);
         image.setSmooth(true);
         newPane.getChildren().add(image); // Show tile image if placed

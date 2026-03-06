@@ -24,18 +24,14 @@ public class Board {
                 new AvailableSpots("down"),
                 new AvailableSpots("left"),
         };
-        Spot center = new Spot(73, 73);
-        for (AvailableSpots availableSpot : availableSpots) {
-            availableSpot.add(center);
-
+        Spot center = new Spot(72, 72);
+        for (int i = 0; i < availableSpots.length; i++) {
+            availableSpots[i].add(center);
         }
         freeSpots = new ArrayList<Spot>();
 
         freeSpots.add(center);
         List<Spot> sp = availableSpots[0].getSpots();
-        System.out.println(
-                "---------------------------Available Spots: " + sp.get(0).getX() + ", "
-                        + sp.get(0).getX());
     }
 
     public Tile getTile(int x, int y) throws IllegalArgumentException {
@@ -55,6 +51,48 @@ public class Board {
 
         board[x][y] = tile;
         updateFreeSpots(x, y);
+
+    }
+
+    public boolean hasAvailableSpots() {
+        for (AvailableSpots as : availableSpots) {
+            if (!as.getSpots().isEmpty()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void updateAvailableSpots(Tile tile) {
+        if (tile == null) {
+            return;
+        }
+        clearAvailableSpots();
+        for (Spot free : freeSpots) {
+            for (int i = 0; i < 4; i++) {
+                tile.rotateTile();
+                int x = free.getX();
+                int y = free.getY();
+                boolean available = true;
+                // Check if Left is available
+                Tile left = board[x - 1][y];
+                if (left != null)
+                    available = available && (left.getSideType(1) == tile.getSideType(3));
+                Tile right = board[x + 1][y];
+                if (right != null)
+                    available = available && (right.getSideType(3) == tile.getSideType(1));
+                Tile up = board[x][y - 1];
+                if (up != null)
+                    available = available && (up.getSideType(2) == tile.getSideType(0));
+                Tile down = board[x][y + 1];
+                if (down != null)
+                    available = available && (down.getSideType(0) == tile.getSideType(2));
+
+                if (available) {
+                    availableSpots[tile.getOrientation()].add(new Spot(x, y));
+                }
+            }
+        }
     }
 
     private void updateFreeSpots(int x, int y) {
@@ -111,6 +149,12 @@ public class Board {
 
     public Spot getMaxSpot() {
         return maxSpot;
+    }
+
+    private void clearAvailableSpots() {
+        for (AvailableSpots as : availableSpots) {
+            as.clear();
+        }
     }
 
     public List<Spot> getAvailableSpots(int orientation) {

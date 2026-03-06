@@ -48,8 +48,9 @@ public class Tile {
         return sides[(side + orientation) % 4];
     }
 
-    public void rotateTile(boolean toRight) {
-        orientation += toRight ? 1 : 3; // -1 ≡ 3 [4]
+    public void rotateTile() {
+        // // orientation += toRight ? 1 : 3; // -1 ≡ 3 [4]
+        orientation += 3;
         orientation %= 4;
     }
 

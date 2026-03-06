@@ -48,7 +48,11 @@ public class Spot {
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(x, y);
+    public boolean equals(Object obj) {
+        if (!(obj instanceof Spot)) {
+            return false;
+        }
+        Spot spot = (Spot) obj;
+        return spot.getX() == x && spot.getY() == y;
     }
 }

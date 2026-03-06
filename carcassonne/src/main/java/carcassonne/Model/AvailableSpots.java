@@ -26,5 +26,4 @@ public class AvailableSpots {
     public void clear() {
         spots.clear();
     }
-
 }

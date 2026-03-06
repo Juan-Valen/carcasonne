@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import carcassonne.DataType.Color;
 import carcassonne.DataType.TileSide;
@@ -48,6 +49,7 @@ public class Game {
 
     public Game() {
         initDeck();
+
     }
 
     public int getActivePlayer() {
@@ -96,12 +98,26 @@ public class Game {
         Tile tile = board.getTile(x, y);
         if (tile != null)
             return;
+        tile = deck.removeFirst();
+        for (int i = 0; i < 4; i++) {
+            System.out.println("---------------PLACED TILE SIDE: " + tile.getSideType(i) + " of orientation " + i);
+        }
         tile.setPane(pane);
-        board.updateSpots(x, y, deck.removeFirst());
+        board.updateSpots(x, y, tile);
+        board.updateAvailableSpots(deck.getFirst());
+        while (!board.hasAvailableSpots()) {
+            deck.add(deck.removeFirst());
+            board.updateAvailableSpots(deck.getFirst());
+        }
+
     }
 
     public void rotateTile(boolean right) {
-        deck.getFirst().rotateTile(right);
+        Tile tile = deck.getFirst();
+        tile.rotateTile();
+        for (int i = 0; i < 4; i++) {
+            System.out.println("---------------PLACED TILE SIDE: " + tile.getSideType(i) + " of orientation " + i);
+        }
     }
 
     public void setNextPlayer() {
@@ -110,10 +126,10 @@ public class Game {
 
     private void initDeck() {
         Map<Character, Integer> dictionary = new HashMap<>();
+        dictionary.put('D', 4);
         dictionary.put('A', 2);
         dictionary.put('B', 4);
         dictionary.put('C', 1);
-        dictionary.put('D', 4);
         dictionary.put('E', 5);
         dictionary.put('F', 2);
         dictionary.put('G', 1);
@@ -138,6 +154,12 @@ public class Game {
             for (int i = 0; i < entry.getValue(); i++) {
                 addTileToDeck(entry.getKey());
             }
+        }
+        Random rand = new Random();
+        int size = deck.size();
+        for (int i = 1; i < size; i++) {
+            int index = rand.nextInt(size - i) + 1;
+            deck.add(deck.remove(index));
         }
     }
 

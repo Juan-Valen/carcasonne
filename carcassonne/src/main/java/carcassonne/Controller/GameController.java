@@ -118,9 +118,32 @@ public class GameController {
     public void rotateTile() {
         model.rotateTile(true);
 
-        // Update the displayed tile in the view to reflect the new rotation
-        Tile tile = model.getCurrentTile();
-        view.displayCurrentTile(tile.getOrientation(), tile.getType());
+        Tile currentTile = model.getCurrentTile();
+        // display the next tile image
+        view.displayCurrentTile(currentTile.getOrientation(), currentTile.getType());
+        //
+        // // redraw player info boxes to update scores and current player
+        // view.renderPlayerInfoBoxes(getCurrentPlayingPlayer(),
+        // model.getMaxPlayers(), view.playerUiBox,
+        // getPlayersMeepleCounts());
+
+        // Update scroll constraints based on new tile placement
+        Spot min = model.getMin();
+        Spot max = model.getMax();
+        view.setScrollConstraint(min.getX(), min.getY(), max.getX(), max.getY());
+
+        // Only enforce constraints if tiles now exceed the viewport
+        if (view.shouldEnforceScrollConstraints()) {
+            view.enforceScrollConstraints();
+        }
+
+        int[] visibleEdges = view.getVisibleBounds();
+        if (visibleEdges != null) {
+            // Tile state changed; rebuild currently visible cells once to refresh
+            // styles/content.
+            clearGrid();
+            renderVisibleTiles(visibleEdges);
+        }
     }
 
     // Handles events from scrolling or resizing the window, enforces scroll
@@ -166,10 +189,14 @@ public class GameController {
             for (int col = visibleBounds[1]; col <= visibleBounds[3]; col++) {
                 Tile tile = board.getTile(row, col);
                 Pane newPane;
+
                 if (tile != null) {
                     newPane = tile.getPane();
                 } else if (model.getAvailableSpots().contains(new Spot(row, col))) {
-                    newPane = view.createPane(row, col, false);
+                    newPane = view.createPane(row, col, true);
+                    System.out.println(
+                            "---------------------------Available Spots (render visible tilerender visible tiless): "
+                                    + row + ", " + col);
                 } else {
                     newPane = view.createPane(row, col, false);
                 }
