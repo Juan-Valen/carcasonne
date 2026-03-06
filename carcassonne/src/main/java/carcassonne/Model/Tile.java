@@ -19,18 +19,22 @@ public class Tile {
     }
 
     public Tile(char type, TileSide[] sides, Pane pane) {
+
         this.type = type;
         this.sides = sides;
         this.pane = pane;
     }
 
     public Tile(char type, TileSide[] sides, int orientation) {
+
         this.type = type;
         this.sides = sides;
         this.orientation = orientation;
     }
 
-    public char getType() {
+
+    public char getType()
+    {
         return type;
     }
 

@@ -1,0 +1,58 @@
+pipeline {
+    agent any
+
+    environment {
+        DOCKERHUB_CREDENTIALS_ID = 'MyDockerAccount'
+        DOCKERHUB_REPO = 'juanvalenzuela101/carcassonne_v1_2026'
+        DOCKER_IMAGE_TAG = 'latest'
+    }
+    stages {
+        stage('Build') {
+            steps {
+                sh 'mvn -f carcassonne/pom.xml clean install' // sh for linux and ios
+            }
+        }
+        stage('Test') {
+            steps {
+                sh 'mvn -f carcassonne/pom.xml test'
+                
+            }
+        }
+        stage('Code Coverage') {
+            steps {
+                sh 'mvn -f carcassonne/pom.xml jacoco:report'
+            }
+        }
+        stage('Publish Test Results') {
+            steps {
+                junit '**/target/surefire-reports/*.xml'
+            }
+        }
+        stage('Publish Coverage Report') {
+            steps {
+                jacoco()
+            }
+        }
+        stage('Build Docker Image') {
+            steps {
+                dir('carcassonne') {
+                    script {
+                        docker.build("${DOCKERHUB_REPO}:${DOCKER_IMAGE_TAG}")
+                    }
+                }
+            }
+        }
+
+        stage('Push Docker Image to Docker Hub') {
+            steps {
+                dir('carcassonne') {
+                    script {
+                        docker.withRegistry('https://index.docker.io/v1/', DOCKERHUB_CREDENTIALS_ID) {
+                            docker.image("${DOCKERHUB_REPO}:${DOCKER_IMAGE_TAG}").push()
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
