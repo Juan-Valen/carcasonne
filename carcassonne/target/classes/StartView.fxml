@@ -4,7 +4,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<VBox fx:id="rootContainer" alignment="CENTER" prefHeight="186.0" prefWidth="288.0" spacing="10.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="carcassonne.UI.StartView">
+<VBox fx:id="rootContainer" alignment="CENTER" prefHeight="186.0" prefWidth="288.0" spacing="10.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="carcassonne.View.StartView">
     <children>
         <Label text="Carcassonne" textFill="#067dfc">
          <font>
