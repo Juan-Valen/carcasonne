@@ -216,7 +216,4 @@ public class PointCalculationTest {
                 "A 4-tile closed road loop should score 4 points."
         );
     }
-
-
-
 }

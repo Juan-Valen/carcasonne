@@ -18,11 +18,6 @@ public class Spot {
         this.tile = tile;
     }
 
-    public Spot(int x, int y, Tile tile) {
-        this.x = x;
-        this.y = y;
-        this.tile = tile;
-    }
 
     public int getX() {
         return x;

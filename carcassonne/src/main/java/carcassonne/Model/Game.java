@@ -28,14 +28,14 @@ public class Game {
             Map.entry('D', new TileSide[] { TileSide.CITY, TileSide.ROAD, TileSide.FIELD, TileSide.ROAD }),
             Map.entry('E', new TileSide[] { TileSide.CITY, TileSide.FIELD, TileSide.FIELD, TileSide.FIELD }),
             Map.entry('F', new TileSide[] { TileSide.FIELD, TileSide.CITY, TileSide.FIELD, TileSide.CITY }),
-            Map.entry('G', new TileSide[] { TileSide.CITY, TileSide.FIELD, TileSide.CITY, TileSide.FIELD }),
-            Map.entry('H', new TileSide[] { TileSide.FIELD, TileSide.CITY, TileSide.FIELD, TileSide.CITY }),
-            Map.entry('I', new TileSide[] { TileSide.FIELD, TileSide.CITY, TileSide.CITY, TileSide.FIELD }),
+            Map.entry('G', new TileSide[] { TileSide.FIELD, TileSide.CITY, TileSide.FIELD, TileSide.CITY }),
+            Map.entry('H', new TileSide[] { TileSide.CITY, TileSide.FIELD, TileSide.CITY, TileSide.FIELD }),
+            Map.entry('I', new TileSide[] { TileSide.CITY, TileSide.CITY, TileSide.FIELD, TileSide.FIELD }),
             Map.entry('J', new TileSide[] { TileSide.CITY, TileSide.ROAD, TileSide.ROAD, TileSide.FIELD }),
-            Map.entry('K', new TileSide[] { TileSide.ROAD, TileSide.CITY, TileSide.FIELD, TileSide.ROAD }),
-            Map.entry('L', new TileSide[] { TileSide.ROAD, TileSide.CITY, TileSide.ROAD, TileSide.ROAD }),
-            Map.entry('M', new TileSide[] { TileSide.CITY, TileSide.FIELD, TileSide.FIELD, TileSide.CITY }),
-            Map.entry('N', new TileSide[] { TileSide.CITY, TileSide.FIELD, TileSide.FIELD, TileSide.CITY }),
+            Map.entry('K', new TileSide[] { TileSide.CITY, TileSide.FIELD, TileSide.ROAD, TileSide.ROAD }),
+            Map.entry('L', new TileSide[] { TileSide.CITY, TileSide.ROAD, TileSide.ROAD, TileSide.ROAD }),
+            Map.entry('M', new TileSide[] { TileSide.CITY, TileSide.CITY, TileSide.FIELD, TileSide.FIELD }),
+            Map.entry('N', new TileSide[] { TileSide.CITY, TileSide.CITY, TileSide.FIELD, TileSide.FIELD }),
             Map.entry('O', new TileSide[] { TileSide.CITY, TileSide.ROAD, TileSide.ROAD, TileSide.CITY }),
             Map.entry('P', new TileSide[] { TileSide.CITY, TileSide.ROAD, TileSide.ROAD, TileSide.CITY }),
             Map.entry('Q', new TileSide[] { TileSide.CITY, TileSide.CITY, TileSide.FIELD, TileSide.CITY }),
@@ -99,9 +99,7 @@ public class Game {
         if (tile != null)
             return;
         tile = deck.removeFirst();
-        for (int i = 0; i < 4; i++) {
-            System.out.println("---------------PLACED TILE SIDE: " + tile.getSideType(i) + " of orientation " + i);
-        }
+
         tile.setPane(pane);
         board.updateSpots(x, y, tile);
         board.updateAvailableSpots(deck.getFirst());
@@ -115,9 +113,7 @@ public class Game {
     public void rotateTile(boolean right) {
         Tile tile = deck.getFirst();
         tile.rotateTile();
-        for (int i = 0; i < 4; i++) {
-            System.out.println("---------------PLACED TILE SIDE: " + tile.getSideType(i) + " of orientation " + i);
-        }
+
     }
 
     public void setNextPlayer() {
@@ -165,6 +161,8 @@ public class Game {
 
     private void addTileToDeck(char letter) {
         TileSide[] sides = tiles.get(letter);
+
         deck.add(new Tile(letter, sides));
+
     }
 }
