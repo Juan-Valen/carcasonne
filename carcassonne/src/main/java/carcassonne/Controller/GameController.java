@@ -154,7 +154,7 @@ public class GameController {
         }
 
         // Enforce constraints if tiles are placed (but don't disable panning)
-        if (!model.hasPlacedTiles()) {
+        if (model.hasPlacedTiles()) {
             view.enforceScrollConstraints();
         }
         int[] visibleEdges = view.getVisibleBounds();
@@ -202,6 +202,11 @@ public class GameController {
                 view.displayPane(newPane, row, col);
             }
         }
+
+        // Update scroll constraints based on new tile placement
+        Spot min = model.getMin();
+        Spot max = model.getMax();
+        view.setScrollConstraint(min.getX(), min.getY(), max.getX(), max.getY());
 
         // // Iterator<Map.Entry<Cell, Pane>> iterator =
         // // visiblePanes.entrySet().iterator();
