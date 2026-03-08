@@ -662,9 +662,9 @@ public class GameView extends View {
         // Calculate pixel boundaries for the allowed viewing region (with 1 cell
         // buffer)
         double minPlaceablePixelX = Math.max(0, (minSelectedCol - 1) * cellSize);
-        double maxPlaceablePixelX = Math.min(gridWidth, (maxSelectedCol + 2) * cellSize);
+        double maxPlaceablePixelX = Math.min(gridWidth, (maxSelectedCol + 1) * cellSize);
         double minPlaceablePixelY = Math.max(0, (minSelectedRow - 1) * cellSize);
-        double maxPlaceablePixelY = Math.min(gridHeight, (maxSelectedRow + 2) * cellSize);
+        double maxPlaceablePixelY = Math.min(gridHeight, (maxSelectedRow + 1) * cellSize);
 
         // Calculate the scroll range that keeps all placeable tiles (with buffer)
         // visible
