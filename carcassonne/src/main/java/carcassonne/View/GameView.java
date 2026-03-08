@@ -293,7 +293,7 @@ public class GameView extends View {
     }
 
     public void displayPane(Pane pane, int x, int y) {
-        currentGameGrid.add(pane, x, y);
+        currentGameGrid.add(pane, y, x);
     }
 
     private void displayMeepleOnCell(StackPane pane, int meeplePosition, int player) {
