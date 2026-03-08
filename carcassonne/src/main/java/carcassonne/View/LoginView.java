@@ -16,7 +16,7 @@ public class LoginView extends View {
             String password = passWordField.getText();
             System.out.println("Login attempted with username: " + username + " and password: " + password);
             // show main view via MainApp
-            carcassonne.MainApp.getInstance().showScene("/StartView.fxml");
+            carcassonne.App.getInstance().showScene("/StartView.fxml");
         } catch (Exception e) {
             e.printStackTrace();
         }

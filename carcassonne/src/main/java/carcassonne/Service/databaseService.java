@@ -1,0 +1,80 @@
+package carcassonne.Service;
+
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+
+import carcassonne.Model.User;
+import carcassonne.Model.Game;
+
+public class databaseService {
+    private static databaseService instance = null;
+    private static final String URL = "jdbc:postgresql://localhost:5432/carcassonne";
+    private static final String USER = "carcas";
+    private static final String PASSWORD = "carcassonne1";
+
+    private databaseService() {
+    }
+
+    public static databaseService getInstance() {
+        if (instance == null)
+            instance = new databaseService();
+        return instance;
+    }
+
+    public User loginUser(String username, String password) {
+        int user_id = 0;
+        int count = 0;
+
+        String sql = "SELECT user_id FROM users WHERE username = ? AND password = ?";
+
+        try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, username);
+            stmt.setString(2, password);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    user_id = rs.getInt("user_id");
+                    count++;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        if (count != 1)
+            return null;
+
+        return new User(user_id, username);
+    }
+
+    public Game getSavedGames(User user) {
+        int user_id = 0;
+        int count = 0;
+
+        String sql = "SELECT game_id, online, updated_date FROM saves WHERE user_id = ? ORDER BY updated_date DESC";
+
+        try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, user.getId());
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    user_id = rs.getInt("user_id");
+                    count++;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        if (count != 1)
+            return null;
+
+        return new Game();
+    }
+
+}

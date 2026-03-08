@@ -17,14 +17,11 @@ public class GameController {
     private Game model;
     private int currentMeeplePlacement = -1; // Placeholder for the current meeple placement, should be set based on the
                                              // game state
-    private int currentPlayingPlayer = 1; // Placeholder for the current playing player, should be set based on the game
-                                          // state
     private int[] playerMeepleCounts = null; // Placeholder for tracking the number of meeples each player has, should
                                              // be managed in the model
     private int gridSize = 144; // Default grid size
     private int RENDER_BUFFER = 2; // Number of extra rows/columns to render beyond the visible area for smoother
                                    // scrolling
-    private int maxPlayers = 5; // Maximum number of players
     private int maxMeeples = 5; // Maximum number of meeples per player, adjust as needed
 
     private List<Pane> visiblePanes = new ArrayList<>();
@@ -50,6 +47,7 @@ public class GameController {
         if (view != null) {
             Tile tile = model.getCurrentTile();
             view.displayCurrentTile(tile.getOrientation(), tile.getType());
+            // view.renderPlayer();
             // Update the player info boxes in the view based on the current player count
             // and meeple counts
             //
@@ -156,7 +154,7 @@ public class GameController {
         }
 
         // Enforce constraints if tiles are placed (but don't disable panning)
-        if (model.getMin().getX() != 73) {
+        if (!model.hasPlacedTiles()) {
             view.enforceScrollConstraints();
         }
         int[] visibleEdges = view.getVisibleBounds();
@@ -194,9 +192,6 @@ public class GameController {
                     newPane = tile.getPane();
                 } else if (model.getAvailableSpots().contains(new Spot(row, col))) {
                     newPane = view.createPane(row, col, true);
-                    System.out.println(
-                            "---------------------------Available Spots (render visible tilerender visible tiless): "
-                                    + row + ", " + col);
                 } else {
                     newPane = view.createPane(row, col, false);
                 }
@@ -228,21 +223,6 @@ public class GameController {
         view.clearGrid();
     }
 
-    private void setNextPlayingPlayerInModel() {
-        // Placeholder function to set the next playing player in the game state
-        if (currentPlayingPlayer == model.getMaxPlayers()) {
-            currentPlayingPlayer = 1; // Loop back to the first player
-        } else {
-            currentPlayingPlayer += 1; // Move to the next player
-        }
-    }
-
-    private void setCurrentMeeplePlacementToModel(int currentMeeplePlacement) {
-        // 0 = top, 1 = right, 2 = bottom, 3 = left, -1 = no meeple
-        // Placeholder function to set the current meeple placement in the game state
-        this.currentMeeplePlacement = currentMeeplePlacement; // Should update the actual meeple placement in the model
-    }
-
     private void decrementPlayerMeepleCountInModel(int player) {
         // Placeholder function to decrement the meeple count for a player in the game
         // state
@@ -261,11 +241,5 @@ public class GameController {
 
     public int getMaxPlayers() {
         return model.getMaxPlayers();
-    }
-
-    private int getCurrentMeeplePlacementFromModel() {
-        // 0 = top, 1 = right, 2 = bottom, 3 = left, -1 = no meeple
-        // Placeholder function to get the current meeple placement from the game state
-        return currentMeeplePlacement; // Should return the actual meeple placement from the model
     }
 }

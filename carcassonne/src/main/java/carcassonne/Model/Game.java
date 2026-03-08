@@ -1,5 +1,6 @@
 package carcassonne.Model;
 
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -11,14 +12,15 @@ import carcassonne.DataType.TileSide;
 import javafx.scene.layout.Pane;
 
 public class Game {
+    private int game_id;
+    private boolean online;
+    private Date updated_date;
     /// List of the remaining unused tiles
     private List<Tile> deck = new ArrayList<>();
     /// Indexes whose player's turn it is
     private int activePlayer = 0;
     /// List of all the players
-    private Player[] players = new Player[1];
-    /// Is the game local (false) or online (true)
-    private boolean online;
+    private Player[] players = new Player[2];
     /// Current state of the game board
     private Board board = new Board();
     private Map<Character, TileSide[]> tiles = Map.ofEntries(
@@ -49,7 +51,6 @@ public class Game {
 
     public Game() {
         initDeck();
-
     }
 
     public int getActivePlayer() {
@@ -78,11 +79,16 @@ public class Game {
     }
 
     public Spot getMin() {
-        return board.getMinSpot();
+        Spot spot = board.getMinSpot();
+        System.out.println("Spots MIN XY: " + spot.getX() + ", " + spot.getY());
+        return spot;
     }
 
     public Spot getMax() {
-        return board.getMaxSpot();
+        Spot spot = board.getMaxSpot();
+        System.out.println("Spots MAX XY: " + spot.getX() + ", " + spot.getY());
+        return spot;
+
     }
 
     public boolean hasPlacedTiles() {

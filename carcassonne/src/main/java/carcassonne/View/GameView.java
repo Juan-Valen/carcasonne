@@ -63,7 +63,7 @@ public class GameView extends View {
     @FXML
     public void openSecondary() {
         try {
-            carcassonne.MainApp.getInstance().showScene("/StartView.fxml");
+            carcassonne.App.getInstance().showScene("/StartView.fxml");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -85,6 +85,7 @@ public class GameView extends View {
     protected void initialize() {
         super.initialize();
         System.out.println("GameView.initialize() called");
+        gridScreen.setPannable(false);
     }
 
     @Override
@@ -443,8 +444,6 @@ public class GameView extends View {
 
             // Only fire click action if drag distance is less than threshold
             if (dragDistance < DRAG_THRESHOLD) {
-                System.out.println("Cell clicked at [" + x + "," + y + "]");
-                System.out.println("Tile already placed at [" + x + "," + y + "]");
                 return;
             }
         });
@@ -739,7 +738,7 @@ public class GameView extends View {
         }
 
         // If no placeable cells found, don't enforce constraints
-        if (minSelectedRow == 73) {
+        if (minSelectedRow == 72) {
             System.out.println("shouldEnforceScrollConstraints() - no placeable cells found");
             return false;
         }

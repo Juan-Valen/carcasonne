@@ -23,8 +23,8 @@ public class StartView extends View {
     @FXML
     public void onBack() {
         try {
-            // show main view via MainApp
-            carcassonne.MainApp.getInstance().showScene("/Carcassonne UI.fxml");
+            // show main view via App
+            carcassonne.App.getInstance().showScene("/Carcassonne UI.fxml");
         } catch (Exception e) {
             e.printStackTrace();
         }

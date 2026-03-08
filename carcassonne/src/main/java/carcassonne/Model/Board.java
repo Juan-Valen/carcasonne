@@ -51,7 +51,6 @@ public class Board {
 
         board[x][y] = tile;
         updateFreeSpots(x, y);
-
     }
 
     public boolean hasAvailableSpots() {
@@ -98,7 +97,7 @@ public class Board {
     private void updateFreeSpots(int x, int y) {
         Spot spot = new Spot(x, y);
         freeSpots.remove(spot);
-
+        setMinMax(spot);
         // Check if Left is available
         if (x > 0) {
             Tile left = board[x - 1][y];
@@ -123,9 +122,6 @@ public class Board {
             if (down == null)
                 freeSpots.add(new Spot(x, y + 1));
         }
-    }
-
-    private void setAvailableSpots() {
     }
 
     private void setMinMax(Spot spot) {
