@@ -166,6 +166,11 @@ public class GameView extends View {
     protected void initialize() {
         super.initialize();
         System.out.println("GameView.initialize() called");
+
+        // Disable panning initially (will be enabled after first tile is placed)
+        if (gridScreen != null) {
+            gridScreen.setPannable(false);
+        }
     }
 
     @Override
