@@ -16,6 +16,8 @@ public class StartView extends View {
 
     App mainApp = App.getInstance();
 
+    Button savedGamesButton;
+
     @FXML
     public VBox rootContainer;
 
@@ -30,8 +32,29 @@ public class StartView extends View {
         super.initialize();
         System.out.println("StartView.initialize() called");
         playerNumSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(2, 5, 2));
+    }
+
+    @Override
+    public void onViewShow() {
+        super.onViewShow();
+        System.out.println("StartView.onViewShow() called");
         if (gameController.getCurrentUser() != null) {
-            loginButton.setText("Game history");
+            loginButton.setText("Change User");
+            if (savedGamesButton == null) {
+                savedGamesButton = new Button("Saved Games");
+                savedGamesButton.setOnAction(e -> {
+                    try {
+                        mainApp.showScene("/GameHistoryView.fxml");
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
+                });
+                if (!rootContainer.getChildren().contains(savedGamesButton)) {
+                    rootContainer.getChildren().add(savedGamesButton);
+                }
+            }
+        } else {
+            loginButton.setText("Login");
         }
     }
 
@@ -51,11 +74,6 @@ public class StartView extends View {
     @FXML
     public void onLogin() {
         try {
-            if (gameController.getCurrentUser() != null) {
-                // show game history view via App
-                mainApp.showScene("/GameHistoryView.fxml");
-                return;
-            }
             // show login view via App
             mainApp.showScene("/LoginView.fxml");
         } catch (Exception e) {
