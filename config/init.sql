@@ -2,6 +2,8 @@ CREATE USER carcas WITH PASSWORD 'carcassonne1';
 CREATE DATABASE carcassonne;
 GRANT ALL PRIVILEGES ON DATABASE carcassonne TO carcas;
 
+\c carcassonne;
+
 CREATE TABLE users
 (
   user_id SERIAL NOT NULL,
@@ -29,7 +31,10 @@ CREATE TABLE saves
   FOREIGN KEY (user_id) REFERENCES users(user_id)
 );
 
-INSERT INTO users(username, password) 
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO carcas;
+GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO carcas;
+
+INSERT INTO users(username, password)
 VALUES
     ('carcassonne', 'password'),
     ('juan', '0j#mi9-fd2j_k4'),
