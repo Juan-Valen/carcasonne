@@ -2,28 +2,26 @@ package carcassonne.Model;
 
 import carcassonne.DataType.Color;
 
-public class Player
-{
+public class Player {
     private Color color;
     private String user;
     private int points;
 
-    public Player(Color color, String user)
-    {
+    private Meple[] meples;
+
+    public Player(Color color, String user) {
         this.color = color;
         this.user = user;
         this.points = 0;
     }
 
-    public Player(Color color, String user, int points)
-    {
+    public Player(Color color, String user, int points) {
         this.color = color;
         this.user = user;
         this.points = points;
     }
 
-    public Color getColor()
-    {
+    public Color getColor() {
         return color;
     }
 
@@ -31,14 +29,13 @@ public class Player
         return user;
     }
 
-    public int getPoints()
-    {
+    public int getPoints() {
         return points;
     }
 
-    public void addPoints(int points) throws IllegalArgumentException
-    {
-        if(points < 0) throw new IllegalArgumentException("Can not add a negative amount of points");
+    public void addPoints(int points) throws IllegalArgumentException {
+        if (points < 0)
+            throw new IllegalArgumentException("Can not add a negative amount of points");
         this.points += points;
     }
 }

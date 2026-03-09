@@ -1,0 +1,21 @@
+
+
+
+
+
+void setTakenSpots(Character tileId, int row, int column, int orientation) {
+    Pane pane = Image(tileId, row, column, orientation)
+    gridScreen.render(pane);
+}
+
+void setAvailableSpots(int row, int column){
+    
+};
+void setCurrentTile()
+void setActivePlayer()
+void setPlayers();
+
+
+
+
+
