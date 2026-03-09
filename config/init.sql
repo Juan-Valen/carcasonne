@@ -16,7 +16,7 @@ CREATE TABLE users
 CREATE TABLE games
 (
   game_id SERIAL NOT NULL,
-  game_state TEXT NOT NULL,
+  game_state BYTEA NULL,
   updated_date DATE NOT NULL,
   online BOOLEAN NOT NULL,
   PRIMARY KEY (game_id)
@@ -42,3 +42,23 @@ VALUES
     ('nooah', '55PwgU39W!5#'),
     ('raphael','a-CY4E3a!8_j');
 
+INSERT INTO games(updated_date, online)
+VALUES
+    ('2020-1-1', false),
+    ('2020-1-5', false),
+    ('2020-2-1', false),
+    ('2020-1-9', false);
+
+
+INSERT INTO saves(game_id, user_id)
+VALUES
+    (1, 1),
+    (2, 1),
+    (1, 2),
+    (2, 2),
+    (1, 3),
+    (4, 3),
+    (1, 4),
+    (2, 4),
+    (1, 5),
+    (2, 5);
