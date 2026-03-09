@@ -82,6 +82,8 @@ public class Game {
     }
 
     public Tile getCurrentTile() {
+        if (deck.isEmpty())
+            return null;
         return deck.getFirst();
     }
 

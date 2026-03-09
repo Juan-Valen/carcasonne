@@ -271,7 +271,7 @@ public class GameView extends View {
         });
     }
 
-    public void displayCurrentTile(int orientation, Character currentTileId, int activePlayer) {
+    public void displayCurrentTile(int orientation, Character currentTileId, int activePlayer, boolean currentPlayerHasMeeples) {
         try {
             if (currentTileId == null) {
                 return;
@@ -286,7 +286,9 @@ public class GameView extends View {
 
                 nextTilePane.getChildren().clear();
                 nextTilePane.getChildren().add(imageView);
-                displayMeeplePlacementOptions(nextTilePane, imageView, activePlayer);
+                if (currentPlayerHasMeeples) {
+                    displayMeeplePlacementOptions(nextTilePane, imageView, activePlayer);
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();

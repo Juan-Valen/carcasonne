@@ -39,7 +39,7 @@ public class GameController {
         // Initialize the view with the current game state
         if (view != null) {
             Tile tile = model.getCurrentTile();
-            view.displayCurrentTile(tile.getOrientation(), tile.getType(), model.getActivePlayer());
+            view.displayCurrentTile(tile.getOrientation(), tile.getType(), model.getActivePlayer(), (model.getPlayersMepleCount()[model.getActivePlayer()]) != 0);
             // view.renderPlayer();
             // Update the player info boxes in the view based on the current player count
             // and meeple counts
@@ -93,7 +93,7 @@ public class GameController {
         // // }
         Tile currentTile = model.getCurrentTile();
         // display the next tile image
-        view.displayCurrentTile(currentTile.getOrientation(), currentTile.getType(), model.getActivePlayer());
+        view.displayCurrentTile(currentTile.getOrientation(), currentTile.getType(), model.getActivePlayer(), (model.getPlayersMepleCount()[model.getActivePlayer()]) != 0);
         // redraw player info boxes to update scores and current player
         view.displayPlayerInfoBoxes(model.getActivePlayer(), model.getMaxPlayers(), model.getPlayersMepleCount());
 
@@ -123,7 +123,7 @@ public class GameController {
 
         Tile currentTile = model.getCurrentTile();
         // display the next tile image
-        view.displayCurrentTile(currentTile.getOrientation(), currentTile.getType(), model.getActivePlayer());
+        view.displayCurrentTile(currentTile.getOrientation(), currentTile.getType(), model.getActivePlayer(), (model.getPlayersMepleCount()[model.getActivePlayer()]) != 0);
         //
         // // redraw player info boxes to update scores and current player
         // view.renderPlayerInfoBoxes(getCurrentPlayingPlayer(),
