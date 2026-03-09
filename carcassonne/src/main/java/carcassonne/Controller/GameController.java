@@ -117,6 +117,8 @@ public class GameController {
     public void rotateTile() {
         model.rotateTile(true);
 
+        model.placeMeple(-1); // set the position to no meeple placed
+
         Tile currentTile = model.getCurrentTile();
         // display the next tile image
         view.displayCurrentTile(currentTile.getOrientation(), currentTile.getType(), model.getActivePlayer());

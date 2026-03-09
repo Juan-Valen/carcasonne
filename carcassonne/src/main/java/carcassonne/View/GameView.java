@@ -238,6 +238,7 @@ public class GameView extends View {
             if (selectedCircle[0] == clicked) {
                 selectedCircle[0] = null; // unselect if clicked again
                 resetColors.run();
+                controller.placeMeple(-1); // -1 indicates no meeple
             } else {
                 selectedCircle[0] = clicked;
                 resetColors.run();
