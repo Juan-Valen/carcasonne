@@ -14,7 +14,6 @@ public class Tile {
     private Pane pane;
     private boolean bonusPoint;
 
-
     public Tile(char type, TileSide[] sides) {
         setType(type);
         this.sides = sides;
@@ -34,16 +33,17 @@ public class Tile {
         this.orientation = orientation;
     }
 
-
-    public char getType()
-    {
+    public char getType() {
         return type;
     }
 
-    private void setType(char t)
-    {
+    private void setType(char t) {
         this.type = t;
         bonusPoint = t == 'C' || t == 'F' || t == 'M' || t == 'O' || t == 'Q' || t == 'S';
+    }
+
+    public void setMeple(Meple meple) {
+        this.meple = meple;
     }
 
     public void setPane(Pane pane) {
@@ -69,7 +69,12 @@ public class Tile {
     public Pane getPane() {
         return pane;
     }
-    public boolean getBonusPoint(){
+
+    public boolean getBonusPoint() {
         return bonusPoint;
+    }
+
+    public Meple getMeple() {
+        return meple;
     }
 }

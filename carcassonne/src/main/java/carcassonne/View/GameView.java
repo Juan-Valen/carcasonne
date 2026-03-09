@@ -14,6 +14,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 
 import java.util.*;
+import java.util.function.Consumer;
 
 public class GameView extends View {
 
@@ -31,16 +32,16 @@ public class GameView extends View {
     private GridPane currentGameGrid = null; // Reference to current grid
     // Viewport-based rendering (virtual scrolling)
     public double cellSize = 0;
-    private int lastRenderedMinRow = -1;
-    private int lastRenderedMaxRow = -1;
-    private int lastRenderedMinCol = -1;
-    private int lastRenderedMaxCol = -1;
+    private int lastRenderedMinY = -1;
+    private int lastRenderedMaxY = -1;
+    private int lastRenderedMinX = -1;
+    private int lastRenderedMaxX = -1;
     private static final int RENDER_BUFFER = 2; // Extra cells to render outside viewport for smoother scrolling
     // Scroll constraints based on selected tiles
-    private int minSelectedRow = Integer.MAX_VALUE;
-    private int maxSelectedRow = Integer.MIN_VALUE;
-    private int minSelectedCol = Integer.MAX_VALUE;
-    private int maxSelectedCol = Integer.MIN_VALUE;
+    private int minSelectedY = Integer.MAX_VALUE;
+    private int maxSelectedY = Integer.MIN_VALUE;
+    private int minSelectedX = Integer.MAX_VALUE;
+    private int maxSelectedX = Integer.MIN_VALUE;
     // Flag to prevent infinite recursion when enforceScrollConstraints modifies
     // scroll values
     private boolean isEnforcingConstraints = false;
@@ -197,81 +198,79 @@ public class GameView extends View {
         }
     }
 
-    // // // Handles logic and click handlers for placing a meeple on the currently
-    // // // placing tile
-    // // private void handleMeeplePlacement(StackPane stackPane, Circle topCircle,
-    // // Circle bottomCircle, Circle leftCircle,
-    // // Circle rightCircle, int currentPlayerNumber) {
-    // // controller.setCurrentMeeplePlacement(-1); // -1 means no meeple, 0-3 for
-    // // top/right/bottom/left
-    // // final Circle[] selectedCircle = new Circle[1]; // selectedCircle[0] is
-    // // current selection
-    // //
-    // // Runnable resetColors = () -> {
-    // // Color playerColor = switch (currentPlayerNumber) {
-    // // case 1 -> Color.RED;
-    // // case 2 -> Color.BLUE;
-    // // case 3 -> Color.GREEN;
-    // // case 4 -> Color.YELLOW;
-    // // case 5 -> Color.ORANGE;
-    // // default -> Color.GRAY;
-    // // };
-    // //
-    // // topCircle.setFill(playerColor.darker());
-    // // bottomCircle.setFill(playerColor.darker());
-    // // leftCircle.setFill(playerColor.darker());
-    // // rightCircle.setFill(playerColor.darker());
-    // // };
-    // //
-    // // // Consumer<Circle> toggleSelection = clicked -> {
-    // // // Color lighterColor = switch (currentPlayerNumber) {
-    // // // case 1 -> Color.RED.brighter();
-    // // // case 2 -> Color.BLUE.brighter();
-    // // // case 3 -> Color.GREEN.brighter();
-    // // // case 4 -> Color.YELLOW.brighter();
-    // // // case 5 -> Color.ORANGE.brighter();
-    // // // default -> Color.LIGHTGRAY;
-    // // // };
-    // // //
-    // // // if (selectedCircle[0] == clicked) {
-    // // // selectedCircle[0] = null; // unselect if clicked again
-    // // // resetColors.run();
-    // // // controller.setCurrentMeeplePlacement(
-    // // // -1 // no meeple
-    // // // );
-    // // // } else {
-    // // // selectedCircle[0] = clicked;
-    // // // resetColors.run();
-    // // // controller.setCurrentMeeplePlacement(
-    // // // clicked == topCircle ? 0
-    // // // : clicked == rightCircle ? 1
-    // // // : clicked == bottomCircle ? 2 : clicked == leftCircle ? 3 : -1);
-    // // // clicked.setFill(lighterColor);
-    // // // }
-    // // // };
-    // //
-    // // topCircle.setOnMouseClicked(e -> {
-    // // System.out.println("Top section clicked for meeple placement");
-    // // toggleSelection.accept(topCircle);
-    // // });
-    // //
-    // // bottomCircle.setOnMouseClicked(e -> {
-    // // System.out.println("Bottom section clicked for meeple placement");
-    // // toggleSelection.accept(bottomCircle);
-    // // });
-    // //
-    // // leftCircle.setOnMouseClicked(e -> {
-    // // System.out.println("Left section clicked for meeple placement");
-    // // toggleSelection.accept(leftCircle);
-    // // });
-    // //
-    // // rightCircle.setOnMouseClicked(e -> {
-    // // System.out.println("Right section clicked for meeple placement");
-    // // toggleSelection.accept(rightCircle);
-    // // });
-    // // }
+    // Handles logic and click handlers for placing a meeple on the currently
+    // placing tile
+    private void handleMeeplePlacement(
+            StackPane stackPane,
+            Circle topCircle,
+            Circle bottomCircle,
+            Circle leftCircle,
+            Circle rightCircle,
+            int currentPlayerNumber) {
+        final Circle[] selectedCircle = new Circle[1]; // selectedCircle[0] is current selection
 
-    public void displayCurrentTile(int orientation, Character currentTileId) {
+        Runnable resetColors = () -> {
+            Color playerColor = switch (currentPlayerNumber) {
+                case 0 -> Color.RED;
+                case 1 -> Color.BLUE;
+                case 2 -> Color.GREEN;
+                case 3 -> Color.YELLOW;
+                case 4 -> Color.ORANGE;
+                default -> Color.GRAY;
+            };
+
+            topCircle.setFill(playerColor.darker());
+            bottomCircle.setFill(playerColor.darker());
+            leftCircle.setFill(playerColor.darker());
+            rightCircle.setFill(playerColor.darker());
+        };
+
+        Consumer<Circle> toggleSelection = clicked -> {
+            Color lighterColor = switch (currentPlayerNumber) {
+                case 0 -> Color.RED.brighter();
+                case 1 -> Color.BLUE.brighter();
+                case 2 -> Color.GREEN.brighter();
+                case 3 -> Color.YELLOW.brighter();
+                case 4 -> Color.ORANGE.brighter();
+                default -> Color.LIGHTGRAY;
+            };
+
+            if (selectedCircle[0] == clicked) {
+                selectedCircle[0] = null; // unselect if clicked again
+                resetColors.run();
+            } else {
+                selectedCircle[0] = clicked;
+                resetColors.run();
+                controller.placeMeple(
+                        clicked == topCircle ? 0
+                                : clicked == rightCircle ? 1
+                                        : clicked == bottomCircle ? 2 : clicked == leftCircle ? 3 : -1);
+                clicked.setFill(lighterColor);
+            }
+        };
+
+        topCircle.setOnMouseClicked(e -> {
+            System.out.println("Top section clicked for meeple placement");
+            toggleSelection.accept(topCircle);
+        });
+
+        bottomCircle.setOnMouseClicked(e -> {
+            System.out.println("Bottom section clicked for meeple placement");
+            toggleSelection.accept(bottomCircle);
+        });
+
+        leftCircle.setOnMouseClicked(e -> {
+            System.out.println("Left section clicked for meeple placement");
+            toggleSelection.accept(leftCircle);
+        });
+
+        rightCircle.setOnMouseClicked(e -> {
+            System.out.println("Right section clicked for meeple placement");
+            toggleSelection.accept(rightCircle);
+        });
+    }
+
+    public void displayCurrentTile(int orientation, Character currentTileId, int activePlayer) {
         try {
             if (currentTileId == null) {
                 return;
@@ -286,6 +285,7 @@ public class GameView extends View {
 
                 nextTilePane.getChildren().clear();
                 nextTilePane.getChildren().add(imageView);
+                displayMeeplePlacementOptions(nextTilePane, imageView, activePlayer);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -293,16 +293,16 @@ public class GameView extends View {
     }
 
     public void displayPane(Pane pane, int x, int y) {
-        currentGameGrid.add(pane, y, x);
+        currentGameGrid.add(pane, x, y);
     }
 
-    private void displayMeepleOnCell(StackPane pane, int meeplePosition, int player) {
+    private void displayMeeplePane(StackPane pane, int meeplePosition, int player) {
         Color playerColor = switch (player) {
-            case 1 -> Color.RED;
-            case 2 -> Color.BLUE;
-            case 3 -> Color.GREEN;
-            case 4 -> Color.YELLOW;
-            case 5 -> Color.ORANGE;
+            case 0 -> Color.RED;
+            case 1 -> Color.BLUE;
+            case 2 -> Color.GREEN;
+            case 3 -> Color.YELLOW;
+            case 4 -> Color.ORANGE;
             default -> Color.GRAY;
         };
 
@@ -330,11 +330,11 @@ public class GameView extends View {
         Circle rightCircle = new Circle(radius);
 
         Color playerColor = switch (currentPlayerNumber) {
-            case 1 -> Color.RED;
-            case 2 -> Color.BLUE;
-            case 3 -> Color.GREEN;
-            case 4 -> Color.YELLOW;
-            case 5 -> Color.ORANGE;
+            case 0 -> Color.RED;
+            case 1 -> Color.BLUE;
+            case 2 -> Color.GREEN;
+            case 3 -> Color.YELLOW;
+            case 4 -> Color.ORANGE;
             default -> Color.GRAY;
         };
 
@@ -356,55 +356,47 @@ public class GameView extends View {
         stackPane.setAlignment(leftCircle, Pos.CENTER_LEFT);
         stackPane.setAlignment(rightCircle, Pos.CENTER_RIGHT);
 
-        // // handleMeeplePlacement(stackPane, topCircle, bottomCircle, leftCircle,
-        // // rightCircle, currentPlayerNumber);
+        handleMeeplePlacement(stackPane, topCircle, bottomCircle, leftCircle, rightCircle, currentPlayerNumber);
     }
 
-    // // public void displayPlayerInfoBoxes(int currentPlayerNumber, int
-    // playerCount,
-    // // VBox container,
-    // // int[] playerMeepleCounts) {
-    // // container.getChildren().clear();
-    // // container.setSpacing(10); // Add spacing between player boxes
-    // //
-    // // for (int i = 1; i <= playerCount; i++) {
-    // // HBox hbox = new HBox(10); // Add spacing between label and circle
-    // // hbox.setStyle("-fx-alignment: center;"); // Center content horizontally
-    // and
-    // // vertically
-    // // hbox.getChildren().add(new Label("Player " + i));
-    // //
-    // // for (int j = 0; j < playerMeepleCounts[i - 1]; j++) {
-    // // Circle circle = new Circle(10);
-    // // switch (i) {
-    // // case 1 -> circle.setFill(Color.RED);
-    // // case 2 -> circle.setFill(Color.BLUE);
-    // // case 3 -> circle.setFill(Color.GREEN);
-    // // case 4 -> circle.setFill(Color.YELLOW);
-    // // case 5 -> circle.setFill(Color.ORANGE);
-    // // default -> circle.setFill(Color.GRAY);
-    // // }
-    // //
-    // // hbox.getChildren().add(circle);
-    // // }
-    // //
-    // // // Make each HBox grow to fill equal vertical space
-    // // VBox.setVgrow(hbox, javafx.scene.layout.Priority.ALWAYS);
-    // //
-    // // if (currentPlayerNumber == i) {
-    // // hbox.setStyle("-fx-background-color: lightblue; -fx-alignment: center;");
-    // //
-    // // Highlight current player
-    // // }
-    // //
-    // // container.getChildren().add(hbox);
-    // // }
-    // //
-    // // // Add empty space at the bottom
-    // // Region spacer = new Region();
-    // // VBox.setVgrow(spacer, javafx.scene.layout.Priority.ALWAYS);
-    // // container.getChildren().add(spacer);
-    // // }
+    public void displayPlayerInfoBoxes(int currentPlayerNumber, int playerCount, int[] playerMeepleCounts) {
+        playerUiBox.getChildren().clear();
+        playerUiBox.setSpacing(10); // Add spacing between player boxes
+
+        for (int i = 0; i < playerCount; i++) {
+            HBox hbox = new HBox(10); // Add spacing between label and circle
+            hbox.setStyle("-fx-alignment: center;"); // Center content horizontally and vertically
+            hbox.getChildren().add(new Label("Player " + i));
+
+            for (int j = 0; j < playerMeepleCounts[i]; j++) {
+                Circle circle = new Circle(10);
+                switch (i) {
+                    case 0 -> circle.setFill(Color.RED);
+                    case 1 -> circle.setFill(Color.BLUE);
+                    case 2 -> circle.setFill(Color.GREEN);
+                    case 3 -> circle.setFill(Color.YELLOW);
+                    case 4 -> circle.setFill(Color.ORANGE);
+                    default -> circle.setFill(Color.GRAY);
+                }
+
+                hbox.getChildren().add(circle);
+            }
+
+            // Make each HBox grow to fill equal vertical space
+            VBox.setVgrow(hbox, javafx.scene.layout.Priority.ALWAYS);
+
+            if (currentPlayerNumber == i) {
+                hbox.setStyle("-fx-background-color: lightblue; -fx-alignment: center;"); // Highlight current player
+            }
+
+            playerUiBox.getChildren().add(hbox);
+        }
+
+        // Add empty space at the bottom
+        Region spacer = new Region();
+        VBox.setVgrow(spacer, javafx.scene.layout.Priority.ALWAYS);
+        playerUiBox.getChildren().add(spacer);
+    }
 
     public void removeGridPane(Pane pane) {
         if (currentGameGrid != null) {
@@ -427,7 +419,7 @@ public class GameView extends View {
         newPane.getChildren().add(image); // Show tile image if placed
 
         if (meeplePosition != -1) {
-            displayMeepleOnCell(newPane, meeplePosition, playerNumber);
+            displayMeeplePane(newPane, meeplePosition, playerNumber);
         }
 
         // Track mouse press to detect if this is a drag or a click
@@ -533,39 +525,47 @@ public class GameView extends View {
     }
 
     public void setScrollConstraint(int minX, int minY, int maxX, int maxY) {
-        minSelectedRow = minX;
-        minSelectedCol = minY;
-        maxSelectedRow = maxX;
-        maxSelectedCol = maxY;
+        minSelectedX = minX;
+        minSelectedY = minY;
+        maxSelectedX = maxX;
+        maxSelectedY = maxY;
     }
 
     /**
      * Adds listeners for scroll events to update which cells are visible.
      */
     public void addScrollListeners() {
-        if (gridScreen == null) {
+        if (gridScreen == null)
             return;
-        }
 
-        Runnable queueScrollUpdate = () -> {
-            if (scrollUpdateQueued) {
-                return;
+        gridScreen.hvalueProperty().addListener((obs, oldVal, newVal) -> {
+            if (!isEnforcingConstraints) {
+                // Enforce constraints IMMEDIATELY to prevent the "bounce"
+                enforceScrollConstraints();
+
+                // Queue the expensive rendering logic for the next pulse
+                if (!scrollUpdateQueued) {
+                    scrollUpdateQueued = true;
+                    Platform.runLater(() -> {
+                        scrollUpdateQueued = false;
+                        controller.handleScroll(false);
+                    });
+                }
             }
-            scrollUpdateQueued = true;
-            Platform.runLater(() -> {
-                scrollUpdateQueued = false;
-                controller.handleScroll(isEnforcingConstraints);
-            });
-        };
+        });
 
-        // Listen for horizontal scroll
-        gridScreen.hvalueProperty().addListener((obs, oldVal, newVal) -> queueScrollUpdate.run());
-
-        // Listen for vertical scroll
-        gridScreen.vvalueProperty().addListener((obs, oldVal, newVal) -> queueScrollUpdate.run());
-
-        // Listen for viewport size changes (window resize)
-        gridScreen.viewportBoundsProperty().addListener((obs, oldVal, newVal) -> queueScrollUpdate.run());
+        gridScreen.vvalueProperty().addListener((obs, oldVal, newVal) -> {
+            if (!isEnforcingConstraints) {
+                enforceScrollConstraints();
+                if (!scrollUpdateQueued) {
+                    scrollUpdateQueued = true;
+                    Platform.runLater(() -> {
+                        scrollUpdateQueued = false;
+                        controller.handleScroll(false);
+                    });
+                }
+            }
+        });
     }
 
     /**
@@ -582,8 +582,8 @@ public class GameView extends View {
         int[] values = getVisibleBounds();
 
         // If the visible range hasn't changed significantly, skip update
-        if (lastRenderedMinRow == values[0] && lastRenderedMaxRow == values[1] &&
-                lastRenderedMinCol == values[2] && lastRenderedMaxCol == values[3]) {
+        if (lastRenderedMinY == values[0] && lastRenderedMaxY == values[1] &&
+                lastRenderedMinX == values[2] && lastRenderedMaxX == values[3]) {
             return null; // No update needed
         }
 
@@ -617,14 +617,14 @@ public class GameView extends View {
         // index of the topmost visible row
         // We can show partial cells, so we use floor for min and ceil for max to ensure
         // we include any partially visible cells
-        int minRow = Math.max(0, (int) Math.floor(scrollOffsetY / cellSize) - RENDER_BUFFER);
-        int maxRow = Math.min(gridSize - 1,
+        int minY = Math.max(0, (int) Math.floor(scrollOffsetY / cellSize) - RENDER_BUFFER);
+        int maxY = Math.min(gridSize - 1,
                 (int) Math.ceil((scrollOffsetY + viewportHeight) / cellSize) + RENDER_BUFFER);
-        int minCol = Math.max(0, (int) Math.floor(scrollOffsetX / cellSize) - RENDER_BUFFER);
-        int maxCol = Math.min(gridSize - 1,
+        int minX = Math.max(0, (int) Math.floor(scrollOffsetX / cellSize) - RENDER_BUFFER);
+        int maxX = Math.min(gridSize - 1,
                 (int) Math.ceil((scrollOffsetX + viewportWidth) / cellSize) + RENDER_BUFFER);
 
-        return new int[] { minRow, minCol, maxRow, maxCol };
+        return new int[] { minY, minX, maxY, maxX };
     }
 
     /**
@@ -632,92 +632,63 @@ public class GameView extends View {
      * the set tiles.
      */
     public void enforceScrollConstraints() {
-        if (gridScreen == null || currentGameGrid == null || cellSize <= 0 || minSelectedRow == Integer.MAX_VALUE) {
+        if (gridScreen == null || currentGameGrid == null || cellSize <= 0 || minSelectedY == Integer.MAX_VALUE) {
             return;
         }
 
         Bounds viewportBounds = gridScreen.getViewportBounds();
-        if (viewportBounds == null || viewportBounds.getWidth() <= 0 || viewportBounds.getHeight() <= 0) {
+        if (viewportBounds == null || viewportBounds.getWidth() <= 0)
             return;
-        }
 
         double gridWidth = currentGameGrid.getPrefWidth();
         double gridHeight = currentGameGrid.getPrefHeight();
         double viewportWidth = viewportBounds.getWidth();
         double viewportHeight = viewportBounds.getHeight();
 
-        // Calculate the actual scrollable range
         double maxScrollPixelX = gridWidth - viewportWidth;
         double maxScrollPixelY = gridHeight - viewportHeight;
 
-        if (maxScrollPixelX <= 0 || maxScrollPixelY <= 0) {
-            // Grid fits in viewport, no scrolling needed
+        if (maxScrollPixelX <= 0 || maxScrollPixelY <= 0)
             return;
+
+        // Use +2 to ensure the buffer cell is fully contained (fixes the cutoff in your
+        // image)
+        double minPixelX = (minSelectedX - 1) * cellSize;
+        double maxPixelX = (maxSelectedX + 2) * cellSize;
+        double minPixelY = (minSelectedY - 1) * cellSize;
+        double maxPixelY = (maxSelectedY + 2) * cellSize;
+
+        // Determine the allowed scroll range (where the viewport's top-left corner can
+        // be)
+        double minAllowedX = Math.max(0, maxPixelX - viewportWidth);
+        double maxAllowedX = Math.min(maxScrollPixelX, minPixelX);
+        double minAllowedY = Math.max(0, maxPixelY - viewportHeight);
+        double maxAllowedY = Math.min(maxScrollPixelY, minPixelY);
+
+        // If tiles are smaller than viewport, lock the scroll to the middle of the
+        // allowed range
+        // to prevent the "bouncing" fight between the mouse and the constraint.
+        if (minAllowedX > maxAllowedX) {
+            double mid = (minAllowedX + maxAllowedX) / 2.0;
+            minAllowedX = maxAllowedX = mid;
+        }
+        if (minAllowedY > maxAllowedY) {
+            double mid = (minAllowedY + maxAllowedY) / 2.0;
+            minAllowedY = maxAllowedY = mid;
         }
 
-        // Get current scroll position in pixels
-        double currentScrollPixelX = gridScreen.getHvalue() * maxScrollPixelX;
-        double currentScrollPixelY = gridScreen.getVvalue() * maxScrollPixelY;
+        double currentH = gridScreen.getHvalue();
+        double currentV = gridScreen.getVvalue();
 
-        // Calculate pixel boundaries for the allowed viewing region (with 1 cell
-        // buffer)
-        double minPlaceablePixelX = Math.max(0, (minSelectedCol - 1) * cellSize);
-        double maxPlaceablePixelX = Math.min(gridWidth, (maxSelectedCol + 1) * cellSize);
-        double minPlaceablePixelY = Math.max(0, (minSelectedRow - 1) * cellSize);
-        double maxPlaceablePixelY = Math.min(gridHeight, (maxSelectedRow + 1) * cellSize);
+        // Clamp the values
+        double targetH = Math.max(minAllowedX / maxScrollPixelX, Math.min(currentH, maxAllowedX / maxScrollPixelX));
+        double targetV = Math.max(minAllowedY / maxScrollPixelY, Math.min(currentV, maxAllowedY / maxScrollPixelY));
 
-        // Calculate the scroll range that keeps all placeable tiles (with buffer)
-        // visible
-        // The viewport left edge can be at most at minPlaceablePixelX (shows leftmost
-        // tile + buffer)
-        // The viewport left edge must be at least at (maxPlaceablePixelX -
-        // viewportWidth) (shows rightmost tile + buffer)
-        double minAllowedScrollX = Math.max(0, maxPlaceablePixelX - viewportWidth);
-        double maxAllowedScrollX = Math.min(maxScrollPixelX, minPlaceablePixelX);
-
-        double minAllowedScrollY = Math.max(0, maxPlaceablePixelY - viewportHeight);
-        double maxAllowedScrollY = Math.min(maxScrollPixelY, minPlaceablePixelY);
-
-        // If min > max, it means tiles span more than viewport can show
-        // In this case, allow scrolling between the extremes to see different parts
-        if (minAllowedScrollX > maxAllowedScrollX) {
-            // Tiles span wider than viewport - clamp to show edges with buffer
-            minAllowedScrollX = Math.max(0, minPlaceablePixelX);
-            maxAllowedScrollX = Math.min(maxScrollPixelX, maxPlaceablePixelX - viewportWidth);
-        }
-
-        if (minAllowedScrollY > maxAllowedScrollY) {
-            // Tiles span taller than viewport - clamp to show edges with buffer
-            minAllowedScrollY = Math.max(0, minPlaceablePixelY);
-            maxAllowedScrollY = Math.min(maxScrollPixelY, maxPlaceablePixelY - viewportHeight);
-        }
-
-        // Clamp current scroll to allowed range
-        double newScrollPixelX = Math.max(minAllowedScrollX, Math.min(currentScrollPixelX, maxAllowedScrollX));
-        double newScrollPixelY = Math.max(minAllowedScrollY, Math.min(currentScrollPixelY, maxAllowedScrollY));
-
-        // Convert back to scroll values (0 to 1)
-        double newHvalue = newScrollPixelX / maxScrollPixelX;
-        double newVvalue = newScrollPixelY / maxScrollPixelY;
-
-        // Apply if changed, using flag to prevent infinite recursion
-        if (Math.abs(newHvalue - gridScreen.getHvalue()) > 0.001) {
-            System.out.println("Enforcing horizontal constraint: " + String.format("%.3f", gridScreen.getHvalue()) +
-                    " -> " + String.format("%.3f", newHvalue) +
-                    " (allowed range: " + String.format("%.3f", minAllowedScrollX / maxScrollPixelX) +
-                    " - " + String.format("%.3f", maxAllowedScrollX / maxScrollPixelX) + ")");
+        // Only update if the difference is significant to avoid jitter
+        if (Math.abs(targetH - currentH) > 1.0e-4 || Math.abs(targetV - currentV) > 1.0e-4) {
             isEnforcingConstraints = true;
-            gridScreen.setHvalue(newHvalue);
-            isEnforcingConstraints = false;
-        }
-
-        if (Math.abs(newVvalue - gridScreen.getVvalue()) > 0.001) {
-            System.out.println("Enforcing vertical constraint: " + String.format("%.3f", gridScreen.getVvalue()) +
-                    " -> " + String.format("%.3f", newVvalue) +
-                    " (allowed range: " + String.format("%.3f", minAllowedScrollY / maxScrollPixelY) +
-                    " - " + String.format("%.3f", maxAllowedScrollY / maxScrollPixelY) + ")");
-            isEnforcingConstraints = true;
-            gridScreen.setVvalue(newVvalue);
+            gridScreen.setHvalue(targetH);
+            gridScreen.setVvalue(targetV);
             isEnforcingConstraints = false;
         }
     }
@@ -728,68 +699,37 @@ public class GameView extends View {
      * Returns false if tiles span across the entire viewport (can't fit them all).
      */
     public boolean shouldEnforceScrollConstraints() {
-        if (gridScreen == null || currentGameGrid == null || cellSize <= 0) {
+        if (gridScreen == null || currentGameGrid == null || cellSize <= 0 || minSelectedY == Integer.MAX_VALUE) {
             return false;
         }
 
         Bounds viewportBounds = gridScreen.getViewportBounds();
-        if (viewportBounds == null || viewportBounds.getWidth() <= 0 || viewportBounds.getHeight() <= 0) {
+        if (viewportBounds == null)
             return false;
-        }
 
-        // If no placeable cells found, don't enforce constraints
-        if (minSelectedRow == 72) {
-            System.out.println("shouldEnforceScrollConstraints() - no placeable cells found");
-            return false;
-        }
+        // Use the same buffer logic: -1 for min, +2 for max
+        double minPixelX = (minSelectedX - 1) * cellSize;
+        double maxPixelX = (maxSelectedX + 2) * cellSize;
+        double minPixelY = (minSelectedY - 1) * cellSize;
+        double maxPixelY = (maxSelectedY + 2) * cellSize;
 
-        // Get the bounds of all placeable cells (including the first tile at center if
-        // no tiles placed yet)
-        int minPlaceableRow = minSelectedRow - 1;
-        int minPlaceableCol = minSelectedCol - 1;
-        int maxPlaceableRow = maxSelectedRow + 1;
-        int maxPlaceableCol = maxSelectedCol + 1;
-
-        // Calculate grid and viewport dimensions
-        double gridWidth = currentGameGrid.getPrefWidth();
-        double gridHeight = currentGameGrid.getPrefHeight();
         double viewportWidth = viewportBounds.getWidth();
         double viewportHeight = viewportBounds.getHeight();
 
-        // Calculate the current scroll position (in pixels from top-left of grid)
-        double scrollOffsetX = gridScreen.getHvalue() * Math.max(0, gridWidth - viewportWidth);
-        double scrollOffsetY = gridScreen.getVvalue() * Math.max(0, gridHeight - viewportHeight);
-
-        // Calculate pixel boundaries of the placeable area
-        double minPixelX = minPlaceableCol * cellSize;
-        double maxPixelX = (maxPlaceableCol + 1) * cellSize;
-        double minPixelY = minPlaceableRow * cellSize;
-        double maxPixelY = (maxPlaceableRow + 1) * cellSize;
-
-        // Calculate the total span of placeable tiles
-        double totalPlaceableWidth = maxPixelX - minPixelX;
-        double totalPlaceableHeight = maxPixelY - minPixelY;
-
-        // If placeable tiles span more than the viewport can show, disable constraints
-        // (you can't show all tiles at once anyway, so free scrolling is better)
-        if (totalPlaceableWidth >= viewportWidth || totalPlaceableHeight >= viewportHeight) {
+        // If the tiles + buffer are wider than the screen, we usually want free
+        // scrolling
+        // or different clamping logic.
+        if ((maxPixelX - minPixelX) >= viewportWidth || (maxPixelY - minPixelY) >= viewportHeight) {
             return false;
         }
 
-        // Calculate the right and bottom edges of the current viewport
+        double scrollOffsetX = gridScreen.getHvalue() * (currentGameGrid.getPrefWidth() - viewportWidth);
+        double scrollOffsetY = gridScreen.getVvalue() * (currentGameGrid.getPrefHeight() - viewportHeight);
         double viewportMaxX = scrollOffsetX + viewportWidth;
         double viewportMaxY = scrollOffsetY + viewportHeight;
 
-        // Check if placeable tiles extend beyond ANY edge of the viewport
-        // Tiles exceed if:
-        boolean exceedsLeft = minPixelX < scrollOffsetX;
-        boolean exceedsRight = maxPixelX > viewportMaxX;
-        boolean exceedsTop = minPixelY < scrollOffsetY;
-        boolean exceedsBottom = maxPixelY > viewportMaxY;
-        boolean tilesExceedViewport = exceedsLeft || exceedsRight || exceedsTop || exceedsBottom;
-
-        System.out.println("  Result: scrolling " + (tilesExceedViewport ? "ENABLED" : "DISABLED"));
-
-        return tilesExceedViewport;
+        // Return true if any part of our "active rectangle" is outside the viewport
+        return (minPixelX < scrollOffsetX || maxPixelX > viewportMaxX ||
+                minPixelY < scrollOffsetY || maxPixelY > viewportMaxY);
     }
 }

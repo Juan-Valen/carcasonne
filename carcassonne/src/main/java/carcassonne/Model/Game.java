@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-import carcassonne.DataType.Color;
 import carcassonne.DataType.TileSide;
 import javafx.scene.layout.Pane;
 
@@ -62,12 +61,24 @@ public class Game {
     }
 
     public void setMaxPlayer(int length) {
+        players = new Player[length];
+        for (int i = 0; i < players.length; i++) {
+            players[i] = new Player();
+            players[i].initMeple(i);
+        }
+    }
 
-        Player[] players = new Player[length];
-        for (Player player : players) {
-            player = new Player(Color.RED, "person");
+    public int[] getPlayersMepleCount() {
+        int[] meples = new int[players.length];
+        // Initialize each player with the starting number of meeples (e.g., 7 or 8)
+        for (int i = 0; i < players.length; i++) {
+            if (players[i] != null)
+                meples[i] = players[i].getMepleCount();
+            else
+                meples[i] = 0;
         }
 
+        return meples;
     }
 
     public Tile getCurrentTile() {
@@ -80,13 +91,11 @@ public class Game {
 
     public Spot getMin() {
         Spot spot = board.getMinSpot();
-        System.out.println("Spots MIN XY: " + spot.getX() + ", " + spot.getY());
         return spot;
     }
 
     public Spot getMax() {
         Spot spot = board.getMaxSpot();
-        System.out.println("Spots MAX XY: " + spot.getX() + ", " + spot.getY());
         return spot;
 
     }
@@ -113,17 +122,27 @@ public class Game {
             deck.add(deck.removeFirst());
             board.updateAvailableSpots(deck.getFirst());
         }
+        activePlayer++;
+        activePlayer %= getMaxPlayers();
 
+    }
+
+    public void placeMeple(int position) {
+        Tile tile = getCurrentTile();
+        Meple meple = tile.getMeple();
+        if (meple == null) {
+            meple = players[getActivePlayer()].placeMeple();
+            if (meple == null)
+                return;
+        }
+        meple.setPosition(position);
+        tile.setMeple(meple);
     }
 
     public void rotateTile(boolean right) {
         Tile tile = deck.getFirst();
         tile.rotateTile();
 
-    }
-
-    public void setNextPlayer() {
-        activePlayer = (activePlayer + 1) % (players.length - 1);
     }
 
     private void initDeck() {

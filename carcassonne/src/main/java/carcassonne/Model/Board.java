@@ -1,7 +1,6 @@
 package carcassonne.Model;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class Board {
@@ -12,8 +11,8 @@ public class Board {
     private Tile[][] board;
     private AvailableSpots[] availableSpots;
     private List<Spot> freeSpots;
-    private Spot minSpot = new Spot(73, 73);
-    private Spot maxSpot = new Spot(73, 73);
+    private Spot minSpot = new Spot(Integer.MAX_VALUE, Integer.MAX_VALUE);
+    private Spot maxSpot = new Spot(Integer.MIN_VALUE, Integer.MIN_VALUE);
 
     public Board() {
         board = new Tile[144][144];
@@ -38,7 +37,7 @@ public class Board {
         if (x < 0 || x > 144 || y < 0 || y > 144)
             throw new IllegalArgumentException("Coordinates can't exceed board size");
 
-        return board[x][y];
+        return board[y][x];
     }
 
     public List<Spot> getFreeSpots() {
@@ -46,10 +45,10 @@ public class Board {
     }
 
     public void updateSpots(int x, int y, Tile tile) throws IllegalArgumentException {
-        if (board[x][y] != null)
+        if (board[y][x] != null)
             return;
 
-        board[x][y] = tile;
+        board[y][x] = tile;
         updateFreeSpots(x, y);
     }
 
@@ -74,16 +73,16 @@ public class Board {
                 int y = free.getY();
                 boolean available = true;
                 // Check if Left is available
-                Tile left = board[x - 1][y];
+                Tile left = board[y][x - 1];
                 if (left != null)
                     available = available && (left.getSideType(1) == tile.getSideType(3));
-                Tile right = board[x + 1][y];
+                Tile right = board[y][x + 1];
                 if (right != null)
                     available = available && (right.getSideType(3) == tile.getSideType(1));
-                Tile up = board[x][y - 1];
+                Tile up = board[y - 1][x];
                 if (up != null)
                     available = available && (up.getSideType(2) == tile.getSideType(0));
-                Tile down = board[x][y + 1];
+                Tile down = board[y + 1][x];
                 if (down != null)
                     available = available && (down.getSideType(0) == tile.getSideType(2));
 
@@ -100,25 +99,25 @@ public class Board {
         setMinMax(spot);
         // Check if Left is available
         if (x > 0) {
-            Tile left = board[x - 1][y];
+            Tile left = board[y][x - 1];
             if (left == null)
                 freeSpots.add(new Spot(x - 1, y));
         }
 
         if (x < 144) {
-            Tile right = board[x + 1][y];
+            Tile right = board[y][x + 1];
             if (right == null)
                 freeSpots.add(new Spot(x + 1, y));
         }
 
         if (y > 0) {
-            Tile up = board[x][y - 1];
+            Tile up = board[y - 1][x];
             if (up == null)
                 freeSpots.add(new Spot(x, y - 1));
         }
 
         if (y < 144) {
-            Tile down = board[x][y + 1];
+            Tile down = board[y + 1][x];
             if (down == null)
                 freeSpots.add(new Spot(x, y + 1));
         }
@@ -158,6 +157,6 @@ public class Board {
     }
 
     public Tile getVisibleTile(int x, int y) {
-        return board[x][y];
+        return board[y][x];
     }
 }

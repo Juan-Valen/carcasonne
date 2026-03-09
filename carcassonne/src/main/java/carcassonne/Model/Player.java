@@ -1,44 +1,64 @@
 package carcassonne.Model;
 
+import java.util.ArrayList;
+
 import carcassonne.DataType.Color;
 
-public class Player
-{
+public class Player {
     private Color color;
-    private String user;
+    private User user;
     private int points;
+    private ArrayList<Meple> meples;
 
-    public Player(Color color, String user)
-    {
-        this.color = color;
+    public Player() {
+        this.points = 0;
+    }
+
+    public Player(User user) {
         this.user = user;
         this.points = 0;
     }
 
-    public Player(Color color, String user, int points)
-    {
-        this.color = color;
+    public Player(User user, int index) {
         this.user = user;
-        this.points = points;
+        this.points = 0;
+        initMeple(index);
     }
 
-    public Color getColor()
-    {
+    public Color getColor() {
         return color;
     }
 
-    public String getUser() {
+    public User getUser() {
         return user;
     }
 
-    public int getPoints()
-    {
+    public int getPoints() {
         return points;
     }
 
-    public void addPoints(int points) throws IllegalArgumentException
-    {
-        if(points < 0) throw new IllegalArgumentException("Can not add a negative amount of points");
+    public void addPoints(int points) throws IllegalArgumentException {
+        if (points < 0)
+            throw new IllegalArgumentException("Can not add a negative amount of points");
         this.points += points;
+    }
+
+    public void initMeple(int playerIndex) {
+        meples = new ArrayList<>();
+
+        for (int i = 0; i < 5; i++) {
+            meples.add(new Meple(playerIndex));
+        }
+    };
+
+    public int getMepleCount() {
+        return meples.size();
+    }
+
+    public Meple placeMeple() {
+        if (meples.size() == 0)
+            return null;
+        return meples.remove(0);
+
     }
 }

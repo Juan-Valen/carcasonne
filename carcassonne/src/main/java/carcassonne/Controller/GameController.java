@@ -4,8 +4,8 @@ import carcassonne.Model.Board;
 import carcassonne.Model.Game;
 import carcassonne.Model.Spot;
 import carcassonne.Model.Tile;
+import carcassonne.Model.Meple;
 import carcassonne.View.GameView;
-import javafx.geometry.Bounds;
 import javafx.scene.layout.Pane;
 
 import java.util.*;
@@ -15,13 +15,6 @@ public class GameController {
     private GameView view; // Reference to the view, can be used to update the UI based on game state
                            // changes
     private Game model;
-    private int currentMeeplePlacement = -1; // Placeholder for the current meeple placement, should be set based on the
-                                             // game state
-    private int[] playerMeepleCounts = null; // Placeholder for tracking the number of meeples each player has, should
-                                             // be managed in the model
-    private int gridSize = 144; // Default grid size
-    private int RENDER_BUFFER = 2; // Number of extra rows/columns to render beyond the visible area for smoother
-                                   // scrolling
     private int maxMeeples = 5; // Maximum number of meeples per player, adjust as needed
 
     private List<Pane> visiblePanes = new ArrayList<>();
@@ -46,16 +39,15 @@ public class GameController {
         // Initialize the view with the current game state
         if (view != null) {
             Tile tile = model.getCurrentTile();
-            view.displayCurrentTile(tile.getOrientation(), tile.getType());
+            view.displayCurrentTile(tile.getOrientation(), tile.getType(), model.getActivePlayer());
             // view.renderPlayer();
             // Update the player info boxes in the view based on the current player count
             // and meeple counts
-            //
-            //
-            // view.displayPlayerInfoBoxes(model.getActivePlayer(), model.getMaxPlayers(),
-            // 4);// players maple count
-            //
-            //
+
+            view.displayPlayerInfoBoxes(model.getActivePlayer(), model.getMaxPlayers(), model.getPlayersMepleCount());// players
+                                                                                                                      // maple
+                                                                                                                      // count
+
             // missing
             // Initialize the grid in the view
             view.initGrid();
@@ -66,13 +58,26 @@ public class GameController {
         }
     }
 
+    public void placeMeple(int position) {
+        model.placeMeple(position);
+    }
+
     public void placeTile(int x, int y) {
         // enable panning of grid if it was previously disabled due to no tiles being
         // placed
         view.updateScrollingState(true);
 
+        System.out.println("------PLACE TILE AT: " + x + "," + y);
         Tile tile = model.getCurrentTile();
-        model.placeTile(x, y, view.createPane(x, y, tile.getOrientation(), tile.getType(), -1, 0));
+        Meple meple = tile.getMeple();
+        model.placeTile(
+                x, y,
+                view.createPane(
+                        x, y,
+                        tile.getOrientation(),
+                        tile.getType(),
+                        meple == null ? -1 : meple.getPosition(),
+                        model.getActivePlayer()));
 
         // // if (getCurrentMeeplePlacement() != -1 &&
         // // getPlayerMeepleCount(getCurrentPlayingPlayer()) > 0) {
@@ -87,12 +92,9 @@ public class GameController {
         // // }
         Tile currentTile = model.getCurrentTile();
         // display the next tile image
-        view.displayCurrentTile(currentTile.getOrientation(), currentTile.getType());
-        //
-        // // redraw player info boxes to update scores and current player
-        // view.renderPlayerInfoBoxes(getCurrentPlayingPlayer(),
-        // model.getMaxPlayers(), view.playerUiBox,
-        // getPlayersMeepleCounts());
+        view.displayCurrentTile(currentTile.getOrientation(), currentTile.getType(), model.getActivePlayer());
+        // redraw player info boxes to update scores and current player
+        view.displayPlayerInfoBoxes(model.getActivePlayer(), model.getMaxPlayers(), model.getPlayersMepleCount());
 
         // Update scroll constraints based on new tile placement
         Spot min = model.getMin();
@@ -118,7 +120,7 @@ public class GameController {
 
         Tile currentTile = model.getCurrentTile();
         // display the next tile image
-        view.displayCurrentTile(currentTile.getOrientation(), currentTile.getType());
+        view.displayCurrentTile(currentTile.getOrientation(), currentTile.getType(), model.getActivePlayer());
         //
         // // redraw player info boxes to update scores and current player
         // view.renderPlayerInfoBoxes(getCurrentPlayingPlayer(),
@@ -176,30 +178,30 @@ public class GameController {
     // current scroll position and grid size, should only render cells that have
     // changed visibility since the last render for performance optimization
     private void renderVisibleTiles(int[] visibleBounds) {
-        // cellbounds format: {minRow, minCol, maxRow, maxCol}
+        // cellbounds format: {minY, minX, maxY, maxX}
         if (visibleBounds == null) {
             return;
         }
 
         Board board = model.getBoard();
         clearGrid();
-        for (int row = visibleBounds[0]; row <= visibleBounds[2]; row++) {
-            for (int col = visibleBounds[1]; col <= visibleBounds[3]; col++) {
-                Tile tile = board.getTile(row, col);
+        for (int yTest = visibleBounds[0]; yTest <= visibleBounds[2]; yTest++) {
+            for (int xTest = visibleBounds[1]; xTest <= visibleBounds[3]; xTest++) {
+                Tile tile = board.getTile(xTest, yTest);
                 Pane newPane;
 
                 if (tile != null) {
                     newPane = tile.getPane();
-                } else if (model.getAvailableSpots().contains(new Spot(row, col))) {
-                    newPane = view.createPane(row, col, true);
+                } else if (model.getAvailableSpots().contains(new Spot(xTest, yTest))) {
+                    newPane = view.createPane(xTest, yTest, true);
                 } else {
-                    newPane = view.createPane(row, col, false);
+                    newPane = view.createPane(xTest, yTest, false);
                 }
 
                 // Cache the rendered pane for this cell so we can reuse it if the cell remains
                 // visible, and remove it from the grid if it goes out of view
                 visiblePanes.add(newPane);
-                view.displayPane(newPane, row, col);
+                view.displayPane(newPane, xTest, yTest);
             }
         }
 
@@ -226,18 +228,6 @@ public class GameController {
         // }
         visiblePanes.clear();
         view.clearGrid();
-    }
-
-    private void decrementPlayerMeepleCountInModel(int player) {
-        // Placeholder function to decrement the meeple count for a player in the game
-        // state
-
-        if (player >= 1 && player <= model.getMaxPlayers()) {
-            playerMeepleCounts[player - 1] = Math.max(0, playerMeepleCounts[player - 1] - 1); // Decrement meeple count
-                                                                                              // for the player,
-                                                                                              // ensuring it doesn't go
-                                                                                              // below 0
-        }
     }
 
     public void setMaxPlayer(int length) {
