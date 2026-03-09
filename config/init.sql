@@ -30,7 +30,8 @@ CREATE TABLE saves
 );
 
 INSERT INTO users(username, password) 
-VALUES 
+VALUES
+    ('carcassonne', 'password'),
     ('juan', '0j#mi9-fd2j_k4'),
     ('noah', '*rB#_Tz_6r2-'),
     ('nooah', '55PwgU39W!5#'),

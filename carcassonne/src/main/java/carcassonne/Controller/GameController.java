@@ -58,11 +58,13 @@ public class GameController {
         }
     }
 
-    public void placeMeple(int position) {
-        model.placeMeple(position);
+    public void placeMeple(int direction) {
+        model.placeMeple(direction);
     }
 
     public void placeTile(int x, int y) {
+        System.out.println(Arrays.toString(model.getPlayersMepleCount()));
+
         // enable panning of grid if it was previously disabled due to no tiles being
         // placed
         view.updateScrollingState(true);
@@ -117,7 +119,7 @@ public class GameController {
     public void rotateTile() {
         model.rotateTile(true);
 
-        model.placeMeple(-1); // set the position to no meeple placed
+        model.rotateMeeple();
 
         Tile currentTile = model.getCurrentTile();
         // display the next tile image

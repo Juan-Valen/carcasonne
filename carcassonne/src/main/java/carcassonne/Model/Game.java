@@ -127,18 +127,37 @@ public class Game {
 
     }
 
-    public void placeMeple(int position) {
+    public void rotateMeeple() {
+        Tile tile = getCurrentTile();
+        Meple meple = tile.getMeple();
+        if (meple == null)
+            return;
+        int position = meple.getPosition();
+        if (position == -1)
+            return;
+        position += 1;
+        position %= 4;
+        meple.setPosition(position);
+    }
+
+    public void placeMeple(int direction) {
         Tile tile = getCurrentTile();
         Meple meple = tile.getMeple();
         if (meple == null) {
-            meple = players[getActivePlayer()].placeMeple();
-            if (meple == null)
+            if (direction == -1) {
                 return;
+            }
+            meple = players[getActivePlayer()].placeMeple();
+            if (meple == null) {
+                return;
+            }
         }
-        if(position == -1) {
+        if (direction == -1) {
             players[getActivePlayer()].addMeple(meple);
+            tile.setMeple(null);
+            return;
         }
-        meple.setPosition(position);
+        meple.setPosition(direction);
         tile.setMeple(meple);
     }
 
