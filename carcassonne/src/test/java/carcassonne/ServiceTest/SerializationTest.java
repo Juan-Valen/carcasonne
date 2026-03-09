@@ -2,6 +2,8 @@ package carcassonne.ServiceTest;
 
 import carcassonne.Model.Game;
 import carcassonne.Model.Tile;
+import carcassonne.Model.User;
+import carcassonne.Service.databaseService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
@@ -74,12 +76,12 @@ public class SerializationTest
             oos.writeObject(game);
             byte[] serializedData = baos.toByteArray();
 
+            User user = new User(1, "test");
+            databaseService dbs = databaseService.getInstance();
+            dbs.setSavedGames(user, false, serializedData);
 
+            Game retrievedGame = dbs.getGameState(0);
 
-            Blob blob = new SerialBlob(serializedData);
-
-            ObjectInputStream ois = new ObjectInputStream(blob.getBinaryStream());
-            Game retrievedGame = (Game) ois.readObject();
 
             carcassonne.Model.Tile tile3 = retrievedGame.getCurrentTile();
             System.out.println(tile3.getType());
@@ -89,12 +91,6 @@ public class SerializationTest
 
         } catch (IOException ex) {
             System.out.println("IOException is caught");
-        } catch (SerialException e) {
-            System.out.println("SerialException is caught");
-        } catch (SQLException e) {
-            System.out.println("SQLException is caught");
-        } catch (ClassNotFoundException e) {
-            System.out.println("ClassNotFoundException is caught");
         }
     }
 }
