@@ -8,87 +8,155 @@ public class Board {
     // Available spots is where you can place the current tile
     // Taken spots is where the tiles are currently
 
-    private Spot[][] board;
-    private List<Spot> availableSpots;
-    private List<Spot> takenSpots;
+    private Tile[][] board;
+    private AvailableSpots[] availableSpots;
+    private List<Spot> freeSpots;
+    private Spot minSpot = new Spot(Integer.MAX_VALUE, Integer.MAX_VALUE);
+    private Spot maxSpot = new Spot(Integer.MIN_VALUE, Integer.MIN_VALUE);
 
-    public Board()
-    {
-        board = new Spot[145][145];
-        for(int x = 0; x < 145; x++)
-        {
-            for (int y = 0; y < 145; y++)
-            {
-                board[x][y] = new Spot(x, y);
+    public Board() {
+        board = new Tile[144][144];
+
+        availableSpots = new AvailableSpots[] {
+                new AvailableSpots("up"),
+                new AvailableSpots("right"),
+                new AvailableSpots("down"),
+                new AvailableSpots("left"),
+        };
+        Spot center = new Spot(72, 72);
+        for (int i = 0; i < availableSpots.length; i++) {
+            availableSpots[i].add(center);
+        }
+        freeSpots = new ArrayList<Spot>();
+
+        freeSpots.add(center);
+        List<Spot> sp = availableSpots[0].getSpots();
+    }
+
+    public Tile getTile(int x, int y) throws IllegalArgumentException {
+        if (x < 0 || x > 144 || y < 0 || y > 144)
+            throw new IllegalArgumentException("Coordinates can't exceed board size");
+
+        return board[y][x];
+    }
+
+    public List<Spot> getFreeSpots() {
+        return freeSpots;
+    }
+
+    public void updateSpots(int x, int y, Tile tile) throws IllegalArgumentException {
+        if (board[y][x] != null)
+            return;
+
+        board[y][x] = tile;
+        updateFreeSpots(x, y);
+    }
+
+    public boolean hasAvailableSpots() {
+        for (AvailableSpots as : availableSpots) {
+            if (!as.getSpots().isEmpty()) {
+                return true;
             }
         }
-
-        availableSpots = new ArrayList<>();
-
-        // Middle spot can receive a tile
-        availableSpots.add(board[72][72]);
-
-        takenSpots = new ArrayList<>();
-
+        return false;
     }
 
-    public Spot getSpot(int x, int y) throws IllegalArgumentException
-    {
-        if(x<0 || x>144 || y<0 || y>144) throw new IllegalArgumentException("Coordinates can't exceed board size");
-
-        return board[x][y];
-    }
-
-    public boolean isSpotInBoard(Spot spot)
-    {
-        int x = spot.getX();
-        int y = spot.getY();
-        if(x<0 || x>144 || y<0 || y>144) return false;
-        return board[x][y] == spot;
-    }
-
-    public void updateSpots(Spot spot) throws IllegalArgumentException
-    {
-        if(takenSpots.contains(spot)) throw new IllegalArgumentException("Spot already played");
-
-        takenSpots.add(spot);
-        availableSpots.remove(spot);
-
-        int x = spot.getX();
-        int y = spot.getY();
-
-        if(x>0)
-        {
-            Spot spotN = board[x-1][y];
-            if (!spotN.hasTile() && !availableSpots.contains(spotN)) availableSpots.add(spotN);
+    public void updateAvailableSpots(Tile tile) {
+        if (tile == null) {
+            return;
         }
+        clearAvailableSpots();
+        for (Spot free : freeSpots) {
+            for (int i = 0; i < 4; i++) {
+                tile.rotateTile();
+                int x = free.getX();
+                int y = free.getY();
+                boolean available = true;
+                // Check if Left is available
+                Tile left = board[y][x - 1];
+                if (left != null)
+                    available = available && (left.getSideType(1) == tile.getSideType(3));
+                Tile right = board[y][x + 1];
+                if (right != null)
+                    available = available && (right.getSideType(3) == tile.getSideType(1));
+                Tile up = board[y - 1][x];
+                if (up != null)
+                    available = available && (up.getSideType(2) == tile.getSideType(0));
+                Tile down = board[y + 1][x];
+                if (down != null)
+                    available = available && (down.getSideType(0) == tile.getSideType(2));
 
-        if(x<144)
-        {
-            Spot spotS = board[x+1][y];
-            if (!spotS.hasTile() && !availableSpots.contains(spotS)) availableSpots.add(spotS);
-        }
-
-        if(y>0)
-        {
-            Spot spotW = board[x][y-1];
-            if (!spotW.hasTile() && !availableSpots.contains(spotW)) availableSpots.add(spotW);
-        }
-
-        if(y<144)
-        {
-            Spot spotE = board[x][y+1];
-            if(!spotE.hasTile() && !availableSpots.contains(spotE)) availableSpots.add(spotE);
+                if (available) {
+                    availableSpots[tile.getOrientation()].add(new Spot(x, y));
+                }
+            }
         }
     }
 
-    public List<Spot> getAvailableSpots()
-    {
-        return availableSpots;
+    private void updateFreeSpots(int x, int y) {
+        Spot spot = new Spot(x, y);
+        freeSpots.remove(spot);
+        setMinMax(spot);
+        // Check if Left is available
+        if (x > 0) {
+            Tile left = board[y][x - 1];
+            if (left == null)
+                freeSpots.add(new Spot(x - 1, y));
+        }
+
+        if (x < 144) {
+            Tile right = board[y][x + 1];
+            if (right == null)
+                freeSpots.add(new Spot(x + 1, y));
+        }
+
+        if (y > 0) {
+            Tile up = board[y - 1][x];
+            if (up == null)
+                freeSpots.add(new Spot(x, y - 1));
+        }
+
+        if (y < 144) {
+            Tile down = board[y + 1][x];
+            if (down == null)
+                freeSpots.add(new Spot(x, y + 1));
+        }
     }
 
-    public List<Spot> getTakenSpots()
-    {
-        return takenSpots;
+    private void setMinMax(Spot spot) {
+        if (spot.getX() < minSpot.getX()) {
+            minSpot.setX(spot.getX());
+        }
+        if (spot.getY() < minSpot.getY()) {
+            minSpot.setY(spot.getY());
+        }
+        if (spot.getX() > maxSpot.getX()) {
+            maxSpot.setX(spot.getX());
+        }
+        if (spot.getY() > maxSpot.getY()) {
+            maxSpot.setY(spot.getY());
+        }
+    }
+
+    public Spot getMinSpot() {
+        return minSpot;
+    }
+
+    public Spot getMaxSpot() {
+        return maxSpot;
+    }
+
+    private void clearAvailableSpots() {
+        for (AvailableSpots as : availableSpots) {
+            as.clear();
+        }
+    }
+
+    public List<Spot> getAvailableSpots(int orientation) {
+        return availableSpots[orientation].getSpots();
+    }
+
+    public Tile getVisibleTile(int x, int y) {
+        return board[y][x];
     }
 }

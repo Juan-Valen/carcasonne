@@ -6,8 +6,9 @@ Software version of the game Carcasonne.
 * Github
 * Java
   * JavaFX
-* javascript
-  * node.js
 * PostgreSQL
 * Docker
 * Jenkins
+
+## 
+

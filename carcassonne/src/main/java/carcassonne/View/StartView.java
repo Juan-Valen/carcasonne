@@ -1,6 +1,6 @@
-package carcassonne.UI;
+package carcassonne.View;
 
-import carcassonne.controller.GameController;
+import carcassonne.Controller.GameController;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.Spinner;
@@ -23,14 +23,13 @@ public class StartView extends View {
     @FXML
     public void onBack() {
         try {
-            // show main view via MainApp
-            carcassonne.MainApp.getInstance().showScene("/Carcassonne UI.fxml");
+            // show main view via App
+            carcassonne.App.getInstance().showScene("/Carcassonne UI.fxml");
         } catch (Exception e) {
             e.printStackTrace();
         }
         System.out.println("current player count: " + playerNumSpinner.getValue());
-        gameController.setCurrentPlayerCount(playerNumSpinner.getValue());
-        System.out.println("playercount in controller: " + gameController.getCurrentPlayerCount());
+        gameController.setMaxPlayer(playerNumSpinner.getValue());
 
     }
 
@@ -38,8 +37,7 @@ public class StartView extends View {
     protected void initialize() {
         super.initialize();
         System.out.println("StartView.initialize() called");
-
-        playerNumSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(2, gameController.getMaxPlayers(), 2));
+        playerNumSpinner.setValueFactory(
+                new SpinnerValueFactory.IntegerSpinnerValueFactory(2, 3, 2));
     }
 }
-

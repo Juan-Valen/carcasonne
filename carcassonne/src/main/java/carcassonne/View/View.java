@@ -1,4 +1,4 @@
-package carcassonne.UI;
+package carcassonne.View;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -35,7 +35,8 @@ public class View {
 
             // Listen for when this view is added to a scene, then set up stage bindings
             rootContainer.sceneProperty().addListener((observable, oldScene, newScene) -> {
-                System.out.println("View.initialize() - sceneProperty changed: oldScene=" + (oldScene != null) + " newScene=" + (newScene != null));
+                System.out.println("View.initialize() - sceneProperty changed: oldScene=" + (oldScene != null)
+                        + " newScene=" + (newScene != null));
                 if (newScene != null && newScene.getWindow() != null) {
                     System.out.println("  Scene has window, calling setupStageBindings");
                     setupStageBindings(newScene.getWindow());
@@ -65,14 +66,16 @@ public class View {
         initialized = true;
         System.out.println("  Set initialized = true");
 
-        System.out.println("View.setupStageBindings() - binding rootContainer to screen size with portionOfScreen=" + portionOfScreen);
+        System.out.println("View.setupStageBindings() - binding rootContainer to screen size with portionOfScreen="
+                + portionOfScreen);
 
-        // Bind to screen size, not stage size, to prevent progressive shrinking when switching views
+        // Bind to screen size, not stage size, to prevent progressive shrinking when
+        // switching views
         if (window instanceof Stage stage) {
             Screen screen = Screen.getPrimary();
             Rectangle2D screenBounds = screen.getVisualBounds();
 
-            if(rootContainer instanceof Region region) {
+            if (rootContainer instanceof Region region) {
                 double screenWidth = screenBounds.getWidth();
                 double screenHeight = screenBounds.getHeight();
 
@@ -93,7 +96,8 @@ public class View {
 
     protected void onAfterStageAvailable() {
         System.out.println("View.onAfterStageAvailable() called - subclasses can override this");
-        // Subclasses can override this to perform additional setup after the stage is available
+        // Subclasses can override this to perform additional setup after the stage is
+        // available
     }
 
     public void onViewShow() {
@@ -101,6 +105,3 @@ public class View {
         // Subclasses can override this to perform actions when the view is shown
     }
 }
-
-
-
