@@ -55,6 +55,10 @@ public class Player {
         return meples.size();
     }
 
+    public void addMeple(Meple meple) {
+        meples.add(meple);
+    }
+
     public Meple placeMeple() {
         if (meples.size() == 0)
             return null;

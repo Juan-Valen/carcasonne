@@ -135,6 +135,9 @@ public class Game {
             if (meple == null)
                 return;
         }
+        if(position == -1) {
+            players[getActivePlayer()].addMeple(meple);
+        }
         meple.setPosition(position);
         tile.setMeple(meple);
     }
