@@ -1,6 +1,8 @@
 package carcassonne.Model;
 
-public class Meple {
+import java.io.Serializable;
+
+public class Meple implements Serializable {
     private int position = -1;
     private int playerIndex;
 

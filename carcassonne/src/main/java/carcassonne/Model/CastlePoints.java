@@ -1,9 +1,11 @@
 package carcassonne.Model;
 
 import carcassonne.DataType.TileSide;
+
+import java.io.Serializable;
 import java.util.*;
 
-public class CastlePoints {
+public class CastlePoints implements Serializable {
 
     private final Board board;
 

@@ -14,7 +14,7 @@ CREATE TABLE users
 CREATE TABLE games
 (
   game_id SERIAL NOT NULL,
-  game_state TEXT NOT NULL,
+  game_state BYTEA NULL,
   updated_date DATE NOT NULL,
   online BOOLEAN NOT NULL,
   PRIMARY KEY (game_id)

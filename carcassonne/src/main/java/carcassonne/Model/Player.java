@@ -1,10 +1,11 @@
 package carcassonne.Model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import carcassonne.DataType.Color;
 
-public class Player {
+public class Player implements Serializable {
     private Color color;
     private User user;
     private int points;
