@@ -67,7 +67,6 @@ public class GameController {
         // placed
         view.updateScrollingState(true);
 
-        System.out.println("------PLACE TILE AT: " + x + "," + y);
         Tile tile = model.getCurrentTile();
         Meple meple = tile.getMeple();
         model.placeTile(
