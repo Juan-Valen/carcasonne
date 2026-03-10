@@ -61,7 +61,7 @@ public class GameHistoryView extends  View {
                     try {
                         // Load the selected game and show the GameView
 //                    gameController.loadGame(savedGame.id);
-                        carcassonne.App.getInstance().showScene("/GameView.fxml");
+                        carcassonne.App.getInstance().showScene("/Carcassonne UI.fxml");
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
