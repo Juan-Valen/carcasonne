@@ -39,12 +39,12 @@ public class GameController {
         if (view != null) {
             Tile tile = model.getCurrentTile();
             view.displayCurrentTile(tile.getOrientation(), tile.getType(), model.getActivePlayer(),
-                    (model.getPlayersMepleCount()[model.getActivePlayer()]) != 0);
+                    (model.getPlayersMeepleCount()[model.getActivePlayer()]) != 0);
             // view.renderPlayer();
             // Update the player info boxes in the view based on the current player count
             // and meeple counts
 
-            view.displayPlayerInfoBoxes(model.getActivePlayer(), model.getMaxPlayers(), model.getPlayersMepleCount());// players
+            view.displayPlayerInfoBoxes(model.getActivePlayer(), model.getMaxPlayers(), model.getPlayersMeepleCount());// players
                                                                                                                       // maple
                                                                                                                       // count
 
@@ -58,19 +58,19 @@ public class GameController {
         }
     }
 
-    public void placeMeple(int direction) {
-        model.placeMeple(direction);
+    public void placeMeeple(int direction) {
+        model.placeMeeple(direction);
     }
 
     public void placeTile(int x, int y) {
-        System.out.println(Arrays.toString(model.getPlayersMepleCount()));
+        System.out.println(Arrays.toString(model.getPlayersMeepleCount()));
 
         // enable panning of grid if it was previously disabled due to no tiles being
         // placed
         view.updateScrollingState(true);
 
         Tile tile = model.getCurrentTile();
-        Meple meple = tile.getMeple();
+        Meeple meple = tile.getMeeple();
         model.placeTile(
                 x, y,
                 view.createPane(
@@ -94,9 +94,9 @@ public class GameController {
         Tile currentTile = model.getCurrentTile();
         // display the next tile image
         view.displayCurrentTile(currentTile.getOrientation(), currentTile.getType(), model.getActivePlayer(),
-                (model.getPlayersMepleCount()[model.getActivePlayer()]) != 0);
+                (model.getPlayersMeepleCount()[model.getActivePlayer()]) != 0);
         // redraw player info boxes to update scores and current player
-        view.displayPlayerInfoBoxes(model.getActivePlayer(), model.getMaxPlayers(), model.getPlayersMepleCount());
+        view.displayPlayerInfoBoxes(model.getActivePlayer(), model.getMaxPlayers(), model.getPlayersMeepleCount());
 
         // Update scroll constraints based on new tile placement
         Spot min = model.getMin();
@@ -125,7 +125,7 @@ public class GameController {
         Tile currentTile = model.getCurrentTile();
         // display the next tile image
         view.displayCurrentTile(currentTile.getOrientation(), currentTile.getType(), model.getActivePlayer(),
-                (model.getPlayersMepleCount()[model.getActivePlayer()]) != 0);
+                (model.getPlayersMeepleCount()[model.getActivePlayer()]) != 0);
         //
         // // redraw player info boxes to update scores and current player
         // view.renderPlayerInfoBoxes(getCurrentPlayingPlayer(),
@@ -198,7 +198,7 @@ public class GameController {
                 if (tile != null) {
                     newPane = tile.getPane();
                     if (newPane == null) {
-                        Meple meple = tile.getMeple();
+                        Meeple meple = tile.getMeeple();
                         tile.setPane(view.createPane(
                                 xTest, yTest,
                                 tile.getOrientation(),

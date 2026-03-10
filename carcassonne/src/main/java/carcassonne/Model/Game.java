@@ -65,16 +65,16 @@ public class Game implements Serializable {
         players = new Player[length];
         for (int i = 0; i < players.length; i++) {
             players[i] = new Player();
-            players[i].initMeple(i);
+            players[i].initMeeple(i);
         }
     }
 
-    public int[] getPlayersMepleCount() {
+    public int[] getPlayersMeepleCount() {
         int[] meples = new int[players.length];
         // Initialize each player with the starting number of meeples (e.g., 7 or 8)
         for (int i = 0; i < players.length; i++) {
             if (players[i] != null)
-                meples[i] = players[i].getMepleCount();
+                meples[i] = players[i].getMeepleCount();
             else
                 meples[i] = 0;
         }
@@ -132,7 +132,7 @@ public class Game implements Serializable {
 
     public void rotateMeeple() {
         Tile tile = getCurrentTile();
-        Meple meple = tile.getMeple();
+        Meeple meple = tile.getMeeple();
         if (meple == null)
             return;
         int position = meple.getPosition();
@@ -143,25 +143,25 @@ public class Game implements Serializable {
         meple.setPosition(position);
     }
 
-    public void placeMeple(int direction) {
+    public void placeMeeple(int direction) {
         Tile tile = getCurrentTile();
-        Meple meple = tile.getMeple();
+        Meeple meple = tile.getMeeple();
         if (meple == null) {
             if (direction == -1) {
                 return;
             }
-            meple = players[getActivePlayer()].placeMeple();
+            meple = players[getActivePlayer()].placeMeeple();
             if (meple == null) {
                 return;
             }
         }
         if (direction == -1) {
-            players[getActivePlayer()].addMeple(meple);
-            tile.setMeple(null);
+            players[getActivePlayer()].addMeeple(meple);
+            tile.setMeeple(null);
             return;
         }
         meple.setPosition(direction);
-        tile.setMeple(meple);
+        tile.setMeeple(meple);
     }
 
     public void rotateTile(boolean right) {
