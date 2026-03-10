@@ -6,6 +6,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Bounds;
 import javafx.geometry.Pos;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
@@ -87,6 +88,9 @@ public class GameView extends View {
     @FXML
     public VBox playerUiBox;
 
+    @FXML
+    public Button quitButton;
+
     @Override
     protected void onAfterStageAvailable() {
         controller.setView(this);
@@ -126,6 +130,8 @@ public class GameView extends View {
     @FXML
     public void onQuit(ActionEvent actionEvent) {
         try {
+            // Save game state
+            controller.saveGame();
             // show main view via MainApp
             carcassonne.App.getInstance().showScene("/StartView.fxml");
         } catch (Exception e) {

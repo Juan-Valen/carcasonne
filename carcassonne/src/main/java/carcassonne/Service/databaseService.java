@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.sql.Date;
 import java.time.LocalDate;
 
-import carcassonne.Model.GameState;
+import carcassonne.Model.GameInfo;
 import carcassonne.Model.User;
 import carcassonne.Model.Game;
 
@@ -58,8 +58,8 @@ public class databaseService {
         return new User(user_id, username);
     }
 
-    public ArrayList<GameState> getSavedGames(User user) {
-        ArrayList<GameState> savedGames = new ArrayList<>();
+    public ArrayList<GameInfo> getSavedGamesInfo(User user) {
+        ArrayList<GameInfo> savedGames = new ArrayList<>();
 
         String sql = "SELECT s.game_id, g.online, g.updated_date " +
                 "FROM saves s JOIN games g ON s.game_id = g.game_id " +
@@ -72,11 +72,11 @@ public class databaseService {
 
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
-                    GameState gameState = new GameState();
-                    gameState.id = rs.getInt("game_id");
-                    gameState.online = rs.getBoolean("online");
-                    gameState.updatedDate = rs.getDate("updated_date");
-                    savedGames.add(gameState);
+                    GameInfo gameInfo = new GameInfo();
+                    gameInfo.id = rs.getInt("game_id");
+                    gameInfo.online = rs.getBoolean("online");
+                    gameInfo.updatedDate = rs.getDate("updated_date");
+                    savedGames.add(gameInfo);
                 }
             }
         } catch (SQLException e) {

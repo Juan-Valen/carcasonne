@@ -43,17 +43,19 @@ public class GameController {
             // Update the player info boxes in the view based on the current player count
             // and meeple counts
 
-            view.displayPlayerInfoBoxes(model.getActivePlayer(), model.getMaxPlayers(), model.getPlayersMepleCount());// players
-                                                                                                                      // maple
-                                                                                                                      // count
-
-            // missing
+            view.displayPlayerInfoBoxes(model.getActivePlayer(), model.getMaxPlayers(), model.getPlayersMepleCount());
             // Initialize the grid in the view
             view.initGrid();
             // Listen for scroll changes to update visible cells
             view.addScrollListeners();
             // Update scroll constraints based on initial tile placements (if any)
             renderVisibleTiles(view.getVisibleBounds());
+
+            if (currentUser != null) {
+                view.quitButton.setText("Save & Quit");
+            } else {
+                view.quitButton.setText("Quit");
+            }
         }
     }
 
@@ -248,7 +250,21 @@ public class GameController {
         return currentUser;
     }
 
-    public ArrayList<GameState> getSavedGamesInfo() {
-        return databaseService.getInstance().getSavedGames(getCurrentUser());
+    public ArrayList<GameInfo> getSavedGamesInfo() {
+        return databaseService.getInstance().getSavedGamesInfo(getCurrentUser());
+    }
+
+    public void saveGame() {
+        if (currentUser != null) {
+            databaseService.getInstance().setSavedGames(currentUser, false, model);
+        }
+    }
+
+    public void loadGame(int gameId) {
+        Game gameState = databaseService.getInstance().getGameState(gameId);
+        if (gameState != null) {
+            this.model = gameState;
+            initView();
+        }
     }
 }

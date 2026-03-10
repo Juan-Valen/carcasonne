@@ -1,14 +1,13 @@
 package carcassonne.View;
 
 import carcassonne.Controller.GameController;
-import carcassonne.Model.GameState;
+import carcassonne.Model.GameInfo;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
-import java.io.IOException;
 import java.util.ArrayList;
 
 public class GameHistoryView extends  View {
@@ -46,12 +45,12 @@ public class GameHistoryView extends  View {
         System.out.println("Rendering saved games...");
 
         // Get saved games from GameController
-        ArrayList<GameState> savedGames = gameController.getSavedGamesInfo();
+        ArrayList<GameInfo> savedGames = gameController.getSavedGamesInfo();
         System.out.println("Found " + (savedGames != null ? savedGames.size() : 0) + " saved games.");
 
         // Render each saved game as a button
         if (savedGames != null) {
-            for (GameState savedGame : savedGames) {
+            for (GameInfo savedGame : savedGames) {
                 HBox gameEntry = new HBox();
                 Label idLabel = new Label("Game ID: " + savedGame.id);
                 Label dateLabel = new Label(savedGame.updatedDate.toString());
@@ -60,8 +59,9 @@ public class GameHistoryView extends  View {
                 gameEntry.setOnMouseClicked(event -> {
                     try {
                         // Load the selected game and show the GameView
-//                    gameController.loadGame(savedGame.id);
+                        gameController.loadGame(savedGame.id);
                         carcassonne.App.getInstance().showScene("/GameView.fxml");
+
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
