@@ -20,7 +20,7 @@
               <children>
                   <Button mnemonicParsing="false" onAction="#openSecondary" text="Open Secondary" AnchorPane.bottomAnchor="30.0" AnchorPane.rightAnchor="30.0" />
                   <Button mnemonicParsing="false" onAction="#rotateCurrentTile" text="Rotate Tile" AnchorPane.rightAnchor="30.0" AnchorPane.topAnchor="30.0" />
-                  <Button mnemonicParsing="false" text="Button" AnchorPane.bottomAnchor="30.0" AnchorPane.leftAnchor="30.0" />
+                  <Button mnemonicParsing="false" onAction="#onQuit" text="Save &amp; Quit" AnchorPane.bottomAnchor="30.0" AnchorPane.leftAnchor="30.0" />
               </children>
            </AnchorPane>
        </VBox>
