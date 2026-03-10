@@ -38,7 +38,8 @@ public class GameController {
         // Initialize the view with the current game state
         if (view != null) {
             Tile tile = model.getCurrentTile();
-            view.displayCurrentTile(tile.getOrientation(), tile.getType(), model.getActivePlayer(), (model.getPlayersMepleCount()[model.getActivePlayer()]) != 0);
+            view.displayCurrentTile(tile.getOrientation(), tile.getType(), model.getActivePlayer(),
+                    (model.getPlayersMepleCount()[model.getActivePlayer()]) != 0);
             // view.renderPlayer();
             // Update the player info boxes in the view based on the current player count
             // and meeple counts
@@ -94,7 +95,8 @@ public class GameController {
         // // }
         Tile currentTile = model.getCurrentTile();
         // display the next tile image
-        view.displayCurrentTile(currentTile.getOrientation(), currentTile.getType(), model.getActivePlayer(), (model.getPlayersMepleCount()[model.getActivePlayer()]) != 0);
+        view.displayCurrentTile(currentTile.getOrientation(), currentTile.getType(), model.getActivePlayer(),
+                (model.getPlayersMepleCount()[model.getActivePlayer()]) != 0);
         // redraw player info boxes to update scores and current player
         view.displayPlayerInfoBoxes(model.getActivePlayer(), model.getMaxPlayers(), model.getPlayersMepleCount());
 
@@ -124,7 +126,8 @@ public class GameController {
 
         Tile currentTile = model.getCurrentTile();
         // display the next tile image
-        view.displayCurrentTile(currentTile.getOrientation(), currentTile.getType(), model.getActivePlayer(), (model.getPlayersMepleCount()[model.getActivePlayer()]) != 0);
+        view.displayCurrentTile(currentTile.getOrientation(), currentTile.getType(), model.getActivePlayer(),
+                (model.getPlayersMepleCount()[model.getActivePlayer()]) != 0);
         //
         // // redraw player info boxes to update scores and current player
         // view.renderPlayerInfoBoxes(getCurrentPlayingPlayer(),
@@ -196,6 +199,15 @@ public class GameController {
 
                 if (tile != null) {
                     newPane = tile.getPane();
+                    if (newPane == null) {
+                        Meple meple = tile.getMeple();
+                        tile.setPane(view.createPane(
+                                xTest, yTest,
+                                tile.getOrientation(),
+                                tile.getType(),
+                                meple == null ? -1 : meple.getPosition(),
+                                meple == null ? -1 : meple.getPlayerIndex()));
+                    }
                 } else if (model.getAvailableSpots().contains(new Spot(xTest, yTest))) {
                     newPane = view.createPane(xTest, yTest, true);
                 } else {

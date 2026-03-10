@@ -59,9 +59,8 @@ public class GameHistoryView extends  View {
                 gameEntry.setOnMouseClicked(event -> {
                     try {
                         // Load the selected game and show the GameView
-                        gameController.loadGame(savedGame.id);
-                        carcassonne.App.getInstance().showScene("/GameView.fxml");
-
+//                    gameController.loadGame(savedGame.id);
+                        carcassonne.App.getInstance().showScene("/Carcassonne UI.fxml");
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
