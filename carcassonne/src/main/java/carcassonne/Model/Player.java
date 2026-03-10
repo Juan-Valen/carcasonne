@@ -3,10 +3,7 @@ package carcassonne.Model;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-import carcassonne.DataType.Color;
-
 public class Player implements Serializable {
-    private Color color;
     private User user;
     private int points;
     private ArrayList<Meple> meples;
@@ -24,10 +21,6 @@ public class Player implements Serializable {
         this.user = user;
         this.points = 0;
         initMeple(index);
-    }
-
-    public Color getColor() {
-        return color;
     }
 
     public User getUser() {
