@@ -3,7 +3,7 @@ services:
     image: postgres:18-alpine
     container_name: carcassonne_db
     environment:
-      - POSTGRES_PASSWORD=mySecretPassword
+      - POSTGRES_PASSWORD=mysecretpassword
     volumes:
       - ./config/init.sql:/docker-entrypoint-initdb.d/init.sql
     ports:
@@ -13,7 +13,6 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-
   app:
     build:
       context: .
@@ -24,9 +23,6 @@ services:
         condition: service_healthy
     environment:
       - DISPLAY=${DISPLAY}
-      - DB_URL=jdbc:postgresql://db:5432/carcassonne
-      - DB_USERNAME=postgres
-      - DB_PASSWORD=mysecretpassword
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix
     network_mode: host # Allows connection to local X server
