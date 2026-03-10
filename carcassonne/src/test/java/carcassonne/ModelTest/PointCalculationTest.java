@@ -1,45 +1,66 @@
 package carcassonne.ModelTest;
 
+import carcassonne.DataType.TileSide;
 import carcassonne.Model.Board;
 import carcassonne.Model.RoadPoints;
-import carcassonne.Model.Spot;
 import carcassonne.Model.Tile;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import java.util.Map;
+
 public class PointCalculationTest {
+    private static Map<Character, TileSide[]> tiles;
+    @BeforeAll
+    static void initAll() {
+        tiles = Map.ofEntries(
+                Map.entry('A', new TileSide[]{TileSide.FIELD, TileSide.FIELD, TileSide.ROAD, TileSide.FIELD}),
+                Map.entry('B', new TileSide[]{TileSide.FIELD, TileSide.FIELD, TileSide.FIELD, TileSide.FIELD}),
+                Map.entry('C', new TileSide[]{TileSide.CITY, TileSide.CITY, TileSide.CITY, TileSide.CITY}),
+                Map.entry('D', new TileSide[]{TileSide.CITY, TileSide.ROAD, TileSide.FIELD, TileSide.ROAD}),
+                Map.entry('E', new TileSide[]{TileSide.CITY, TileSide.FIELD, TileSide.FIELD, TileSide.FIELD}),
+                Map.entry('F', new TileSide[]{TileSide.FIELD, TileSide.CITY, TileSide.FIELD, TileSide.CITY}),
+                Map.entry('G', new TileSide[]{TileSide.FIELD, TileSide.CITY, TileSide.FIELD, TileSide.CITY}),
+                Map.entry('H', new TileSide[]{TileSide.CITY, TileSide.FIELD, TileSide.CITY, TileSide.FIELD}),
+                Map.entry('I', new TileSide[]{TileSide.CITY, TileSide.CITY, TileSide.FIELD, TileSide.FIELD}),
+                Map.entry('J', new TileSide[]{TileSide.CITY, TileSide.ROAD, TileSide.ROAD, TileSide.FIELD}),
+                Map.entry('K', new TileSide[]{TileSide.CITY, TileSide.FIELD, TileSide.ROAD, TileSide.ROAD}),
+                Map.entry('L', new TileSide[]{TileSide.CITY, TileSide.ROAD, TileSide.ROAD, TileSide.ROAD}),
+                Map.entry('M', new TileSide[]{TileSide.CITY, TileSide.CITY, TileSide.FIELD, TileSide.FIELD}),
+                Map.entry('N', new TileSide[]{TileSide.CITY, TileSide.CITY, TileSide.FIELD, TileSide.FIELD}),
+                Map.entry('O', new TileSide[]{TileSide.CITY, TileSide.ROAD, TileSide.ROAD, TileSide.CITY}),
+                Map.entry('P', new TileSide[]{TileSide.CITY, TileSide.ROAD, TileSide.ROAD, TileSide.CITY}),
+                Map.entry('Q', new TileSide[]{TileSide.CITY, TileSide.CITY, TileSide.FIELD, TileSide.CITY}),
+                Map.entry('R', new TileSide[]{TileSide.CITY, TileSide.CITY, TileSide.FIELD, TileSide.CITY}),
+                Map.entry('S', new TileSide[]{TileSide.CITY, TileSide.CITY, TileSide.ROAD, TileSide.CITY}),
+                Map.entry('T', new TileSide[]{TileSide.CITY, TileSide.CITY, TileSide.ROAD, TileSide.CITY}),
+                Map.entry('U', new TileSide[]{TileSide.ROAD, TileSide.FIELD, TileSide.ROAD, TileSide.FIELD}),
+                Map.entry('V', new TileSide[]{TileSide.FIELD, TileSide.FIELD, TileSide.ROAD, TileSide.ROAD}),
+                Map.entry('W', new TileSide[]{TileSide.FIELD, TileSide.ROAD, TileSide.ROAD, TileSide.ROAD}),
+                Map.entry('X', new TileSide[]{TileSide.ROAD, TileSide.ROAD, TileSide.ROAD, TileSide.ROAD}));
+    }
 
     @Test
     public void roadPointCalculationTest() {
 
-        // Road tile: road on east and west
-        Tile roadTile = new Tile('U', new int[]{1, 0, 1, 0},1);
-        Tile villageTile = new Tile('X', new int[]{1, 1, 1, 1});
+        Tile roadTileEW = new Tile('U', tiles.get('U'),1);
+        Tile village = new Tile('X', tiles.get('X'));
 
         Board board = new Board();
 
-        // Create and place 4 connected road tiles horizontally
-        Spot s1 = board.getSpot(70, 70);
-        Spot s2 = board.getSpot(71, 70);
-        Spot s3 = board.getSpot(72, 70);
-        Spot s4 = board.getSpot(73, 70);
+        board.updateSpots(70, 70,village);
+        board.updateSpots(71, 70,roadTileEW);
+        board.updateSpots(72,70,roadTileEW);
+        board.updateSpots(73,70,village);
 
-        s1.setTile(villageTile);
-        s2.setTile(roadTile);
-        s3.setTile(roadTile);
-        s4.setTile(villageTile);
+        RoadPoints rp = new RoadPoints(board);
 
-        board.updateSpots(s1);
-        board.updateSpots(s2);
-        board.updateSpots(s3);
-        board.updateSpots(s4);
+        int points = rp.calculateRoadPoints(70, 70, 1); // EAST side of start
 
-        RoadPoints roadPoints = new RoadPoints(board);
-
-        int points = roadPoints.calculateRoadPoints(s1, 1); // start at s1 east side
-
-        Assertions.assertEquals(4, points, "Road should consist of 4 tiles");
+        Assertions.assertEquals(4, points);
     }
+
 
     @Test
     public void roadWithTurnAndVillageEndsTest() {
@@ -47,173 +68,145 @@ public class PointCalculationTest {
         Board board = new Board();
 
         // --- Tile definitions ---
-        Tile village3Top = new Tile('W', new int[]{1, 1, 0, 1}); // N,E,W roads
-        Tile straight = new Tile('U', new int[]{1, 0, 1, 0},1); // E-W straight
-        Tile turn = new Tile('V', new int[]{0, 1, 1, 0},2); // W -> S
-        Tile straightSouth = new Tile('U', new int[]{1, 0, 1, 0}); // N-S straight
-        Tile village3Bottom = new Tile('W', new int[]{1, 1, 0, 1},1);
 
-        // --- Place spots ---
-        Spot s1 = board.getSpot(70, 70); // top village
-        Spot s2 = board.getSpot(71, 70); // straight
-        Spot s3 = board.getSpot(72, 70); // turn
-        Spot s4 = board.getSpot(72, 69); // straight down
-        Spot s5 = board.getSpot(72, 68); // bottom village
+        // Village tile W (roads N/E/W)
+        Tile villageTop = new Tile('W', tiles.get('W'));
+        Tile villageBottom = new Tile('W', tiles.get('W'));
 
-        // Assign tiles
-        s1.setTile(village3Top);
-        s2.setTile(straight);
-        s3.setTile(turn);
-        s4.setTile(straightSouth);
-        s5.setTile(village3Bottom);
+        Tile straightEW = new Tile('U', tiles.get('U'),1);
 
-        // Update board spots
-        board.updateSpots(s1);
-        board.updateSpots(s2);
-        board.updateSpots(s3);
-        board.updateSpots(s4);
-        board.updateSpots(s5);
+        // Turn tile V (base shape: connects S→E)
+        Tile turn = new Tile('V', tiles.get('V'));
+        // To get E→S, rotate once
+        turn.rotateTile();
+
+        // Straight NORTH-SOUTH = U tile rotated twice
+        Tile straightNS = new Tile('U', tiles.get('U'));
+        straightNS.rotateTile();
+        straightNS.rotateTile();
+
+        // --- Place tiles using new updateSpots ---
+        board.updateSpots(70, 70, villageTop);     // top village
+        board.updateSpots(71, 70, straightEW);     // east-west
+        board.updateSpots(72, 70, turn);           // turn down
+        board.updateSpots(72, 69, straightNS);     // vertical road down
+        board.updateSpots(72, 68, villageBottom);  // bottom village
 
         RoadPoints roadPoints = new RoadPoints(board);
 
-        // Start scoring at top village, going EAST (side 1)
-        int points = roadPoints.calculateRoadPoints(s1, 1);
+        // Start scoring at top village tile, EAST side
+        int points = roadPoints.calculateRoadPoints(70, 70, 1);
 
-        // We placed 5 road tiles → score = 5
-        Assertions.assertEquals(5, points, "Road with 90° turn and two 3-road villages should be 5 tiles long");
+        Assertions.assertEquals(
+                5,
+                points,
+                "Road with 90° turn and two 3-road villages should be 5 tiles long"
+        );
     }
     @Test
     public void roadWithTurnAndSurroundingNonRoadTilesTest() {
 
         Board board = new Board();
 
-        // --- Tile definitions ----
-        Tile village3Top = new Tile('W', new int[]{1, 1, 0, 1});  // roads N,E,W
-        Tile straightEW  = new Tile('U', new int[]{1, 0, 1, 0}, 1); // EW straight
-        Tile turnEN      = new Tile('V', new int[]{0, 1, 1, 0}, 2); // E -> N
-        Tile straightNS  = new Tile('U', new int[]{1, 0, 1, 0}); // NS straight
-        Tile village3Bot = new Tile('W', new int[]{1, 1, 0, 1}, 1);
+        // --- Correct tile definitions ---
+        Tile villageTop = new Tile('W', tiles.get('W'));
+        Tile villageBottom = new Tile('W', tiles.get('W'));
 
-        // Non-road tiles (grass / city)
-        Tile grassTile = new Tile('G', new int[]{0,0,0,0});
-        Tile cityTile  = new Tile('C', new int[]{2,2,2,2});
+        // Straight east-west: U tile rotated once
+        Tile straightEW = new Tile('U', tiles.get('U'));
+        straightEW.rotateTile(); // EW
 
-        // --- Road tile positions ---
-        Spot s1 = board.getSpot(70, 70);
-        Spot s2 = board.getSpot(71, 70);
-        Spot s3 = board.getSpot(72, 70);
-        Spot s4 = board.getSpot(72, 69);
-        Spot s5 = board.getSpot(72, 68);
+        // Turn V: base connects S→E, rotate once to get E→S
+        Tile turnEN = new Tile('V', tiles.get('V'));
+        turnEN.rotateTile(); // E → S
 
-        s1.setTile(village3Top);
-        s2.setTile(straightEW);
-        s3.setTile(turnEN);
-        s4.setTile(straightNS);
-        s5.setTile(village3Bot);
+        // Straight north-south: rotate EW twice
+        Tile straightNS = new Tile('U', tiles.get('U'));
+        straightNS.rotateTile();
+        straightNS.rotateTile();
 
-        // --- Surrounding tiles ---
-        // Left of start
-        Spot g1 = board.getSpot(69, 70);
-        g1.setTile(grassTile);
+        // Non-road filler tiles
+        Tile grassTile = new Tile('G', new TileSide[]{
+                TileSide.FIELD, TileSide.FIELD, TileSide.FIELD, TileSide.FIELD
+        });
+        Tile cityTile = new Tile('C', new TileSide[]{
+                TileSide.CITY, TileSide.CITY, TileSide.CITY, TileSide.CITY
+        });
 
-        // Above the turn
-        Spot g2 = board.getSpot(72, 67);
-        g2.setTile(cityTile);
+        // --- Place road path tiles ---
+        board.updateSpots(70, 70, villageTop);
+        board.updateSpots(71, 70, straightEW);
+        board.updateSpots(72, 70, turnEN);
+        board.updateSpots(72, 69, straightNS);
+        board.updateSpots(72, 68, villageBottom);
 
-        // Right of the turn
-        Spot g3 = board.getSpot(73, 70);
-        g3.setTile(grassTile);
+        // --- Surrounding filler tiles ---
+        board.updateSpots(69, 70, grassTile); // left of start
+        board.updateSpots(72, 67, cityTile);  // above the downward road
+        board.updateSpots(73, 70, grassTile); // right of turn
+        board.updateSpots(71, 68, cityTile);  // left of bottom village
 
-        // Left of bottom village
-        Spot g4 = board.getSpot(71, 68);
-        g4.setTile(cityTile);
+        RoadPoints rp = new RoadPoints(board);
 
-
-        // --- Update board spots ---
-        board.updateSpots(s1);
-        board.updateSpots(s2);
-        board.updateSpots(s3);
-        board.updateSpots(s4);
-        board.updateSpots(s5);
-
-        board.updateSpots(g1);
-        board.updateSpots(g2);
-        board.updateSpots(g3);
-        board.updateSpots(g4);
-
-        RoadPoints roadPoints = new RoadPoints(board);
-
-        // Start at top village, road going EAST = side 1
-        int points = roadPoints.calculateRoadPoints(s1, 1);
+        int points = rp.calculateRoadPoints(70, 70, 1); // EAST
 
         Assertions.assertEquals(
                 5,
                 points,
-                "Road with 90° turn and village ends should score 5 even with non-road tiles around."
+                "Road with 90° turn and village ends should be 5 tiles long."
         );
     }
     @Test
     public void shortRoadTest() {
+
         Board board = new Board();
-        Tile village3Top = new Tile('W', new int[]{1, 1, 0, 1});
 
-        Spot s1 = board.getSpot(70, 70);
-        Spot s2 = board.getSpot(71, 70);
+        Tile village = new Tile('W', tiles.get('W'));
 
-        s1.setTile(village3Top);
-        s2.setTile(village3Top);
+        board.updateSpots(70, 70, village);
+        board.updateSpots(71, 70, village);
+        board.updateSpots(72, 70, village);
 
-        board.updateSpots(s1);
-        board.updateSpots(s2);
-        RoadPoints roadPoints = new RoadPoints(board);
-        int points = roadPoints.calculateRoadPoints(s1, 1);
+        RoadPoints rp = new RoadPoints(board);
 
-        Assertions.assertEquals(2,points,"Short road with 2 villages next to each other.");
+        int points = rp.calculateRoadPoints(70, 70, 1);
+
+        Assertions.assertEquals(
+                2,
+                points,
+                "Short road with two villages should return 2."
+        );
     }
+
     @Test
     public void fourTileRoadLoopTest() {
 
         Board board = new Board();
 
-        // Base turn tile (N, E, S, W) = road, road, grass, grass
-        int[] turn = {0, 1, 1, 0};
+        TileSide[] baseTurn = tiles.get('V');
 
-        // Create 4 turn tiles with correct rotations
-        Tile t1 = new Tile('V', turn.clone(), 0); // connects N→E
-        Tile t2 = new Tile('V', turn.clone(), 3); // connects E→S
-        Tile t3 = new Tile('V', turn.clone(), 2); // connects S→W
-        Tile t4 = new Tile('V', turn.clone(), 1); // connects W→N
+        Tile t1 = new Tile('V', baseTurn,3); // original orientation: S → E
+        Tile t2 = new Tile('V', baseTurn);              // E → S
+        Tile t3 = new Tile('V', baseTurn, 1); // S → W
+        Tile t4 = new Tile('V', baseTurn,2);  // W → N
 
-        // Layout:
-        // (70,70) t1
-        // (71,70) t2
-        // (71,71) t3
-        // (70,71) t4
+        // Loop layout:
+        //  t1 → t2
+        //   ↑     ↓
+        //  t4 ← t3
+        board.updateSpots(70, 70, t1);
+        board.updateSpots(71, 70, t2);
+        board.updateSpots(71, 71, t3);
+        board.updateSpots(70, 71, t4);
 
-        Spot s1 = board.getSpot(70, 70);
-        Spot s2 = board.getSpot(71, 70);
-        Spot s3 = board.getSpot(71, 71);
-        Spot s4 = board.getSpot(70, 71);
+        RoadPoints rp = new RoadPoints(board);
 
-        s1.setTile(t1);
-        s2.setTile(t2);
-        s3.setTile(t3);
-        s4.setTile(t4);
-
-        board.updateSpots(s1);
-        board.updateSpots(s2);
-        board.updateSpots(s3);
-        board.updateSpots(s4);
-
-        RoadPoints roadPoints = new RoadPoints(board);
-
-        // Start at tile (70,70) going EAST
-        int points = roadPoints.calculateRoadPoints(s1, 1);
+        int points = rp.calculateRoadPoints(70, 70, 1); // EAST
 
         Assertions.assertEquals(
                 4,
                 points,
-                "A 4-tile closed road loop should score 4 points."
+                "A 4‑tile closed loop should return 4 points."
         );
     }
 }

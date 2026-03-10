@@ -69,11 +69,7 @@ public class RoadPoints implements Serializable {
             }
 
             if (neighbor == null) {
-
-                if (!isRoadEnd(tile)) {
-                    complete = false;
-                }
-
+                complete = false;
                 continue;
             }
 
