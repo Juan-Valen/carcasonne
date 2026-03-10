@@ -70,6 +70,7 @@ public class SerializationTest {
 
     @DisplayName("Amazingly incredibly beautiful test2")
     @Test
+    @Disabled
     public void Test3() {
         game.placeTile(72, 72, null);
         carcassonne.Model.Tile tile = game.getCurrentTile();

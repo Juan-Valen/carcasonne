@@ -2,51 +2,52 @@ package carcassonne.ModelTest;
 
 import carcassonne.DataType.TileSide;
 import carcassonne.Model.Tile;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 public class TileTest {
-    Tile tile = new Tile('Z', new TileSide[]{TileSide.FIELD, TileSide.ROAD, TileSide.CITY, TileSide.RIVER});
 
-    @DisplayName("Test getSideType")
-    @ParameterizedTest(name = "The tile side {0} is {1}")
-    @CsvSource({ "0, 1", "2, 3", "3, 4" })
-    public void testGetSideType(int input, int expectedOutput)
-    {
-        assertEquals(expectedOutput, tile.getSideType(input), "Wrong side for " + expectedOutput);
-    }
-
-    @DisplayName("test SideOutOfRange")
-    @ParameterizedTest(name = "The tile side {0} should throw exception")
-    @CsvSource({ "-1", "5", "10000" })
-    public void testSideOutOfRange(int input)
-    {
-        IndexOutOfBoundsException exception = assertThrows(IndexOutOfBoundsException.class, () -> tile.getSideType(input));
-        assertEquals("Side must be in range 0 to 3", exception.getMessage());
-    }
-
-    @DisplayName("Test tile rotation")
     @Test
-    public void testRotateTile()
-    {
+    @DisplayName("Verify correct orientation and side mapping")
+    void testRotationAndSideMapping() {
+        // Order: North, East, South, West
+        TileSide[] sides = { TileSide.CITY, TileSide.ROAD, TileSide.FIELD, TileSide.RIVER };
+        Tile tile = new Tile('C', sides, 0);
+
+        // Initial check
+        assertEquals(TileSide.CITY, tile.getSideType(0));
+        assertEquals(TileSide.ROAD, tile.getSideType(1));
+
+        // Rotate 90 degrees clockwise
         tile.rotateTile();
-        assertEquals(2,tile.getSideType(0), "Wrong rotation");
-        tile.rotateTile();
-        tile.rotateTile();
-        assertEquals(4,tile.getSideType(0), "Wrong rotation");
+        assertEquals(3, tile.getOrientation());
+
+        // After 90° rotation, side 0 (North) should now be the original side 3 (West)
+        // (0 + 3) % 4 = 3
+        assertEquals(TileSide.RIVER, tile.getSideType(0));
+        assertEquals(TileSide.CITY, tile.getSideType(1));
     }
 
-    @DisplayName("Test gets")
     @Test
-    public void testGets()
-    {
-        tile = new Tile('Z', new TileSide[]{TileSide.FIELD, TileSide.ROAD, TileSide.CITY, TileSide.RIVER});
-        assertEquals(0, tile.getOrientation(), "Wrong orientation");
-        assertEquals(0, tile.getType(), "Wrong type");
+    @DisplayName("Verify bonus point logic based on type")
+    void testBonusPointLogic() {
+        TileSide[] sides = { TileSide.FIELD, TileSide.FIELD, TileSide.FIELD, TileSide.FIELD };
+
+        Tile bonusTile = new Tile('C', sides);
+        assertTrue(bonusTile.getBonusPoint(), "Type 'C' should have bonus points");
+
+        Tile noBonusTile = new Tile('X', sides);
+        assertFalse(noBonusTile.getBonusPoint(), "Type 'X' should not have bonus points");
     }
 
+    @Test
+    @DisplayName("Verify side index out of bounds")
+    void testOutOfBounds() {
+        TileSide[] sides = { TileSide.FIELD, TileSide.FIELD, TileSide.FIELD, TileSide.FIELD };
+        Tile tile = new Tile('F', sides);
+
+        assertThrows(IndexOutOfBoundsException.class, () -> tile.getSideType(4));
+    }
 }

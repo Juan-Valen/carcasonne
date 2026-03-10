@@ -1,33 +1,60 @@
 package carcassonne.ModelTest;
 
-import carcassonne.DataType.Color;
-import carcassonne.Model.Player;
-
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
+
+import carcassonne.Model.Meeple;
+import carcassonne.Model.Player;
+import carcassonne.Model.User;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class PlayerTest {
-    Player player = new Player();
 
-    @DisplayName("Test gets")
     @Test
-    public void testGets() {
-        assertEquals("user", player.getUser(), "Wrong user");
-        assertEquals(0, player.getPoints(), "Wrong amount of points");
+    @DisplayName("Test Player point tracking and validation")
+    void testPoints() {
+        User user = new User(1, "TestUser");
+        Player player = new Player(user);
+
+        player.addPoints(10);
+        assertEquals(10, player.getPoints());
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            player.addPoints(-5);
+        }, "Should throw exception when adding negative points");
     }
 
-    @DisplayName("Test addPoints")
-    @ParameterizedTest(name = "Adds {0} and {1} and expects there sum")
-    @CsvSource({ "100, 250", "500, 700", "255, 145" })
-    public void testAddPoints(int input1, int input2) {
-        player.addPoints(input1);
-        assertEquals(input1, player.getPoints(), "Incorrect number of points");
-        player.addPoints(input2);
-        assertEquals(input1 + input2, player.getPoints(), "Incorrect number of points");
+    @Test
+    @DisplayName("Test Meeple initialization and placement")
+    void testMeepleManagement() {
+        User user = new User(1, "TestUser");
+        // Initialize with 5 meeples
+        Player player = new Player(user, 1);
+
+        assertEquals(5, player.getMeepleCount());
+
+        // Place one meple
+        Meeple placed = player.placeMeeple();
+        assertNotNull(placed);
+        assertEquals(4, player.getMeepleCount());
+
+        // Exhaust supply
+        player.placeMeeple();
+        player.placeMeeple();
+        player.placeMeeple();
+        player.placeMeeple();
+
+        assertEquals(0, player.getMeepleCount());
+        assertNull(player.placeMeeple(), "Should return null when no meeples are left");
     }
 
+    @Test
+    @DisplayName("Test adding a Meeple manually")
+    void testAddMeeple() {
+        Player player = new Player(new User(1, "TestUser"));
+        player.addMeeple(new Meeple(1));
+
+        assertEquals(1, player.getMeepleCount());
+    }
 }
