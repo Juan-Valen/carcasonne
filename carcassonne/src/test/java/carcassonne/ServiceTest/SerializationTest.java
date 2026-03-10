@@ -1,7 +1,7 @@
 package carcassonne.ServiceTest;
 
 import carcassonne.Model.Game;
-import carcassonne.Model.GameState;
+import carcassonne.Model.GameInfo;
 import carcassonne.Model.User;
 import carcassonne.Service.databaseService;
 
@@ -79,7 +79,7 @@ public class SerializationTest {
         User user = new User(1, "test");
         databaseService dbs = databaseService.getInstance();
         dbs.setSavedGames(user, false, game);
-        ArrayList<GameState> gs = dbs.getSavedGames(user);
+        ArrayList<GameInfo> gs = dbs.getSavedGamesInfo(user);
 
         Game retrievedGame = dbs.getGameState(gs.get(0).id);
 

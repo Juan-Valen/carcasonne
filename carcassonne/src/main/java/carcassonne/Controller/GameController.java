@@ -45,8 +45,6 @@ public class GameController {
             // and meeple counts
 
             view.displayPlayerInfoBoxes(model.getActivePlayer(), model.getMaxPlayers(), model.getPlayersMeepleCount());// players
-                                                                                                                      // maple
-                                                                                                                      // count
 
             // missing
             // Initialize the grid in the view
@@ -55,6 +53,12 @@ public class GameController {
             view.addScrollListeners();
             // Update scroll constraints based on initial tile placements (if any)
             renderVisibleTiles(view.getVisibleBounds());
+
+            if (currentUser != null) {
+                view.quitButton.setText("Save & Quit");
+            } else {
+                view.quitButton.setText("Quit");
+            }
         }
     }
 
@@ -199,12 +203,13 @@ public class GameController {
                     newPane = tile.getPane();
                     if (newPane == null) {
                         Meeple meple = tile.getMeeple();
-                        tile.setPane(view.createPane(
+                        newPane = view.createPane(
                                 xTest, yTest,
                                 tile.getOrientation(),
                                 tile.getType(),
                                 meple == null ? -1 : meple.getPosition(),
-                                meple == null ? -1 : meple.getPlayerIndex()));
+                                meple == null ? -1 : meple.getPlayerIndex());
+                        tile.setPane(newPane);
                     }
                 } else if (model.getAvailableSpots().contains(new Spot(xTest, yTest))) {
                     newPane = view.createPane(xTest, yTest, true);
@@ -260,7 +265,26 @@ public class GameController {
         return currentUser;
     }
 
-    public ArrayList<GameState> getSavedGamesInfo() {
-        return databaseService.getInstance().getSavedGames(getCurrentUser());
+    public ArrayList<GameInfo> getSavedGamesInfo() {
+        return databaseService.getInstance().getSavedGamesInfo(getCurrentUser());
+    }
+
+    public void saveGame() {
+        if (currentUser != null) {
+            databaseService.getInstance().setSavedGames(currentUser, false, model);
+        }
+    }
+
+    public void loadGame(int gameId) {
+        Game gameState = databaseService.getInstance().getGameState(gameId);
+        if (gameState != null) {
+            this.model = gameState;
+            initView();
+        }
+    }
+
+    public void newgame() {
+        this.model = new Game();
+        initView();
     }
 }
