@@ -68,11 +68,7 @@ public class RoadPoints {
             }
 
             if (neighbor == null) {
-
-                if (!isRoadEnd(tile)) {
-                    complete = false;
-                }
-
+                complete = false;
                 continue;
             }
 
