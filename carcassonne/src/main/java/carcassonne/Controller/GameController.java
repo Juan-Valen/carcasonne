@@ -201,12 +201,13 @@ public class GameController {
                     newPane = tile.getPane();
                     if (newPane == null) {
                         Meple meple = tile.getMeple();
-                        tile.setPane(view.createPane(
+                        newPane = view.createPane(
                                 xTest, yTest,
                                 tile.getOrientation(),
                                 tile.getType(),
                                 meple == null ? -1 : meple.getPosition(),
-                                meple == null ? -1 : meple.getPlayerIndex()));
+                                meple == null ? -1 : meple.getPlayerIndex());
+                        tile.setPane(newPane);
                     }
                 } else if (model.getAvailableSpots().contains(new Spot(xTest, yTest))) {
                     newPane = view.createPane(xTest, yTest, true);
@@ -278,5 +279,10 @@ public class GameController {
             this.model = gameState;
             initView();
         }
+    }
+
+    public void newgame() {
+        this.model = new Game();
+        initView();
     }
 }

@@ -66,6 +66,9 @@ public class StartView extends View {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        gameController.newgame();
+
         System.out.println("current player count: " + playerNumSpinner.getValue());
         gameController.setMaxPlayer(playerNumSpinner.getValue());
 
