@@ -1,7 +1,6 @@
 package carcassonne.Model;
 
 import java.io.Serializable;
-import java.util.Objects;
 
 public class Spot implements Serializable {
 

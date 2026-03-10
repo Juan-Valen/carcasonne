@@ -2,14 +2,14 @@ package carcassonne.Model;
 
 import java.io.Serializable;
 
-public class Meple implements Serializable {
+public class Meeple implements Serializable {
     private int position = -1;
     private int playerIndex;
 
-    public Meple() {
+    public Meeple() {
     }
 
-    public Meple(int playerIndex) {
+    public Meeple(int playerIndex) {
         this.playerIndex = playerIndex;
     };
 

@@ -6,7 +6,7 @@ import java.util.ArrayList;
 public class Player implements Serializable {
     private User user;
     private int points;
-    private ArrayList<Meple> meples;
+    private ArrayList<Meeple> meples = new ArrayList<>();
 
     public Player() {
         this.points = 0;
@@ -20,7 +20,7 @@ public class Player implements Serializable {
     public Player(User user, int index) {
         this.user = user;
         this.points = 0;
-        initMeple(index);
+        initMeeple(index);
     }
 
     public User getUser() {
@@ -37,23 +37,23 @@ public class Player implements Serializable {
         this.points += points;
     }
 
-    public void initMeple(int playerIndex) {
+    public void initMeeple(int playerIndex) {
         meples = new ArrayList<>();
 
         for (int i = 0; i < 5; i++) {
-            meples.add(new Meple(playerIndex));
+            meples.add(new Meeple(playerIndex));
         }
     };
 
-    public int getMepleCount() {
+    public int getMeepleCount() {
         return meples.size();
     }
 
-    public void addMeple(Meple meple) {
+    public void addMeeple(Meeple meple) {
         meples.add(meple);
     }
 
-    public Meple placeMeple() {
+    public Meeple placeMeeple() {
         if (meples.size() == 0)
             return null;
         return meples.remove(0);
