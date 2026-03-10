@@ -1,42 +1,38 @@
 package carcassonne.ServiceTest;
 
 import carcassonne.Model.Game;
-import carcassonne.Model.Tile;
+import carcassonne.Model.GameState;
 import carcassonne.Model.User;
 import carcassonne.Service.databaseService;
+
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
-
 
 import javax.sql.rowset.serial.SerialBlob;
 import javax.sql.rowset.serial.SerialException;
 import java.io.*;
 import java.sql.Blob;
-import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
-public class SerializationTest
-{
+public class SerializationTest {
     Game game = new Game();
 
-    @DisplayName("Amazingly incredibly beautiful test")
+    @DisplayName("Serialize and deserialize Game model")
     @Test
-    public void Test()
-    {
-        game.placeTile(72,72, null);
+    public void Test() {
+        game.placeTile(72, 72, null);
         carcassonne.Model.Tile tile = game.getCurrentTile();
         System.out.println(tile.getType());
 
-        try
-        {
+        try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             ObjectOutputStream oos = new ObjectOutputStream(baos);
 
             oos.writeObject(game);
             byte[] serializedData = baos.toByteArray();
-
-
 
             Blob blob = new SerialBlob(serializedData);
 
@@ -60,37 +56,36 @@ public class SerializationTest
         }
     }
 
+    @DisplayName("Send bytes of Game model serialization to the database.")
+    @Test
+    @Disabled
+    public void Test2() {
+        game.placeTile(72, 72, null);
+        carcassonne.Model.Tile tile = game.getCurrentTile();
+        System.out.println(tile.getType());
+        User user = new User(1, "test");
+        databaseService dbs = databaseService.getInstance();
+        dbs.setSavedGames(user, false, game);
+    }
+
     @DisplayName("Amazingly incredibly beautiful test2")
     @Test
-    public void Test2()
-    {
-        game.placeTile(72,72, null);
+    public void Test3() {
+        game.placeTile(72, 72, null);
         carcassonne.Model.Tile tile = game.getCurrentTile();
         System.out.println(tile.getType());
 
-        try
-        {
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            ObjectOutputStream oos = new ObjectOutputStream(baos);
+        User user = new User(1, "test");
+        databaseService dbs = databaseService.getInstance();
+        dbs.setSavedGames(user, false, game);
+        ArrayList<GameState> gs = dbs.getSavedGames(user);
 
-            oos.writeObject(game);
-            byte[] serializedData = baos.toByteArray();
+        Game retrievedGame = dbs.getGameState(gs.get(0).id);
 
-            User user = new User(1, "test");
-            databaseService dbs = databaseService.getInstance();
-            dbs.setSavedGames(user, false, serializedData);
-
-            Game retrievedGame = dbs.getGameState(0);
-
-
-            carcassonne.Model.Tile tile3 = retrievedGame.getCurrentTile();
-            System.out.println(tile3.getType());
-            assertEquals(tile.getType(), tile3.getType());
-            assertEquals(tile.getOrientation(), tile3.getOrientation());
-            assertEquals(tile.getBonusPoint(), tile3.getBonusPoint());
-
-        } catch (IOException ex) {
-            System.out.println("IOException is caught");
-        }
+        carcassonne.Model.Tile tile3 = retrievedGame.getCurrentTile();
+        System.out.println(tile3.getType());
+        assertEquals(tile.getType(), tile3.getType());
+        assertEquals(tile.getOrientation(), tile3.getOrientation());
+        assertEquals(tile.getBonusPoint(), tile3.getBonusPoint());
     }
 }
