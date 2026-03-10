@@ -13,7 +13,7 @@ public class Tile implements Serializable {
     /// Angle of the tile (1/2/3/0 -> 90°/180°/270°/360°)
     private int orientation = 0;
     private Meple meple;
-    private Pane pane;
+    private transient Pane pane; // not serializable, excluded from save data
     private boolean bonusPoint;
 
     public Tile(char type, TileSide[] sides) {

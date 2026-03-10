@@ -130,7 +130,8 @@ public class databaseService {
             oos.writeObject(game_state);
             game_state_bytes = baos.toByteArray();
         } catch (IOException ex) {
-            System.out.println("IOException is caught");
+            System.out.println("IOException while serializing game state:");
+            ex.printStackTrace();
             return;
         }
         String sql = "INSERT INTO games(online, game_state, updated_date) VALUES (?, ?, ?)";

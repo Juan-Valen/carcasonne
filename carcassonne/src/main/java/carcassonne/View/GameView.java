@@ -313,6 +313,9 @@ public class GameView extends View {
     }
 
     public void displayPane(Pane pane, int x, int y) {
+        if (currentGameGrid == null || pane == null) {
+            return;
+        }
         currentGameGrid.add(pane, x, y);
     }
 
