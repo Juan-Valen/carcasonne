@@ -9,7 +9,7 @@ Start Postgres by running the following command in the parent folder of config.
 docker run --name carcassonne-psql \
 -e POSTGRES_PASSWORD=mysecretpassword \
 -v $(pwd)/config/init.sql:/docker-entrypoint-initdb.d/init.sql \
--d postgres:18-alpine
+-p 5432:5432 -d postgres:18-alpine
 ```
 
 You can terminate the container by pressing ctrl-C
