@@ -1,10 +1,7 @@
 package carcassonne.Controller;
 
-import carcassonne.Model.Board;
-import carcassonne.Model.Game;
-import carcassonne.Model.Spot;
-import carcassonne.Model.Tile;
-import carcassonne.Model.Meple;
+import carcassonne.Model.*;
+import carcassonne.Service.databaseService;
 import carcassonne.View.GameView;
 import javafx.scene.layout.Pane;
 
@@ -18,6 +15,8 @@ public class GameController {
     private int maxMeeples = 5; // Maximum number of meeples per player, adjust as needed
 
     private List<Pane> visiblePanes = new ArrayList<>();
+
+    private User currentUser;
 
     private GameController() {
         // Private constructor to prevent instantiation
@@ -239,5 +238,17 @@ public class GameController {
 
     public int getMaxPlayers() {
         return model.getMaxPlayers();
+    }
+
+    public void setCurrentUser(User currentUser) {
+        this.currentUser = currentUser;
+    }
+
+    public User getCurrentUser() {
+        return currentUser;
+    }
+
+    public ArrayList<GameState> getSavedGamesInfo() {
+        return databaseService.getInstance().getSavedGames(getCurrentUser());
     }
 }

@@ -54,6 +54,59 @@ public class databaseService {
         return new User(user_id, username);
     }
 
+    public ArrayList<GameState> getSavedGames(User user) {
+        ArrayList<GameState> savedGames = new ArrayList<>();
+
+        String sql = "SELECT s.game_id, g.online, g.updated_date " +
+                "FROM saves s JOIN games g ON s.game_id = g.game_id " +
+                "WHERE s.user_id = ? ORDER BY g.updated_date DESC";
+
+        try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, user.getId());
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    GameState gameState = new GameState();
+                    gameState.id = rs.getInt("game_id");
+                    gameState.online = rs.getBoolean("online");
+                    gameState.updatedDate = rs.getDate("updated_date");
+                    savedGames.add(gameState);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+      
+        return savedGames;
+    }
+
+    public Game getGameState(int game_id) {
+        String sql = "SELECT game_state FROM game WHERE game_id = ?";
+        Game game = null;
+        try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, game_id);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    Blob blob = rs.getBlob("game_state");
+                    try (InputStream is = blob.getBinaryStream();
+                         ObjectInputStream ois = new ObjectInputStream(is)) {
+                        game = (Game) ois.readObject();
+                    } catch (IOException | ClassNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return game;
+    }
+  
     public void setSavedGames(User user, boolean online, byte[] game_state) {
         int count = 0;
 
@@ -61,7 +114,8 @@ public class databaseService {
 
         try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setBytes(1, game_state);
+            stmt.setBytes(1, online);
+            stmt.setBytes(2, game_state);
             stmt.executeUpdate();
 
             ResultSet rs = stmt.getGeneratedKeys();
@@ -70,6 +124,7 @@ public class databaseService {
             if (rs.next()) {
                 id = rs.getInt(1);
             }
+            setSaves(user, id);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -96,60 +151,5 @@ public class databaseService {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-    }
-
-    public ArrayList<GameState> getSavedGames(User user) {
-        ArrayList<GameState> savedGames = new ArrayList<>();
-
-        String sql = "SELECT s.game_id, g.online, g.updated_date " +
-                "FROM saves s JOIN games g ON s.game_id = g.game_id " +
-                "WHERE s.user_id = ? ORDER BY g.updated_date DESC";
-
-        try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-            stmt.setInt(1, user.getId());
-
-            try (ResultSet rs = stmt.executeQuery()) {
-                while (rs.next()) {
-                    GameState gameState = new GameState();
-                    gameState.id = rs.getInt("game_id");
-                    gameState.online = rs.getBoolean("online");
-                    gameState.updatedDate = rs.getDate("updated_date");
-                    savedGames.add(gameState);
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-
-        return savedGames;
-    }
-
-    public Game getGameState(int game_id) {
-        byte[] bytes = new byte[1];
-        String sql = "SELECT game_state FROM game WHERE game_id = ?";
-        Game game = null;
-        try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-            stmt.setInt(1, game_id);
-
-            try (ResultSet rs = stmt.executeQuery()) {
-                while (rs.next()) {
-                    Blob blob = rs.getBlob("game_state");
-                    try (InputStream is = blob.getBinaryStream();
-                         ObjectInputStream ois = new ObjectInputStream(is)) {
-                        game = (Game) ois.readObject();
-                    } catch (IOException | ClassNotFoundException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return game;
     }
 }

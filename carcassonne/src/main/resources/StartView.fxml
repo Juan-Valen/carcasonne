@@ -17,6 +17,6 @@
               <Button onAction="#onBack" text="Start" VBox.vgrow="ALWAYS" />
          </children>
       </VBox>
-      <Button mnemonicParsing="false" text="Settings" VBox.vgrow="ALWAYS" />
+      <Button fx:id="loginButton" mnemonicParsing="false" onAction="#onLogin" text="Login" VBox.vgrow="ALWAYS" />
     </children>
 </VBox>

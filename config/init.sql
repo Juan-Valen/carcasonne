@@ -2,6 +2,8 @@ CREATE USER carcas WITH PASSWORD 'carcassonne1';
 CREATE DATABASE carcassonne;
 GRANT ALL PRIVILEGES ON DATABASE carcassonne TO carcas;
 
+\c carcassonne;
+
 CREATE TABLE users
 (
   user_id SERIAL NOT NULL,
@@ -29,7 +31,10 @@ CREATE TABLE saves
   FOREIGN KEY (user_id) REFERENCES users(user_id)
 );
 
-INSERT INTO users(username, password) 
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO carcas;
+GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO carcas;
+
+INSERT INTO users(username, password)
 VALUES
     ('carcassonne', 'password'),
     ('juan', '0j#mi9-fd2j_k4'),
@@ -37,3 +42,23 @@ VALUES
     ('nooah', '55PwgU39W!5#'),
     ('raphael','a-CY4E3a!8_j');
 
+INSERT INTO games(updated_date, online)
+VALUES
+    ('2020-1-1', false),
+    ('2020-1-5', false),
+    ('2020-2-1', false),
+    ('2020-1-9', false);
+
+
+INSERT INTO saves(game_id, user_id)
+VALUES
+    (1, 1),
+    (2, 1),
+    (1, 2),
+    (2, 2),
+    (1, 3),
+    (4, 3),
+    (1, 4),
+    (2, 4),
+    (1, 5),
+    (2, 5);
