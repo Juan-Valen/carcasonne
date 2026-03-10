@@ -2,6 +2,7 @@ package carcassonne.View;
 
 import carcassonne.Controller.GameController;
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Bounds;
 import javafx.geometry.Pos;
@@ -47,53 +48,6 @@ public class GameView extends View {
     private boolean isEnforcingConstraints = false;
     Map<Character, Image> tileIdToImage = new HashMap<>(); // Cache for tile images based on tile ID
 
-    private int gridSize = 144; // Default grid size
-
-    @FXML
-    private ScrollPane gridScreen;
-
-    @FXML
-    public StackPane nextTilePane;
-
-    @FXML
-    public VBox playerUiBox;
-
-    // Coalesces high-frequency scroll callbacks into one UI update per pulse.
-    private boolean scrollUpdateQueued = false;
-
-    @FXML
-    public void openSecondary() {
-        try {
-            carcassonne.App.getInstance().showScene("/StartView.fxml");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    @FXML
-    public void rotateCurrentTile() {
-        System.out.println("rotateCurrentTile() called");
-        controller.rotateTile();
-    }
-
-    @Override
-    protected void onAfterStageAvailable() {
-        controller.setView(this);
-        controller.initView();
-    }
-
-    @Override
-    protected void initialize() {
-        super.initialize();
-        System.out.println("GameView.initialize() called");
-        gridScreen.setPannable(false);
-    }
-
-    @Override
-    public void onViewShow() {
-        super.onViewShow();
-    }
-
     // Initializer block to populate the tile image cache
     {
         tileIdToImage.put('A', loadImage("images/Base_Game_C3_Tile_A.png"));
@@ -120,6 +74,63 @@ public class GameView extends View {
         tileIdToImage.put('V', loadImage("images/Base_Game_C3_Tile_V.png"));
         tileIdToImage.put('W', loadImage("images/Base_Game_C3_Tile_W.png"));
         tileIdToImage.put('X', loadImage("images/Base_Game_C3_Tile_X.png"));
+    }
+
+    private int gridSize = 144; // Default grid size
+
+    @FXML
+    private ScrollPane gridScreen;
+
+    @FXML
+    public StackPane nextTilePane;
+
+    @FXML
+    public VBox playerUiBox;
+
+    @Override
+    protected void onAfterStageAvailable() {
+        controller.setView(this);
+        controller.initView();
+    }
+
+    @Override
+    protected void initialize() {
+        super.initialize();
+        System.out.println("GameView.initialize() called");
+        gridScreen.setPannable(false);
+    }
+
+    @Override
+    public void onViewShow() {
+        super.onViewShow();
+    }
+
+    // Coalesces high-frequency scroll callbacks into one UI update per pulse.
+    private boolean scrollUpdateQueued = false;
+
+    @FXML
+    public void openSecondary() {
+        try {
+            carcassonne.App.getInstance().showScene("/StartView.fxml");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    public void rotateCurrentTile() {
+        System.out.println("rotateCurrentTile() called");
+        controller.rotateTile();
+    }
+
+    @FXML
+    public void onQuit(ActionEvent actionEvent) {
+        try {
+            // show main view via MainApp
+            carcassonne.App.getInstance().showScene("/StartView.fxml");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**
