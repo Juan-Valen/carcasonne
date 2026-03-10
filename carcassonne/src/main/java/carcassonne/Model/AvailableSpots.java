@@ -1,9 +1,10 @@
 package carcassonne.Model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AvailableSpots {
+public class AvailableSpots implements Serializable {
     private String direction;
     private List<Spot> spots = new ArrayList<Spot>();
 

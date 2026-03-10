@@ -1,5 +1,6 @@
 package carcassonne.Model;
 
+import java.io.Serializable;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -10,7 +11,7 @@ import java.util.Random;
 import carcassonne.DataType.TileSide;
 import javafx.scene.layout.Pane;
 
-public class Game {
+public class Game implements Serializable {
     private int game_id;
     private boolean online;
     private Date updated_date;

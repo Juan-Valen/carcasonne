@@ -1,9 +1,10 @@
 package carcassonne.Model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Board {
+public class Board implements Serializable {
 
     // Available spots is where you can place the current tile
     // Taken spots is where the tiles are currently
