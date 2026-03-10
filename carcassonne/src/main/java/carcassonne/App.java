@@ -33,7 +33,7 @@ public class App extends Application {
     }
 
     public void showMainView() throws IOException {
-        showScene("/LoginView.fxml");
+        showScene("/StartView.fxml");
     }
 
     public void showScene(String resource) throws IOException {
