@@ -5,7 +5,6 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.List;
 
 import carcassonne.Model.GameState;
 import carcassonne.Model.User;
@@ -62,7 +61,7 @@ public class databaseService {
                 "WHERE s.user_id = ? ORDER BY g.updated_date DESC";
 
         try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setInt(1, user.getId());
 
@@ -78,7 +77,7 @@ public class databaseService {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-      
+
         return savedGames;
     }
 
@@ -86,7 +85,7 @@ public class databaseService {
         String sql = "SELECT game_state FROM game WHERE game_id = ?";
         Game game = null;
         try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setInt(1, game_id);
 
@@ -94,7 +93,7 @@ public class databaseService {
                 while (rs.next()) {
                     Blob blob = rs.getBlob("game_state");
                     try (InputStream is = blob.getBinaryStream();
-                         ObjectInputStream ois = new ObjectInputStream(is)) {
+                            ObjectInputStream ois = new ObjectInputStream(is)) {
                         game = (Game) ois.readObject();
                     } catch (IOException | ClassNotFoundException e) {
                         e.printStackTrace();
@@ -106,15 +105,15 @@ public class databaseService {
         }
         return game;
     }
-  
+
     public void setSavedGames(User user, boolean online, byte[] game_state) {
         int count = 0;
 
         String sql = "INSERT INTO games(online, game_state) VALUES (?, ?)";
 
         try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setBytes(1, online);
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setBoolean(1, online);
             stmt.setBytes(2, game_state);
             stmt.executeUpdate();
 
@@ -136,7 +135,7 @@ public class databaseService {
         String sql = "INSERT INTO saves(game_id, user_id) VALUES (?, ?)";
 
         try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, game_id);
             stmt.setInt(2, user.getId());
 
