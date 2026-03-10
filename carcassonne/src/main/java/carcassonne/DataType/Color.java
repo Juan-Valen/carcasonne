@@ -1,6 +1,8 @@
 package carcassonne.DataType;
 
-public enum Color {
+import java.io.Serializable;
+
+public enum Color implements Serializable {
     RED("red", "#FF0000"), GREEN("green", "#00FF00"), BLUE("blue", "#0000FF");
 
     private String name;

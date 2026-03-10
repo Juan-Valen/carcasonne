@@ -2,9 +2,10 @@ package carcassonne.Model;
 
 import carcassonne.DataType.TileSide;
 
+import java.io.Serializable;
 import java.util.*;
 
-public class RoadPoints {
+public class RoadPoints implements Serializable {
 
     private final Board board;
 

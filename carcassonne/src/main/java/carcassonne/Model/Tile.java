@@ -3,7 +3,9 @@ package carcassonne.Model;
 import carcassonne.DataType.TileSide;
 import javafx.scene.layout.Pane;
 
-public class Tile {
+import java.io.Serializable;
+
+public class Tile implements Serializable {
     /// ID to indentify the displayed image
     private char type;
     /// List of the type of sides of the tile
