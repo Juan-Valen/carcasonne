@@ -10,15 +10,12 @@ import org.junit.jupiter.params.provider.CsvSource;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class PlayerTest
-{
-    Player player = new Player(Color.RED, "user", 0);
+public class PlayerTest {
+    Player player = new Player();
 
     @DisplayName("Test gets")
     @Test
-    public void testGets()
-    {
-        assertEquals(Color.RED, player.getColor(), "Wrong color");
+    public void testGets() {
         assertEquals("user", player.getUser(), "Wrong user");
         assertEquals(0, player.getPoints(), "Wrong amount of points");
     }
@@ -26,8 +23,7 @@ public class PlayerTest
     @DisplayName("Test addPoints")
     @ParameterizedTest(name = "Adds {0} and {1} and expects there sum")
     @CsvSource({ "100, 250", "500, 700", "255, 145" })
-    public void testAddPoints(int input1, int input2)
-    {
+    public void testAddPoints(int input1, int input2) {
         player.addPoints(input1);
         assertEquals(input1, player.getPoints(), "Incorrect number of points");
         player.addPoints(input2);
