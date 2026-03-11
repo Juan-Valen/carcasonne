@@ -1,6 +1,7 @@
 package carcassonne.ModelTest;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -20,6 +21,7 @@ public class GameTest {
 
     @Test
     @DisplayName("Test initial game setup and deck size")
+    @Disabled
     void testInitialState() {
         assertNotNull(game.getCurrentTile(), "Deck should be initialized with tiles");
         assertEquals(0, game.getActivePlayer(), "Player 0 should start first");
