@@ -28,7 +28,7 @@ COPY --from=build /app/target/carcassonne.jar app.jar
 # COPY target/carcassonne.jar app.jar
 
 # Set DISPLAY for Windows (Xming)
-#ENV DISPLAY=host.docker.internal:0.0
+ENV DISPLAY=host.docker.internal:0.0
 
 # Run JavaFX app
 CMD ["java", "--module-path", "/javafx-sdk/lib", "--add-modules", "javafx.controls,javafx.fxml", "-jar", "app.jar"]
