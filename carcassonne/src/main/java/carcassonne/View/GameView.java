@@ -255,11 +255,11 @@ public class GameView extends View {
             if (selectedCircle[0] == clicked) {
                 selectedCircle[0] = null; // unselect if clicked again
                 resetColors.run();
-                controller.placeMeple(-1); // -1 indicates no meeple
+                controller.placeMeeple(-1); // -1 indicates no meeple
             } else {
                 selectedCircle[0] = clicked;
                 resetColors.run();
-                controller.placeMeple(
+                controller.placeMeeple(
                         clicked == topCircle ? 0
                                 : clicked == rightCircle ? 1
                                         : clicked == bottomCircle ? 2 : clicked == leftCircle ? 3 : -1);
@@ -313,6 +313,9 @@ public class GameView extends View {
     }
 
     public void displayPane(Pane pane, int x, int y) {
+        if (currentGameGrid == null || pane == null) {
+            return;
+        }
         currentGameGrid.add(pane, x, y);
     }
 

@@ -12,8 +12,8 @@ public class Tile implements Serializable {
     private final TileSide[] sides;
     /// Angle of the tile (1/2/3/0 -> 90°/180°/270°/360°)
     private int orientation = 0;
-    private Meple meple;
-    private Pane pane;
+    private Meeple meple;
+    private transient Pane pane;
     private boolean bonusPoint;
 
     public Tile(char type, TileSide[] sides) {
@@ -44,7 +44,7 @@ public class Tile implements Serializable {
         bonusPoint = t == 'C' || t == 'F' || t == 'M' || t == 'O' || t == 'Q' || t == 'S';
     }
 
-    public void setMeple(Meple meple) {
+    public void setMeeple(Meeple meple) {
         this.meple = meple;
     }
 
@@ -76,7 +76,7 @@ public class Tile implements Serializable {
         return bonusPoint;
     }
 
-    public Meple getMeple() {
+    public Meeple getMeeple() {
         return meple;
     }
 }

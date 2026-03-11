@@ -49,7 +49,7 @@ public class GameHistoryView extends  View {
         System.out.println("Found " + (savedGames != null ? savedGames.size() : 0) + " saved games.");
 
         // Render each saved game as a button
-        if (savedGames != null) {
+        if (savedGames != null && !savedGames.isEmpty()) {
             for (GameInfo savedGame : savedGames) {
                 HBox gameEntry = new HBox();
                 Label idLabel = new Label("Game ID: " + savedGame.id);
@@ -59,7 +59,7 @@ public class GameHistoryView extends  View {
                 gameEntry.setOnMouseClicked(event -> {
                     try {
                         // Load the selected game and show the GameView
-//                    gameController.loadGame(savedGame.id);
+                    gameController.loadGame(savedGame.id);
                         carcassonne.App.getInstance().showScene("/Carcassonne UI.fxml");
                     } catch (Exception e) {
                         e.printStackTrace();
