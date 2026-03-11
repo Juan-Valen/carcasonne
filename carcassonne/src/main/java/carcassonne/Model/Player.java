@@ -40,7 +40,7 @@ public class Player implements Serializable {
     public void initMeeple(int playerIndex) {
         meples = new ArrayList<>();
 
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 7; i++) {
             meples.add(new Meeple(playerIndex));
         }
     };

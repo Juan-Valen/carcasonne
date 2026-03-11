@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import carcassonne.Controller.GameController;
 import carcassonne.DataType.TileSide;
 import javafx.scene.layout.Pane;
 
@@ -82,6 +83,17 @@ public class Game implements Serializable {
         return meples;
     }
 
+    public int[] getPlayersScores() {
+        int[] scores = new int[players.length];
+        for (int i = 0; i < players.length; i++) {
+            if (players[i] != null)
+                scores[i] = players[i].getPoints();
+            else
+                scores[i] = 0;
+        }
+        return scores;
+    }
+
     public Tile getCurrentTile() {
         if (deck.isEmpty())
             return null;
@@ -117,6 +129,10 @@ public class Game implements Serializable {
         if (tile != null)
             return;
         tile = deck.removeFirst();
+
+        if (deck.isEmpty()) {
+            return;
+        }
 
         tile.setPane(pane);
         board.updateSpots(x, y, tile);
@@ -168,6 +184,41 @@ public class Game implements Serializable {
         Tile tile = deck.getFirst();
         tile.rotateTile();
 
+    }
+
+    public void calculatePoints(int startX, int startY) {
+        RoadPoints roadPoints = new RoadPoints(board);
+        CityPoints cityPoints = new CityPoints(board);
+        MonasteryPoints monasteryPoints = new MonasteryPoints(board);
+
+        // Calculate possible points for each side of the tile at (startX, startY)
+        for (int i = 0; i < 3; i++) {
+            RoadPoints.RoadResult roadResult = roadPoints.calculateRoadResult(startX, startY, i);
+            if (roadResult.getPoints() > 0) {
+                for (int playerIndex : roadResult.getWinnerPlayerIndices()) {
+                    players[playerIndex].addPoints(roadResult.getPoints());
+                }
+            }
+            CityPoints.CityResult cityResult = cityPoints.calculateCityResult(startX, startY, i);
+            if (cityResult.getPoints() > 0) {
+                for (int playerIndex : cityResult.getWinnerPlayerIndices()) {
+                    players[playerIndex].addPoints(cityResult.getPoints());
+                }
+            }
+            // Monastery point calculation incomplete at the moment, as it requires checking the 8 surrounding tiles
+        }
+    }
+
+    public Player[] getPlayers() {
+        return players;
+    }
+
+    public boolean endGame() {
+        if (deck.isEmpty()) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     private void initDeck() {

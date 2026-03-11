@@ -27,6 +27,11 @@ public class GameHistoryView extends  View {
     protected void onAfterStageAvailable() {
         super.onAfterStageAvailable();
         System.out.println("GameHistoryView.onAfterStageAvailable() called");
+    }
+
+    @Override
+    public void onViewShow() {
+        super.onViewShow();
         renderSavedGames();
     }
 

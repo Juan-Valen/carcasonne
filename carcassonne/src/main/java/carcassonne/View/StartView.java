@@ -60,6 +60,8 @@ public class StartView extends View {
 
     @FXML
     public void onBack() {
+        int selectedPlayers = playerNumSpinner.getValue();
+
         try {
             // show main view via App
             mainApp.showScene("/Carcassonne UI.fxml");
@@ -67,11 +69,8 @@ public class StartView extends View {
             e.printStackTrace();
         }
 
-        gameController.newgame();
-
-        System.out.println("current player count: " + playerNumSpinner.getValue());
-        gameController.setMaxPlayer(playerNumSpinner.getValue());
-
+        gameController.newgame(selectedPlayers);
+        System.out.println("current player count: " + selectedPlayers);
     }
 
     @FXML

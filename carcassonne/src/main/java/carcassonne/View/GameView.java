@@ -382,14 +382,14 @@ public class GameView extends View {
         handleMeeplePlacement(stackPane, topCircle, bottomCircle, leftCircle, rightCircle, currentPlayerNumber);
     }
 
-    public void displayPlayerInfoBoxes(int currentPlayerNumber, int playerCount, int[] playerMeepleCounts) {
+    public void displayPlayerInfoBoxes(int currentPlayerNumber, int playerCount, int[] playerMeepleCounts, int[] playerPoints) {
         playerUiBox.getChildren().clear();
         playerUiBox.setSpacing(10); // Add spacing between player boxes
 
         for (int i = 0; i < playerCount; i++) {
             HBox hbox = new HBox(10); // Add spacing between label and circle
             hbox.setStyle("-fx-alignment: center;"); // Center content horizontally and vertically
-            hbox.getChildren().add(new Label("Player " + i));
+            hbox.getChildren().add(new Label("Player " + (i+1)));
 
             for (int j = 0; j < playerMeepleCounts[i]; j++) {
                 Circle circle = new Circle(10);
@@ -404,6 +404,8 @@ public class GameView extends View {
 
                 hbox.getChildren().add(circle);
             }
+
+            hbox.getChildren().add(new Label("  Points: " + playerPoints[i]));
 
             // Make each HBox grow to fill equal vertical space
             VBox.setVgrow(hbox, javafx.scene.layout.Priority.ALWAYS);
@@ -651,8 +653,15 @@ public class GameView extends View {
     }
 
     /**
-     * Enforces scroll constraints to prevent scrolling more than one tile beyond
-     * the set tiles.
+     * Enforces scroll constraints so the viewport can never go more than 1 cell
+     * beyond the furthest placed tile in any direction.
+     *
+     * Two independent pixel-space limits are applied to the current scroll offset:
+     *   leftLimit  = (minPlacedX - 1) * cellSize       — how far left  the viewport top-left can go
+     *   rightLimit = (maxPlacedX + 2) * cellSize - vpW  — how far right the viewport top-left can go
+     *
+     * These are applied as separate clamps, never compared against each other.
+     * This works correctly whether tiles are narrower or wider than the viewport.
      */
     public void enforceScrollConstraints() {
         if (gridScreen == null || currentGameGrid == null || cellSize <= 0 || minSelectedY == Integer.MAX_VALUE) {
@@ -674,41 +683,40 @@ public class GameView extends View {
         if (maxScrollPixelX <= 0 || maxScrollPixelY <= 0)
             return;
 
-        // Use +2 to ensure the buffer cell is fully contained (fixes the cutoff in your
-        // image)
-        double minPixelX = (minSelectedX - 1) * cellSize;
-        double maxPixelX = (maxSelectedX + 2) * cellSize;
-        double minPixelY = (minSelectedY - 1) * cellSize;
-        double maxPixelY = (maxSelectedY + 2) * cellSize;
+        // Current scroll position in pixels
+        double scrollX = gridScreen.getHvalue() * maxScrollPixelX;
+        double scrollY = gridScreen.getVvalue() * maxScrollPixelY;
 
-        // Determine the allowed scroll range (where the viewport's top-left corner can
-        // be)
-        double minAllowedX = Math.max(0, maxPixelX - viewportWidth);
-        double maxAllowedX = Math.min(maxScrollPixelX, minPixelX);
-        double minAllowedY = Math.max(0, maxPixelY - viewportHeight);
-        double maxAllowedY = Math.min(maxScrollPixelY, minPixelY);
+        // minScrollX: viewport can't go further LEFT  than (minPlacedX - 1) cell start
+        //             = the floor of the allowed scroll range
+        // maxScrollX: viewport can't go further RIGHT than where (maxPlacedX + 2) cell
+        //             end is still visible = (maxPlacedX + 2) * cellSize - viewportWidth
+        //             = the ceiling of the allowed scroll range
+        //
+        // Both cases handled by a single clamp [minScrollX, maxScrollX]:
+        //   tiles narrower than viewport: maxScrollX < minScrollX possible only near
+        //     grid edge (both are clamped to [0, maxScrollPixel] so this won't happen
+        //     in practice for a centred layout)
+        //   tiles wider than viewport: maxScrollX > minScrollX — valid range, user
+        //     can pan freely between the two 1-cell buffer limits
+        double minScrollX = Math.max(0,               (minSelectedX - 1) * cellSize);
+        double maxScrollX = Math.min(maxScrollPixelX, (maxSelectedX + 2) * cellSize - viewportWidth);
+        double minScrollY = Math.max(0,               (minSelectedY - 1) * cellSize);
+        double maxScrollY = Math.min(maxScrollPixelY, (maxSelectedY + 2) * cellSize - viewportHeight);
 
-        // If tiles are smaller than viewport, lock the scroll to the middle of the
-        // allowed range
-        // to prevent the "bouncing" fight between the mouse and the constraint.
-        if (minAllowedX > maxAllowedX) {
-            double mid = (minAllowedX + maxAllowedX) / 2.0;
-            minAllowedX = maxAllowedX = mid;
-        }
-        if (minAllowedY > maxAllowedY) {
-            double mid = (minAllowedY + maxAllowedY) / 2.0;
-            minAllowedY = maxAllowedY = mid;
-        }
+        // If the tile span is smaller than the viewport, maxScrollX can be negative
+        // before the Math.max(0) clamp, meaning the tile group fits entirely with room
+        // to spare. In that case allow free scroll (don't constrain).
+        if (maxScrollX < minScrollX) maxScrollX = minScrollX;
+        if (maxScrollY < minScrollY) maxScrollY = minScrollY;
 
-        double currentH = gridScreen.getHvalue();
-        double currentV = gridScreen.getVvalue();
+        double targetX = Math.max(minScrollX, Math.min(scrollX, maxScrollX));
+        double targetY = Math.max(minScrollY, Math.min(scrollY, maxScrollY));
 
-        // Clamp the values
-        double targetH = Math.max(minAllowedX / maxScrollPixelX, Math.min(currentH, maxAllowedX / maxScrollPixelX));
-        double targetV = Math.max(minAllowedY / maxScrollPixelY, Math.min(currentV, maxAllowedY / maxScrollPixelY));
+        double targetH = targetX / maxScrollPixelX;
+        double targetV = targetY / maxScrollPixelY;
 
-        // Only update if the difference is significant to avoid jitter
-        if (Math.abs(targetH - currentH) > 1.0e-4 || Math.abs(targetV - currentV) > 1.0e-4) {
+        if (Math.abs(targetH - gridScreen.getHvalue()) > 1.0e-4 || Math.abs(targetV - gridScreen.getVvalue()) > 1.0e-4) {
             isEnforcingConstraints = true;
             gridScreen.setHvalue(targetH);
             gridScreen.setVvalue(targetV);
@@ -717,42 +725,19 @@ public class GameView extends View {
     }
 
     /**
-     * Checks if the placeable tiles exceed the current viewport.
-     * Returns true if placeable cells extend beyond ANY viewport edge.
-     * Returns false if tiles span across the entire viewport (can't fit them all).
+     * Always returns true when placed tiles exist, since enforceScrollConstraints()
+     * now handles all cases (both small and large tile spans) without collapsing.
      */
     public boolean shouldEnforceScrollConstraints() {
-        if (gridScreen == null || currentGameGrid == null || cellSize <= 0 || minSelectedY == Integer.MAX_VALUE) {
-            return false;
-        }
+        return gridScreen != null && currentGameGrid != null
+                && cellSize > 0 && minSelectedY != Integer.MAX_VALUE;
+    }
 
-        Bounds viewportBounds = gridScreen.getViewportBounds();
-        if (viewportBounds == null)
-            return false;
-
-        // Use the same buffer logic: -1 for min, +2 for max
-        double minPixelX = (minSelectedX - 1) * cellSize;
-        double maxPixelX = (maxSelectedX + 2) * cellSize;
-        double minPixelY = (minSelectedY - 1) * cellSize;
-        double maxPixelY = (maxSelectedY + 2) * cellSize;
-
-        double viewportWidth = viewportBounds.getWidth();
-        double viewportHeight = viewportBounds.getHeight();
-
-        // If the tiles + buffer are wider than the screen, we usually want free
-        // scrolling
-        // or different clamping logic.
-        if ((maxPixelX - minPixelX) >= viewportWidth || (maxPixelY - minPixelY) >= viewportHeight) {
-            return false;
-        }
-
-        double scrollOffsetX = gridScreen.getHvalue() * (currentGameGrid.getPrefWidth() - viewportWidth);
-        double scrollOffsetY = gridScreen.getVvalue() * (currentGameGrid.getPrefHeight() - viewportHeight);
-        double viewportMaxX = scrollOffsetX + viewportWidth;
-        double viewportMaxY = scrollOffsetY + viewportHeight;
-
-        // Return true if any part of our "active rectangle" is outside the viewport
-        return (minPixelX < scrollOffsetX || maxPixelX > viewportMaxX ||
-                minPixelY < scrollOffsetY || maxPixelY > viewportMaxY);
+    public void endGame() {
+            try {
+                carcassonne.App.getInstance().showScene("/EndGameView.fxml");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
     }
 }
