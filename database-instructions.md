@@ -22,7 +22,7 @@ For example:
 docker run --name carcassonne-psql \
 -e POSTGRES_PASSWORD=mysecretpassword \
 -v C:\Users\joe\Documents\config\init.sql:/docker-entrypoint-initdb.d/init.sql \
--d postgres:18-alpine
+-p 5432:5432 -d postgres:18-alpine
 ```
 
 You can also make a batch file:
@@ -30,7 +30,7 @@ You can also make a batch file:
 docker run --name carcassonne-psql \
 -e POSTGRES_PASSWORD=mysecretpassword \
 -v %cd%\config\init.sql:/docker-entrypoint-initdb.d/init.sql \
--d postgres:18-alpine
+-p 5432:5432 -d postgres:18-alpine
 ```
 
 
@@ -46,5 +46,8 @@ docker exec -it carcassonne-psql psql -U postgres
 ## Working PowerShell command
 For running locally on windows, the following command should work in PowerShell:
 ```powershell
-   docker run --name carcassonne-psql -e POSTGRES_PASSWORD=mysecretpassword -v C:\Users\Omistaja\IdeaProjects\carcasonne\config\init.sql:/docker-entrypoint-initdb.d/init.sql -p 5432:5432 -d postgres:18-alpine
+   docker run --name carcassonne-psql
+   -e POSTGRES_PASSWORD=mysecretpassword
+   -v C:\Users\Omistaja\IdeaProjects\carcasonne\config\init.sql:/docker-entrypoint-initdb.d/init.sql
+   -p 5432:5432 -d postgres:18-alpine
 ```
