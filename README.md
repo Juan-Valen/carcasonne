@@ -26,8 +26,8 @@ The project relies on the listed technologies to run :
   * Kubernetes (W.I.P.)
 
 ## 3. Database Diagrams
-[Entity relationship diagram](./Documents/img/entity_relationship.png)  
-[Relational schema diagram](./Documents/img/relational_schema.png)
+![Entity relationship diagram](./Documents/img/entity_relationship.png)  
+![Relational schema diagram](./Documents/img/relational_schema.png)
 
 ## 4. Entity relationship
 The [entity relationship](./Documents/img/carcassonne_class.png) can be described as follows,  
