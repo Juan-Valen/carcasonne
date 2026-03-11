@@ -37,10 +37,7 @@ The user, once connected, can start a game, play using the different functionali
 The game, by the action of the player, can interact with the virtual tiles (turn and place them).  
 The game can also interact with the database by saving or retrieving past or current games.  
 
-## 5. Acknowledgments
-> Thank you to all the [contributors](#contributors) and [teacher](#professor)
-
-## 6. Instruction for playing the game with docker.
+## 5. Instruction for playing the game with docker.
 
 ### Run database for game with docker
 First, follow the [database instructions](./database-instructions.md). Note: to run the instructions you will need to copy the [sql initialization file](./config/init.sql).
@@ -62,3 +59,6 @@ docker run --name carcassonne_app \
   -v /tmp/.X11-unix:/tmp/.X11-unix \
   juanvalenzuela101/carcassonne_v1_2026
 ```
+
+## 5. Acknowledgments
+> Thank you to all the [contributors](#contributors) and [teacher](#professor)
