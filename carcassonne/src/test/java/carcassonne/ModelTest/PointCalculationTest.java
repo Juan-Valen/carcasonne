@@ -7,6 +7,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.util.Map;
+import java.util.Set;
 
 public class PointCalculationTest {
     private static Map<Character, TileSide[]> tiles;
@@ -302,4 +303,129 @@ public class PointCalculationTest {
         Assertions.assertEquals(0, points, "Incomplete monastery should score 0 points (classic mid-game).");
     }
 
+    @Test
+    public void roadResultTracksSingleMajorityWinner() {
+        Board board = new Board();
+
+        Tile villageStart = new Tile('X', tiles.get('X'));
+        Meeple playerOneMeepleA = new Meeple(1);
+        playerOneMeepleA.setPosition(1);
+        villageStart.setMeeple(playerOneMeepleA);
+
+        Tile roadTileEW1 = new Tile('U', tiles.get('U'), 1);
+        Meeple playerOneMeepleB = new Meeple(1);
+        playerOneMeepleB.setPosition(1);
+        roadTileEW1.setMeeple(playerOneMeepleB);
+
+        Tile roadTileEW2 = new Tile('U', tiles.get('U'), 1);
+        Meeple playerTwoMeeple = new Meeple(2);
+        playerTwoMeeple.setPosition(3);
+        roadTileEW2.setMeeple(playerTwoMeeple);
+
+        Tile villageEnd = new Tile('X', tiles.get('X'));
+
+        board.updateSpots(70, 70, villageStart);
+        board.updateSpots(71, 70, roadTileEW1);
+        board.updateSpots(72, 70, roadTileEW2);
+        board.updateSpots(73, 70, villageEnd);
+
+        RoadPoints roadPoints = new RoadPoints(board);
+        RoadPoints.RoadResult result = roadPoints.calculateRoadResult(70, 70, 1);
+
+        Assertions.assertEquals(4, result.getPoints());
+        Assertions.assertEquals(Set.of(1), result.getWinnerPlayerIndices());
+    }
+
+    @Test
+    public void roadResultTracksTiedMajorityWinners() {
+        Board board = new Board();
+
+        Tile villageStart = new Tile('X', tiles.get('X'));
+        Meeple playerZeroMeeple = new Meeple(0);
+        playerZeroMeeple.setPosition(1);
+        villageStart.setMeeple(playerZeroMeeple);
+
+        Tile roadTileEW1 = new Tile('U', tiles.get('U'), 1);
+        Tile roadTileEW2 = new Tile('U', tiles.get('U'), 1);
+
+        Tile villageEnd = new Tile('X', tiles.get('X'));
+        Meeple playerTwoMeeple = new Meeple(2);
+        playerTwoMeeple.setPosition(3);
+        villageEnd.setMeeple(playerTwoMeeple);
+
+        board.updateSpots(70, 70, villageStart);
+        board.updateSpots(71, 70, roadTileEW1);
+        board.updateSpots(72, 70, roadTileEW2);
+        board.updateSpots(73, 70, villageEnd);
+
+        RoadPoints roadPoints = new RoadPoints(board);
+        RoadPoints.RoadResult result = roadPoints.calculateRoadResult(70, 70, 1);
+
+        Assertions.assertEquals(4, result.getPoints());
+        Assertions.assertEquals(Set.of(0, 2), result.getWinnerPlayerIndices());
+    }
+
+    @Test
+    public void cityResultTracksSingleMajorityWinner() {
+        Board board = new Board();
+
+        Tile center = new Tile('C', tiles.get('C'));
+        Meeple p1CenterMeeple = new Meeple(1);
+        p1CenterMeeple.setPosition(0);
+        center.setMeeple(p1CenterMeeple);
+
+        Tile cityN = new Tile('L', tiles.get('L'), 0);
+        Meeple p1NorthMeeple = new Meeple(1);
+        p1NorthMeeple.setPosition(0);
+        cityN.setMeeple(p1NorthMeeple);
+
+        Tile cityW = new Tile('L', tiles.get('L'), 1);
+        Tile cityS = new Tile('L', tiles.get('L'), 2);
+        Tile cityE = new Tile('L', tiles.get('L'), 3);
+        Meeple p2SouthMeeple = new Meeple(2);
+        p2SouthMeeple.setPosition(2);
+        cityS.setMeeple(p2SouthMeeple);
+
+        board.updateSpots(70, 70, center);
+        board.updateSpots(70, 71, cityN);
+        board.updateSpots(71, 70, cityW);
+        board.updateSpots(70, 69, cityS);
+        board.updateSpots(69, 70, cityE);
+
+        CityPoints cityPoints = new CityPoints(board);
+        CityPoints.CityResult result = cityPoints.calculateCityResult(70, 71, 0);
+
+        Assertions.assertEquals(12, result.getPoints());
+        Assertions.assertEquals(Set.of(1), result.getWinnerPlayerIndices());
+    }
+
+    @Test
+    public void cityResultTracksTiedMajorityWinners() {
+        Board board = new Board();
+
+        Tile center = new Tile('C', tiles.get('C'));
+        Meeple p0CenterMeeple = new Meeple(0);
+        p0CenterMeeple.setPosition(0);
+        center.setMeeple(p0CenterMeeple);
+
+        Tile cityN = new Tile('L', tiles.get('L'), 0);
+        Tile cityW = new Tile('L', tiles.get('L'), 1);
+        Tile cityS = new Tile('L', tiles.get('L'), 2);
+        Tile cityE = new Tile('L', tiles.get('L'), 3);
+        Meeple p2EastMeeple = new Meeple(2);
+        p2EastMeeple.setPosition(1);
+        cityE.setMeeple(p2EastMeeple);
+
+        board.updateSpots(70, 70, center);
+        board.updateSpots(70, 71, cityN);
+        board.updateSpots(71, 70, cityW);
+        board.updateSpots(70, 69, cityS);
+        board.updateSpots(69, 70, cityE);
+
+        CityPoints cityPoints = new CityPoints(board);
+        CityPoints.CityResult result = cityPoints.calculateCityResult(70, 71, 0);
+
+        Assertions.assertEquals(12, result.getPoints());
+        Assertions.assertEquals(Set.of(0, 2), result.getWinnerPlayerIndices());
+    }
 }
