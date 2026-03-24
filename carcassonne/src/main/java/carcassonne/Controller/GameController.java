@@ -44,7 +44,7 @@ public class GameController {
             // Update the player info boxes in the view based on the current player count
             // and meeple counts
 
-            view.displayPlayerInfoBoxes(model.getActivePlayer(), model.getMaxPlayers(), model.getPlayersMeepleCount());// players
+            view.displayPlayerInfoBoxes(model.getActivePlayer(), model.getMaxPlayers(), model.getPlayersMeepleCount(), model.getPlayersScores());// players
 
             // missing
             // Initialize the grid in the view
@@ -84,23 +84,19 @@ public class GameController {
                         meple == null ? -1 : meple.getPosition(),
                         model.getActivePlayer()));
 
-        // // if (getCurrentMeeplePlacement() != -1 &&
-        // // getPlayerMeepleCount(getCurrentPlayingPlayer()) > 0) {
-        // // cell.meeple = getCurrentMeeplePlacement(); // Placeholder for getting the
-        // // current meeple placement from the
-        // // // game state
-        // // } else {
-        // // cell.meeple = -1; // No meeple placed
-        // // }
-        // // if (cell.meeple != -1) {
-        // // decrementPlayerMeepleCount(getCurrentPlayingPlayer());
-        // // }
+        if (model.endGame()) {
+            view.endGame();
+            return;
+        }
+
+        model.calculatePoints(x, y);
+
         Tile currentTile = model.getCurrentTile();
         // display the next tile image
         view.displayCurrentTile(currentTile.getOrientation(), currentTile.getType(), model.getActivePlayer(),
                 (model.getPlayersMeepleCount()[model.getActivePlayer()]) != 0);
         // redraw player info boxes to update scores and current player
-        view.displayPlayerInfoBoxes(model.getActivePlayer(), model.getMaxPlayers(), model.getPlayersMeepleCount());
+        view.displayPlayerInfoBoxes(model.getActivePlayer(), model.getMaxPlayers(), model.getPlayersMeepleCount(), model.getPlayersScores());
 
         // Update scroll constraints based on new tile placement
         Spot min = model.getMin();
@@ -173,6 +169,10 @@ public class GameController {
         if (visibleEdges != null) {
             renderVisibleTiles(visibleEdges);
         }
+    }
+
+    public static void endGame() {
+
     }
 
     // private int[] getPlayersMeepleCounts() {
@@ -257,6 +257,10 @@ public class GameController {
         return model.getMaxPlayers();
     }
 
+    public Player[] getPlayers() {
+        return model.getPlayers();
+    }
+
     public void setCurrentUser(User currentUser) {
         this.currentUser = currentUser;
     }
@@ -283,8 +287,13 @@ public class GameController {
         }
     }
 
-    public void newgame() {
+    public void newgame(int maxPlayers) {
         this.model = new Game();
+        this.model.setMaxPlayer(maxPlayers);
         initView();
+    }
+
+    public void newgame() {
+        newgame(2);
     }
 }
