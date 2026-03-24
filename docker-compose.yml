@@ -16,7 +16,7 @@ services:
   app:
     build:
       context: .
-      dockerfile: ./carcassonne/Dockerfile
+      dockerfile: ./carcassonne/compose.Dockerfile
     container_name: carcassonne_app
     depends_on:
       db:

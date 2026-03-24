@@ -30,16 +30,18 @@ public class PlayerTest {
     void testMeepleManagement() {
         User user = new User(1, "TestUser");
         // Initialize with 5 meeples
-        Player player = new Player(user, 1);
+        Player player = new Player(user, 5);
 
-        assertEquals(5, player.getMeepleCount());
+        assertEquals(7, player.getMeepleCount());
 
         // Place one meple
         Meeple placed = player.placeMeeple();
         assertNotNull(placed);
-        assertEquals(4, player.getMeepleCount());
+        assertEquals(6, player.getMeepleCount());
 
         // Exhaust supply
+        player.placeMeeple();
+        player.placeMeeple();
         player.placeMeeple();
         player.placeMeeple();
         player.placeMeeple();
