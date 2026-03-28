@@ -54,10 +54,7 @@ docker run --name carcassonne_app \
 
 For Windows/Mac run:
 ```bash
-docker run --name carcassonne_app \
-  -e DISPLAY=host.docker.internal:0 \
-  -v /tmp/.X11-unix:/tmp/.X11-unix \
-  juanvalenzuela101/carcassonne_v1_2026
+docker run --name carcassonne_app -e DISPLAY=host.docker.internal:0 -v /tmp/.X11-unix:/tmp/.X11-unix juanvalenzuela101/carcassonne_v1_2026
 ```
 
 ## 6. Acknowledgments
