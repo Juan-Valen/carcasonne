@@ -1,7 +1,10 @@
-carcassonne/ServiceTest/SerializationTest.class
-carcassonne/ModelTest/PlayerTest.class
-carcassonne/ModelTest/BoardTest.class
-carcassonne/ModelTest/SpotTest.class
-carcassonne/ModelTest/GameTest.class
-carcassonne/ModelTest/PointCalculationTest.class
-carcassonne/ModelTest/TileTest.class
+carcassonne\ModelTest\PointCalculationTest.class
+carcassonne\ModelTest\GameTest.class
+carcassonne\ServiceTest\SerializationTest.class
+carcassonne\ModelTest\UserTest.class
+carcassonne\ModelTest\TileTest.class
+carcassonne\ModelTest\MeepleTest.class
+carcassonne\ModelTest\PlayerTest.class
+carcassonne\ModelTest\AvailableSpotsTest.class
+carcassonne\ModelTest\BoardTest.class
+carcassonne\ModelTest\SpotTest.class

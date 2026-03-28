@@ -2,16 +2,15 @@ package carcassonne.View;
 
 import carcassonne.App;
 import carcassonne.Controller.GameController;
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.Spinner;
-import javafx.scene.control.SpinnerValueFactory;
+import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 
 public class StartView extends View {
 
     public Button loginButton;
+    public ComboBox langComboBox;
     GameController gameController = GameController.getInstance();
 
     App mainApp = App.getInstance();
@@ -32,6 +31,28 @@ public class StartView extends View {
         super.initialize();
         System.out.println("StartView.initialize() called");
         playerNumSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(2, 5, 2));
+
+        langComboBox.setItems(FXCollections.observableArrayList("English", "French", "German"));
+        langComboBox.setValue("English");  // Set default value
+        
+        // Listener for when ComboBox value changes
+        langComboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                switch (newValue.toString().toLowerCase()) {
+                    case "english":
+                        enterPlayerNumPrompt.setText("Enter number of players:");
+                        break;
+                    case "french":
+                        enterPlayerNumPrompt.setText("Entrez le nombre de joueurs:");
+                        break;
+                    case "german":
+                        enterPlayerNumPrompt.setText("Geben Sie die Anzahl der Spieler ein:");
+                        break;
+                    default:
+                        enterPlayerNumPrompt.setText("Enter number of players:");
+                }
+            }
+        });
     }
 
     @Override
