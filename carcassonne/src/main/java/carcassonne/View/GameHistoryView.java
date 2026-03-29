@@ -20,13 +20,11 @@ public class GameHistoryView extends  View {
     @Override
     protected void initialize() {
         super.initialize();
-        System.out.println("GameHistoryView.initialize() called");
     }
 
     @Override
     protected void onAfterStageAvailable() {
         super.onAfterStageAvailable();
-        System.out.println("GameHistoryView.onAfterStageAvailable() called");
     }
 
     @Override
@@ -57,9 +55,9 @@ public class GameHistoryView extends  View {
         if (savedGames != null && !savedGames.isEmpty()) {
             for (GameInfo savedGame : savedGames) {
                 HBox gameEntry = new HBox();
-                Label idLabel = new Label("Game ID: " + savedGame.id);
+                Label idLabel = new Label(gameController.getText("game.id") + ": " + savedGame.id);
                 Label dateLabel = new Label(savedGame.updatedDate.toString());
-                Label onlineLabel = new Label(savedGame.online ? "Online" : "Offline");
+                Label onlineLabel = new Label(savedGame.online ? gameController.getText("game.online") : gameController.getText("game.offline"));
                 gameEntry.getChildren().addAll(idLabel, dateLabel, onlineLabel);
                 gameEntry.setOnMouseClicked(event -> {
                     try {
@@ -85,7 +83,7 @@ public class GameHistoryView extends  View {
                 saveContainer.getChildren().add(gameEntry);
             }
         } else {
-            Label noSavesLabel = new Label("No saved games found.");
+            Label noSavesLabel = new Label(gameController.getText("game.saved.none"));
             saveContainer.getChildren().add(noSavesLabel);
         }
     }

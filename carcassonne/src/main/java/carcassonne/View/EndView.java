@@ -5,6 +5,7 @@ import carcassonne.Controller.GameController;
 import carcassonne.Model.Player;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 
@@ -18,6 +19,13 @@ public class EndView extends View {
 
     @FXML
     public VBox scoreBox;
+    public Button btnBack;
+
+    @FXML
+    public void initialize() {
+        super.initialize();
+        btnBack.setText(controller.getText("back"));
+    }
 
     @FXML
     public void onBack(ActionEvent actionEvent) {
@@ -40,7 +48,7 @@ public class EndView extends View {
 
         for (int i = 0; i < sortedPlayers.length; i++) {
             Player player = sortedPlayers[i];
-            Label label = new Label("#" + (i + 1) + "  Player " + (i + 1) + ": " + player.getPoints() + " pts");
+            Label label = new Label("#" + (i + 1) + "  " + controller.getText("player") + " " + (i + 1) + ": " + player.getPoints() + " " + controller.getText("pts"));
             scoreBox.getChildren().add(label);
         }
     }

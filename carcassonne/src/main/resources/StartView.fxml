@@ -14,7 +14,7 @@
          <children>
             <Label fx:id="enterPlayerNumPrompt" text="Enter number of players" />
             <Spinner fx:id="playerNumSpinner" prefWidth="50.0" />
-              <Button onAction="#onBack" text="New Game" VBox.vgrow="ALWAYS" />
+              <Button fx:id="btnNewGame" onAction="#onBack" text="New Game" VBox.vgrow="ALWAYS" />
          </children>
       </VBox>
       <Button fx:id="loginButton" mnemonicParsing="false" onAction="#onLogin" text="Login" VBox.vgrow="ALWAYS" />

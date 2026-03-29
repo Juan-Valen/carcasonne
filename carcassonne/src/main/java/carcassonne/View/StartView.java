@@ -6,16 +6,19 @@ import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
+import javafx.util.StringConverter;
 
 public class StartView extends View {
 
     public Button loginButton;
-    public ComboBox langComboBox;
+    public ComboBox<String> langComboBox;
+    public Button btnNewGame;
     GameController gameController = GameController.getInstance();
 
     App mainApp = App.getInstance();
 
     Button savedGamesButton;
+    private String selectedLanguageCode = "en";
 
     @FXML
     public VBox rootContainer;
@@ -29,40 +32,48 @@ public class StartView extends View {
     @FXML
     protected void initialize() {
         super.initialize();
-        System.out.println("StartView.initialize() called");
         playerNumSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(2, 5, 2));
 
-        langComboBox.setItems(FXCollections.observableArrayList("English", "French", "German"));
-        langComboBox.setValue("English");  // Set default value
-        
-        // Listener for when ComboBox value changes
-        langComboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue != null) {
-                switch (newValue.toString().toLowerCase()) {
-                    case "english":
-                        enterPlayerNumPrompt.setText("Enter number of players:");
-                        break;
-                    case "french":
-                        enterPlayerNumPrompt.setText("Entrez le nombre de joueurs:");
-                        break;
-                    case "german":
-                        enterPlayerNumPrompt.setText("Geben Sie die Anzahl der Spieler ein:");
-                        break;
-                    default:
-                        enterPlayerNumPrompt.setText("Enter number of players:");
-                }
+        langComboBox.setConverter(new StringConverter<>() {
+            @Override
+            public String toString(String code) {
+                return getLanguageDisplayText(code);
+            }
+
+            @Override
+            public String fromString(String string) {
+                return selectedLanguageCode;
             }
         });
+
+        langComboBox.setItems(FXCollections.observableArrayList("en", "ch", "ru"));
+        langComboBox.setValue(selectedLanguageCode);
+
+        langComboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                selectedLanguageCode = newValue;
+                gameController.setLanguage(selectedLanguageCode);
+                setLang();
+            }
+        });
+
+        setLang();
+    }
+
+    private String getLanguageDisplayText(String code) {
+        return switch (code) {
+            case "ch" -> gameController.getText("chinese");
+            case "ru" -> gameController.getText("russian");
+            default -> gameController.getText("english");
+        };
     }
 
     @Override
     public void onViewShow() {
         super.onViewShow();
-        System.out.println("StartView.onViewShow() called");
         if (gameController.getCurrentUser() != null) {
-            loginButton.setText("Change User");
             if (savedGamesButton == null) {
-                savedGamesButton = new Button("Saved Games");
+                savedGamesButton = new Button(gameController.getText("game.saved"));
                 savedGamesButton.setOnAction(e -> {
                     try {
                         mainApp.showScene("/GameHistoryView.fxml");
@@ -75,7 +86,7 @@ public class StartView extends View {
                 }
             }
         } else {
-            loginButton.setText("Login");
+            loginButton.setText(gameController.getText("login"));
         }
     }
 
@@ -90,7 +101,7 @@ public class StartView extends View {
             e.printStackTrace();
         }
 
-        gameController.newgame(selectedPlayers);
+        gameController.newgame(selectedPlayers, selectedLanguageCode);
         System.out.println("current player count: " + selectedPlayers);
     }
 
@@ -104,5 +115,33 @@ public class StartView extends View {
         }
     }
 
+    public void setLang() {
+        if (savedGamesButton != null) {
+            savedGamesButton.setText(gameController.getText("game.saved"));
+        }
 
+        enterPlayerNumPrompt.setText(gameController.getText("players.prompt"));
+
+        loginButton.setText(gameController.getText("login"));
+
+        btnNewGame.setText(gameController.getText("game.new"));
+
+        if (gameController.getCurrentUser() != null) {
+            loginButton.setText(gameController.getText("login"));
+        } else {
+            loginButton.setText(gameController.getText("user.change"));
+        }
+
+        if (savedGamesButton != null) {
+            savedGamesButton.setText(gameController.getText("game.saved"));
+        }
+
+        langComboBox.setItems(FXCollections.observableArrayList("en", "ch", "ru"));
+        if (!langComboBox.getItems().contains(selectedLanguageCode)) {
+            selectedLanguageCode = "en";
+        }
+        if (!selectedLanguageCode.equals(langComboBox.getValue())) {
+            langComboBox.setValue(selectedLanguageCode);
+        }
+    }
 }
