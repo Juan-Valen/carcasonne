@@ -5,16 +5,29 @@ import carcassonne.Model.User;
 import carcassonne.Service.databaseService;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 
 public class LoginView extends View {
 
     public Label errorLabel;
+    public Button btnLogin;
+    public Button btnBack;
     @FXML
     private TextField userNameField;
     @FXML
     private TextField passWordField;
+
+    public void initialize() {
+        super.initialize();
+
+        btnBack.setText(GameController.getInstance().getText("back"));
+        btnLogin.setText(GameController.getInstance().getText("login"));
+
+        userNameField.setPromptText(GameController.getInstance().getText("username"));
+        passWordField.setPromptText(GameController.getInstance().getText("password"));
+    }
 
     @FXML
     private void onLogin() {

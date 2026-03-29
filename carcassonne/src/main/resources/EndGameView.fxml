@@ -9,7 +9,7 @@
       <VBox alignment="CENTER" fillWidth="false" prefHeight="400.0" prefWidth="600.0">
          <children>
             <VBox fx:id="scoreBox" prefHeight="288.0" prefWidth="260.0" />
-            <Button mnemonicParsing="false" onAction="#onBack" text="Back">
+            <Button fx:id="btnBack" mnemonicParsing="false" onAction="#onBack" text="Back">
                <VBox.margin>
                   <Insets top="30.0" />
                </VBox.margin>

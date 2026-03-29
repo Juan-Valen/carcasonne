@@ -55,9 +55,9 @@ public class GameController {
             renderVisibleTiles(view.getVisibleBounds());
 
             if (currentUser != null) {
-                view.quitButton.setText("Save & Quit");
+                view.quitButton.setText(model.getText("game.save.quit"));
             } else {
-                view.quitButton.setText("Quit");
+                view.quitButton.setText(model.getText("game.quit"));
             }
         }
     }
@@ -287,13 +287,21 @@ public class GameController {
         }
     }
 
-    public void newgame(int maxPlayers) {
-        this.model = new Game();
+    public void newgame(int maxPlayers, String languageCode) {
+        this.model = new Game(languageCode);
         this.model.setMaxPlayer(maxPlayers);
         initView();
     }
 
     public void newgame() {
-        newgame(2);
+        newgame(2,"en");
+    }
+
+    public void setLanguage(String langCode) {
+        model.setLanguage(langCode);
+    }
+
+    public String getText(String key) {
+        return model.getText(key);
     }
 }

@@ -11,9 +11,11 @@ carcassonne\View\StartView.class
 carcassonne\App.class
 carcassonne\Model\Tile.class
 carcassonne\Model\CityPoints$CityResult.class
+carcassonne\View\StartView$1.class
 carcassonne\Model\Meeple.class
 carcassonne\Model\CityPoints.class
 carcassonne\View\GameHistoryView.class
+carcassonne\Model\Language.class
 carcassonne\Service\databaseService.class
 carcassonne\Model\Player.class
 carcassonne\View\LoginView.class

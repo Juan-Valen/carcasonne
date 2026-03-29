@@ -19,7 +19,7 @@
       </VBox>
       <StackPane>
          <children>
-            <Button mnemonicParsing="false" onAction="#onLogin" text="Login" />
+            <Button fx:id="btnLogin" mnemonicParsing="false" onAction="#onLogin" text="Login" />
          </children>
          <padding>
             <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
@@ -27,7 +27,7 @@
       </StackPane>
       <StackPane alignment="TOP_CENTER" prefHeight="150.0" prefWidth="200.0">
          <children>
-            <Button mnemonicParsing="false" onAction="#onBack" text="Back" />
+            <Button fx:id="btnBack" mnemonicParsing="false" onAction="#onBack" text="Back" />
          </children>
       </StackPane>
    </children>

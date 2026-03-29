@@ -22,6 +22,7 @@ public class GameView extends View {
 
     // Reference to game controller
     private final GameController controller = GameController.getInstance();
+    public Button btnRotateTile;
     private boolean layoutRetryScheduled = false;
     private double cellPortionOfScreen = 0.1; // Portion of the screen width that the one cell in the grid takes up when
                                               // using dynamic cell size instead of tile image size (0.0 to 1.0)
@@ -100,8 +101,10 @@ public class GameView extends View {
     @Override
     protected void initialize() {
         super.initialize();
-        System.out.println("GameView.initialize() called");
         gridScreen.setPannable(false);
+
+        quitButton.setText(controller.getText("game.quit"));
+        btnRotateTile.setText(controller.getText("rotate.tile"));
     }
 
     @Override
@@ -113,17 +116,7 @@ public class GameView extends View {
     private boolean scrollUpdateQueued = false;
 
     @FXML
-    public void openSecondary() {
-        try {
-            carcassonne.App.getInstance().showScene("/StartView.fxml");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    @FXML
     public void rotateCurrentTile() {
-        System.out.println("rotateCurrentTile() called");
         controller.rotateTile();
     }
 
@@ -389,7 +382,7 @@ public class GameView extends View {
         for (int i = 0; i < playerCount; i++) {
             HBox hbox = new HBox(10); // Add spacing between label and circle
             hbox.setStyle("-fx-alignment: center;"); // Center content horizontally and vertically
-            hbox.getChildren().add(new Label("Player " + (i+1)));
+            hbox.getChildren().add(new Label(controller.getText("player") + " " + (i+1)));
 
             for (int j = 0; j < playerMeepleCounts[i]; j++) {
                 Circle circle = new Circle(10);
@@ -405,7 +398,7 @@ public class GameView extends View {
                 hbox.getChildren().add(circle);
             }
 
-            hbox.getChildren().add(new Label("  Points: " + playerPoints[i]));
+            hbox.getChildren().add(new Label("  " + controller.getText("points") + ": " + playerPoints[i]));
 
             // Make each HBox grow to fill equal vertical space
             VBox.setVgrow(hbox, javafx.scene.layout.Priority.ALWAYS);
