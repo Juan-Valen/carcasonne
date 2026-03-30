@@ -49,13 +49,6 @@ public class Game implements Serializable {
             Map.entry('W', new TileSide[] { TileSide.FIELD, TileSide.ROAD, TileSide.ROAD, TileSide.ROAD }),
             Map.entry('X', new TileSide[] { TileSide.ROAD, TileSide.ROAD, TileSide.ROAD, TileSide.ROAD }));
 
-    private Language language = new Language();
-
-    public Game(String languageCode) {
-        initDeck();
-        setLanguage(languageCode);
-    }
-
     public Game() {
         initDeck();
     }
@@ -271,13 +264,5 @@ public class Game implements Serializable {
 
         deck.add(new Tile(letter, sides));
 
-    }
-
-    public void setLanguage(String languageCode) {
-        language.setLanguage(languageCode);
-    }
-
-    public String getText(String key) {
-        return language.getString(key);
     }
 }

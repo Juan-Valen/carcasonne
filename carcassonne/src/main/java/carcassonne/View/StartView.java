@@ -101,7 +101,7 @@ public class StartView extends View {
             e.printStackTrace();
         }
 
-        gameController.newgame(selectedPlayers, selectedLanguageCode);
+        gameController.newgame(selectedPlayers);
         System.out.println("current player count: " + selectedPlayers);
     }
 

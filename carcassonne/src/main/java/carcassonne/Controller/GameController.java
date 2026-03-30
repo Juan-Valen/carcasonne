@@ -18,6 +18,8 @@ public class GameController {
 
     private User currentUser;
 
+    private Language language = new Language();
+
     private GameController() {
         // Private constructor to prevent instantiation
         model = new Game();
@@ -55,9 +57,9 @@ public class GameController {
             renderVisibleTiles(view.getVisibleBounds());
 
             if (currentUser != null) {
-                view.quitButton.setText(model.getText("game.save.quit"));
+                view.quitButton.setText(getText("game.save.quit"));
             } else {
-                view.quitButton.setText(model.getText("game.quit"));
+                view.quitButton.setText(getText("game.quit"));
             }
         }
     }
@@ -287,21 +289,20 @@ public class GameController {
         }
     }
 
-    public void newgame(int maxPlayers, String languageCode) {
-        this.model = new Game(languageCode);
+    public void newgame(int maxPlayers) {
         this.model.setMaxPlayer(maxPlayers);
         initView();
     }
 
     public void newgame() {
-        newgame(2,"en");
+        newgame(2);
     }
 
-    public void setLanguage(String langCode) {
-        model.setLanguage(langCode);
+    public void setLanguage(String languageCode) {
+        language.setLanguage(languageCode);
     }
 
     public String getText(String key) {
-        return model.getText(key);
+        return language.getString(key);
     }
 }
