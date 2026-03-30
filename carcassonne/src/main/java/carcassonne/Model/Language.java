@@ -6,7 +6,7 @@ import java.util.ResourceBundle;
 public class Language {
     public Locale currentLocale;
     public ResourceBundle resourceBundle;
-    Language() {
+    public Language() {
         this.currentLocale = new Locale("en");
         this.resourceBundle = ResourceBundle.getBundle("bundle", currentLocale);
     }
