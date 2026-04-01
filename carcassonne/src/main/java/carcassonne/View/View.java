@@ -2,7 +2,6 @@ package carcassonne.View;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;
-import javafx.geometry.Bounds;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
 import javafx.scene.layout.Region;
@@ -24,6 +23,7 @@ public class View {
         System.out.println("  rootContainer = " + rootContainer);
 
         if (rootContainer != null) {
+            applyFontFallback();
             System.out.println("  rootContainer.getScene() = " + rootContainer.getScene());
 
             // Try immediate binding if scene is already available
@@ -71,7 +71,7 @@ public class View {
 
         // Bind to screen size, not stage size, to prevent progressive shrinking when
         // switching views
-        if (window instanceof Stage stage) {
+        if (window instanceof Stage) {
             Screen screen = Screen.getPrimary();
             Rectangle2D screenBounds = screen.getVisualBounds();
 
@@ -98,6 +98,17 @@ public class View {
         System.out.println("View.onAfterStageAvailable() called - subclasses can override this");
         // Subclasses can override this to perform additional setup after the stage is
         // available
+    }
+
+    private void applyFontFallback() {
+        String fallbackStyle = "-fx-font-family: \"Noto Sans CJK SC\";";
+        String currentStyle = rootContainer.getStyle();
+
+        if (currentStyle == null || currentStyle.isBlank()) {
+            rootContainer.setStyle(fallbackStyle);
+        } else if (!currentStyle.contains("-fx-font-family")) {
+            rootContainer.setStyle(currentStyle + " " + fallbackStyle);
+        }
     }
 
     public void onViewShow() {
