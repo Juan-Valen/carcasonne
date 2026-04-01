@@ -30,7 +30,7 @@ The project relies on the listed technologies to run :
 ![Relational schema diagram](./Documents/img/relational_schema.png)
 
 ## 4. Entity relationship
-The [entity relationship](./Documents/img/carcassonne_class.png) can be described as follows,  
+The [entity relationship](./Documents/img/SEP_diagram.png) ([detailed version](./Documents/diagram/model_class_diagram.pdf)) can be described as follows,  
 The user interacts with the game.  
 The user can connect to the game.  
 The user, once connected, can start a game, play using the different functionalities and save it.  
@@ -39,11 +39,19 @@ The game can also interact with the database by saving or retrieving past or cur
 
 ## 5. Instruction for playing the game with docker.
 
+### Run the app using docker compose
+```bash
+docker compose up --build -d
+```
+**Disclaimer :** Please ensure that you have the proper tools installed and running
+
+
+### [DEPRECATED]
+
 ### Run database for game with docker
 First, follow the [database instructions](./database-instructions.md). Note: to run the instructions you will need to copy the [sql initialization file](./config/init.sql).
 
 ### Run the game with docker
-
 For linux run:
 ```bash
 docker run --name carcassonne_app \
@@ -57,5 +65,13 @@ For Windows/Mac run:
 docker run --name carcassonne_app -e DISPLAY=host.docker.internal:0 -v /tmp/.X11-unix:/tmp/.X11-unix juanvalenzuela101/carcassonne_v1_2026
 ```
 
-## 6. Acknowledgments
+## 6. Localization
+You can adapt the UI using localization.  
+When launching the game, select the box at the bottom and choose the desired language.  
+Languages implemented :
+* English
+* Russian
+* Chinese
+
+## 7. Acknowledgments
 > Thank you to all the [contributors](#contributors) and [teacher](#professor)

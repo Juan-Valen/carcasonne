@@ -33,7 +33,7 @@ The project could be improved on those aspects :
 ### Next Sprint Focus (Future Of The Project)
 In the future, the project could try to work on/improve :
 * Using Kubernetes for the deployment
-* Implementing websockets to play on multiple devices simultaniously
+* Implementing websockets to play on multiple devices simultaneously
 * Improving the general UI/UX 
 * Having a web interface as well as the javaFX one
 
