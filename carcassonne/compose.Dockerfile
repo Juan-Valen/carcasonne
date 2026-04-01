@@ -10,11 +10,13 @@ FROM eclipse-temurin:21-jdk
 
 WORKDIR /app
 
-
-# Install GUI libraries
+# Install GUI libraries and CJK fonts
 RUN apt-get update && apt-get install -y \
     libx11-6 libxext6 libxrender1 libxtst6 libxi6 libgtk-3-0 mesa-utils wget unzip \
+    fontconfig fonts-noto-cjk \
+    && fc-cache -f -v \
     && rm -rf /var/lib/apt/lists/*
+
 
 # Download JavaFX SDK
 RUN mkdir -p /javafx-sdk \
