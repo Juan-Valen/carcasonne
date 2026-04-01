@@ -1,6 +1,6 @@
 ## Sprint 5 Review Report
 
-### Translationa
+### Translations
 Translated the games minimal text content to russian and chinese.
 
 ### UI Changes
