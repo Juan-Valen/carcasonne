@@ -34,18 +34,17 @@ CREATE TABLE saves
 CREATE TABLE languages
 (
     language_id SERIAL NOT NULL,
-    language STRING NOT NULL,
+    language CHAR(2) NOT NULL,
     PRIMARY KEY (language_id)
 );
 
 CREATE TABLE translations
 (
-    translation_id SERIAL NOT NULL,
     language_id INT NOT NULL,
-    key STRING NOT NULL,
-    translation STRING NOT NULL,
-    UNIQUE (language_id,key)
-    PRIMARY KEY (translation_id),
+    key VARCHAR(100) NOT NULL,
+    translation VARCHAR(100) NOT NULL,
+    UNIQUE (language_id, key),
+    PRIMARY KEY (language_id, key),
     FOREIGN KEY (language_id) REFERENCES languages(language_id)
 );
 
@@ -57,16 +56,16 @@ VALUES
     ('carcassonne', 'password'),
     ('juan', '0j#mi9-fd2j_k4'),
     ('noah', '*rB#_Tz_6r2-'),
-    ('nooah', '55PwgU39W!5#'),
+    ('nooa', '55PwgU39W!5#'),
     ('raphael','a-CY4E3a!8_j');
 
 INSERT INTO languages(language)
 VALUES
-    ("en"),
-    ("ch"),
-    ("ru");
+    ('en'),
+    ('ch'),
+    ('ru');
 
-INSERT INTO translations (language_id, translation_key, translation_value)
+INSERT INTO translations (language_id, key, translation)
 VALUES
     (1, 'english', 'English'),
     (1, 'chinese', 'Chinese'),
@@ -91,7 +90,7 @@ VALUES
     (1, 'player', 'Player'),
     (1, 'points', 'Points'),
     (1, 'game.end.pts', 'pts');
-INSERT INTO translations (language_id, translation_key, translation_value)
+INSERT INTO translations (language_id, key, translation)
 VALUES
     (2, 'english', '英文'),
     (2, 'chinese', '中文'),
@@ -126,7 +125,7 @@ VALUES
     (2, '7', '七'),
     (2, '8', '八'),
     (2, '9', '九');
-INSERT INTO translations (language_id, translation_key, translation_value)
+INSERT INTO translations (language_id, key, translation)
 VALUES
     (3, 'english', 'английский'),
     (3, 'chinese', 'китайский'),

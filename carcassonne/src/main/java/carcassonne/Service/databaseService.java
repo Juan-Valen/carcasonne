@@ -10,6 +10,10 @@ import java.util.ArrayList;
 
 import java.sql.Date;
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.Map;
+import java.util.HashMap;
 
 import carcassonne.Model.GameInfo;
 import carcassonne.Model.User;
@@ -169,4 +173,47 @@ public class databaseService {
             e.printStackTrace();
         }
     }
+
+    public Map<String, String> getTranslations(String language) {
+        Map<String, String> dictionary = new HashMap<>();
+
+        String sql = "SELECT key, translation FROM translations AS t LEFT JOIN languages AS l ON l.language_id = t.language_id WHERE language = ?";
+
+        try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, language);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    String key = rs.getString("key");
+                    String value = rs.getString("translation");
+                    dictionary.put(key, value);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return dictionary;
+    }
+
+    public String[] getLanguages() {
+        Set<String> languages = new HashSet<>();
+
+        String sql = "SELECT language FROM languages WHERE active = 1";
+
+        try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    languages.add(rs.getString("language"));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return languages.toArray(new String[0]);
+    }
+
 }
