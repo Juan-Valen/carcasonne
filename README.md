@@ -73,5 +73,9 @@ Languages implemented :
 * Russian
 * Chinese
 
+The app uses a database translation table that is initialized along with other database tables in the [sql initialization file](./config/init.sql).
+
+The script creates the table and inserts all the translations (containing a language ID, an english key and the given languages translation)
+
 ## 7. Acknowledgments
 > Thank you to all the [contributors](#contributors) and [teacher](#professor)
