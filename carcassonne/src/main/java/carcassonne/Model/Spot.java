@@ -1,6 +1,7 @@
 package carcassonne.Model;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 public class Spot implements Serializable {
 
@@ -54,5 +55,10 @@ public class Spot implements Serializable {
         }
         Spot spot = (Spot) obj;
         return spot.getX() == x && spot.getY() == y;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(x, y);
     }
 }
