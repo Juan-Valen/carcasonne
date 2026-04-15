@@ -1,3 +1,4 @@
+# Use cases
 ![use_cases_diagram](../img/use_cases.png)
 
 
