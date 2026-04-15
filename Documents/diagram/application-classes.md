@@ -1,1 +1,1 @@
-!![classes](../img/carcassonne_class.png)
+![classes](../img/carcassonne_class.png)
