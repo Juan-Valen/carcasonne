@@ -5,6 +5,12 @@ Project name: Carcassonne
 General game explanation: Carcassonne is a multiplayer board game. It is composed of tiles that you place during
 the game and meeples that increase the points awarded after you complete affiliated
 task.
+
+The three arrows from Board to Spot represent three different variables. minSpot and maxSpot which are used in the display to calculate the minimum boundary size and a list of free spots.
+
+The tile interface is used to interface between the 24 different tiles that compose the game. From TileA to TileX.
+
+
 **Detailed diagram explanation:**
 - **User:**
 The user is the entity stored in the database that represents the player that
@@ -17,7 +23,7 @@ play following Carcassonne rules.
 - **Meeple:**
 The meeple is the little piece from the game associated to a player. It acts as a
 multiplier of points on the tile it is placed.
-- **Tile:**
+- **Tile A-X:**
 The tile is the square piece that is used to create the board. When placed, the
 player can choose to add a meeple to it and change its orientation.
 - **Spot:**
