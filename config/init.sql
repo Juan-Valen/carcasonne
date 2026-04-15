@@ -35,6 +35,7 @@ CREATE TABLE languages
 (
     language_id SERIAL NOT NULL,
     language CHAR(2) NOT NULL,
+    active BOOLEAN DEFAULT TRUE,
     PRIMARY KEY (language_id)
 );
 
