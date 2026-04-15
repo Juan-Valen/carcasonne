@@ -1,6 +1,6 @@
 # Software Architecture
 ## Class diagram
-!![Carcassone diagram](../img/carcassonne_class.png)
+![Carcassone diagram](../img/carcassonne_class.png)
 Project name: Carcassonne
 General game explanation: Carcassonne is a multiplayer board game. It is composed of tiles that you place during
 the game and meeples that increase the points awarded after you complete affiliated
