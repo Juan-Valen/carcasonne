@@ -26,11 +26,13 @@ The project relies on the listed technologies to run :
   * Kubernetes (W.I.P.)
 
 ## 3. Database Diagrams
+### Entity relationship diagram
 ![Entity relationship diagram](./Documents/img/entity_relationship.png)  
+### Relational schema diagram
 ![Relational schema diagram](./Documents/img/relational_schema.png)
 
-## 4. Class diagram
-The [Class diagram](./Documents/img/carcassonne_class.png) can be described as follows,  
+## 4. Software architecture
+The [Class diagram](./Documents/diagram/software_architecture.png) can be described as follows,  
 The user interacts with the game.  
 The user can connect to the game.  
 The user, once connected, can start a game, play using the different functionalities and save it.  
