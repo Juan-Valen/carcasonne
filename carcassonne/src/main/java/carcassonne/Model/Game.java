@@ -23,6 +23,9 @@ public class Game implements Serializable {
     private Player[] players = new Player[2];
     /// Current state of the game board
     private Board board = new Board();
+    /// Random number generator for drawing tiles
+    Random rand = new Random();
+
     private Map<Character, TileSide[]> tiles = Map.ofEntries(
             Map.entry('A', new TileSide[] { TileSide.FIELD, TileSide.FIELD, TileSide.ROAD, TileSide.FIELD }),
             Map.entry('B', new TileSide[] { TileSide.FIELD, TileSide.FIELD, TileSide.FIELD, TileSide.FIELD }),
@@ -251,7 +254,6 @@ public class Game implements Serializable {
                 addTileToDeck(entry.getKey());
             }
         }
-        Random rand = new Random();
         int size = deck.size();
         for (int i = 1; i < size; i++) {
             int index = rand.nextInt(size - i) + 1;
