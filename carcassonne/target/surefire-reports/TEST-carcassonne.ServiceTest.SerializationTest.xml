@@ -1,67 +1,72 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="carcassonne.ServiceTest.SerializationTest" time="0.081" tests="2" errors="0" skipped="1" failures="0">
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="carcassonne.ServiceTest.SerializationTest" time="0.112" tests="3" errors="0" skipped="2" failures="0">
   <properties>
-    <property name="java.specification.version" value="25"/>
-    <property name="sun.jnu.encoding" value="UTF-8"/>
-    <property name="java.class.path" value="/Users/noahstewart/IdeaProjects/carcasonne/carcassonne/target/test-classes:/Users/noahstewart/IdeaProjects/carcasonne/carcassonne/target/classes:/Users/noahstewart/.m2/repository/org/postgresql/postgresql/42.7.10/postgresql-42.7.10.jar:/Users/noahstewart/.m2/repository/org/checkerframework/checker-qual/3.52.0/checker-qual-3.52.0.jar:/Users/noahstewart/.m2/repository/org/junit/jupiter/junit-jupiter-api/5.14.2/junit-jupiter-api-5.14.2.jar:/Users/noahstewart/.m2/repository/org/opentest4j/opentest4j/1.3.0/opentest4j-1.3.0.jar:/Users/noahstewart/.m2/repository/org/junit/platform/junit-platform-commons/1.14.2/junit-platform-commons-1.14.2.jar:/Users/noahstewart/.m2/repository/org/apiguardian/apiguardian-api/1.1.2/apiguardian-api-1.1.2.jar:/Users/noahstewart/.m2/repository/org/jacoco/jacoco-maven-plugin/0.8.14/jacoco-maven-plugin-0.8.14.jar:/Users/noahstewart/.m2/repository/org/codehaus/plexus/plexus-utils/3.0.24/plexus-utils-3.0.24.jar:/Users/noahstewart/.m2/repository/org/apache/maven/shared/file-management/3.2.0/file-management-3.2.0.jar:/Users/noahstewart/.m2/repository/org/slf4j/slf4j-api/1.7.36/slf4j-api-1.7.36.jar:/Users/noahstewart/.m2/repository/commons-io/commons-io/2.19.0/commons-io-2.19.0.jar:/Users/noahstewart/.m2/repository/org/apache/maven/reporting/maven-reporting-api/3.0/maven-reporting-api-3.0.jar:/Users/noahstewart/.m2/repository/org/apache/maven/doxia/doxia-sink-api/1.0/doxia-sink-api-1.0.jar:/Users/noahstewart/.m2/repository/org/jacoco/org.jacoco.agent/0.8.14/org.jacoco.agent-0.8.14-runtime.jar:/Users/noahstewart/.m2/repository/org/jacoco/org.jacoco.core/0.8.14/org.jacoco.core-0.8.14.jar:/Users/noahstewart/.m2/repository/org/ow2/asm/asm/9.9/asm-9.9.jar:/Users/noahstewart/.m2/repository/org/ow2/asm/asm-commons/9.9/asm-commons-9.9.jar:/Users/noahstewart/.m2/repository/org/ow2/asm/asm-tree/9.9/asm-tree-9.9.jar:/Users/noahstewart/.m2/repository/org/jacoco/org.jacoco.report/0.8.14/org.jacoco.report-0.8.14.jar:/Users/noahstewart/.m2/repository/org/junit/jupiter/junit-jupiter/5.14.0/junit-jupiter-5.14.0.jar:/Users/noahstewart/.m2/repository/org/junit/jupiter/junit-jupiter-params/5.14.0/junit-jupiter-params-5.14.0.jar:/Users/noahstewart/.m2/repository/org/junit/jupiter/junit-jupiter-engine/5.14.0/junit-jupiter-engine-5.14.0.jar:/Users/noahstewart/.m2/repository/org/junit/platform/junit-platform-engine/1.14.0/junit-platform-engine-1.14.0.jar:/Users/noahstewart/.m2/repository/org/openjfx/javafx-graphics/21/javafx-graphics-21.jar:/Users/noahstewart/.m2/repository/org/openjfx/javafx-graphics/21/javafx-graphics-21-mac.jar:/Users/noahstewart/.m2/repository/org/openjfx/javafx-base/21/javafx-base-21.jar:/Users/noahstewart/.m2/repository/org/openjfx/javafx-base/21/javafx-base-21-mac.jar:/Users/noahstewart/.m2/repository/org/openjfx/javafx-fxml/21/javafx-fxml-21.jar:/Users/noahstewart/.m2/repository/org/openjfx/javafx-fxml/21/javafx-fxml-21-mac.jar:/Users/noahstewart/.m2/repository/org/openjfx/javafx-controls/21/javafx-controls-21.jar:/Users/noahstewart/.m2/repository/org/openjfx/javafx-controls/21/javafx-controls-21-mac.jar:"/>
-    <property name="java.vm.vendor" value="Homebrew"/>
+    <property name="java.specification.version" value="21"/>
+    <property name="sun.cpu.isalist" value="amd64"/>
+    <property name="sun.jnu.encoding" value="Cp1252"/>
+    <property name="java.class.path" value="C:\Users\Omistaja\IdeaProjects\carcasonne\carcassonne\target\test-classes;C:\Users\Omistaja\IdeaProjects\carcasonne\carcassonne\target\classes;C:\Users\Omistaja\.m2\repository\org\postgresql\postgresql\42.7.10\postgresql-42.7.10.jar;C:\Users\Omistaja\.m2\repository\org\checkerframework\checker-qual\3.52.0\checker-qual-3.52.0.jar;C:\Users\Omistaja\.m2\repository\org\junit\jupiter\junit-jupiter-api\5.14.2\junit-jupiter-api-5.14.2.jar;C:\Users\Omistaja\.m2\repository\org\opentest4j\opentest4j\1.3.0\opentest4j-1.3.0.jar;C:\Users\Omistaja\.m2\repository\org\junit\platform\junit-platform-commons\1.14.2\junit-platform-commons-1.14.2.jar;C:\Users\Omistaja\.m2\repository\org\apiguardian\apiguardian-api\1.1.2\apiguardian-api-1.1.2.jar;C:\Users\Omistaja\.m2\repository\org\jacoco\jacoco-maven-plugin\0.8.14\jacoco-maven-plugin-0.8.14.jar;C:\Users\Omistaja\.m2\repository\org\codehaus\plexus\plexus-utils\3.0.24\plexus-utils-3.0.24.jar;C:\Users\Omistaja\.m2\repository\org\apache\maven\shared\file-management\3.2.0\file-management-3.2.0.jar;C:\Users\Omistaja\.m2\repository\org\slf4j\slf4j-api\1.7.36\slf4j-api-1.7.36.jar;C:\Users\Omistaja\.m2\repository\commons-io\commons-io\2.19.0\commons-io-2.19.0.jar;C:\Users\Omistaja\.m2\repository\org\apache\maven\reporting\maven-reporting-api\3.0\maven-reporting-api-3.0.jar;C:\Users\Omistaja\.m2\repository\org\apache\maven\doxia\doxia-sink-api\1.0\doxia-sink-api-1.0.jar;C:\Users\Omistaja\.m2\repository\org\jacoco\org.jacoco.agent\0.8.14\org.jacoco.agent-0.8.14-runtime.jar;C:\Users\Omistaja\.m2\repository\org\jacoco\org.jacoco.core\0.8.14\org.jacoco.core-0.8.14.jar;C:\Users\Omistaja\.m2\repository\org\ow2\asm\asm\9.9\asm-9.9.jar;C:\Users\Omistaja\.m2\repository\org\ow2\asm\asm-commons\9.9\asm-commons-9.9.jar;C:\Users\Omistaja\.m2\repository\org\ow2\asm\asm-tree\9.9\asm-tree-9.9.jar;C:\Users\Omistaja\.m2\repository\org\jacoco\org.jacoco.report\0.8.14\org.jacoco.report-0.8.14.jar;C:\Users\Omistaja\.m2\repository\org\junit\jupiter\junit-jupiter\5.14.0\junit-jupiter-5.14.0.jar;C:\Users\Omistaja\.m2\repository\org\junit\jupiter\junit-jupiter-params\5.14.0\junit-jupiter-params-5.14.0.jar;C:\Users\Omistaja\.m2\repository\org\junit\jupiter\junit-jupiter-engine\5.14.0\junit-jupiter-engine-5.14.0.jar;C:\Users\Omistaja\.m2\repository\org\junit\platform\junit-platform-engine\1.14.0\junit-platform-engine-1.14.0.jar;C:\Users\Omistaja\.m2\repository\org\openjfx\javafx-graphics\21\javafx-graphics-21.jar;C:\Users\Omistaja\.m2\repository\org\openjfx\javafx-graphics\21\javafx-graphics-21-win.jar;C:\Users\Omistaja\.m2\repository\org\openjfx\javafx-base\21\javafx-base-21.jar;C:\Users\Omistaja\.m2\repository\org\openjfx\javafx-base\21\javafx-base-21-win.jar;C:\Users\Omistaja\.m2\repository\org\openjfx\javafx-fxml\21\javafx-fxml-21.jar;C:\Users\Omistaja\.m2\repository\org\openjfx\javafx-fxml\21\javafx-fxml-21-win.jar;C:\Users\Omistaja\.m2\repository\org\openjfx\javafx-controls\21\javafx-controls-21.jar;C:\Users\Omistaja\.m2\repository\org\openjfx\javafx-controls\21\javafx-controls-21-win.jar;"/>
+    <property name="java.vm.vendor" value="Oracle Corporation"/>
     <property name="sun.arch.data.model" value="64"/>
-    <property name="java.vendor.url" value="https://github.com/Homebrew/homebrew-core/issues"/>
-    <property name="os.name" value="Mac OS X"/>
-    <property name="java.vm.specification.version" value="25"/>
+    <property name="user.variant" value=""/>
+    <property name="java.vendor.url" value="https://java.oracle.com/"/>
+    <property name="user.timezone" value="Europe/Helsinki"/>
+    <property name="os.name" value="Windows 11"/>
+    <property name="java.vm.specification.version" value="21"/>
     <property name="sun.java.launcher" value="SUN_STANDARD"/>
-    <property name="user.country" value="CA"/>
-    <property name="sun.boot.library.path" value="/usr/local/Cellar/openjdk/25.0.1/libexec/openjdk.jdk/Contents/Home/lib"/>
-    <property name="sun.java.command" value="/Users/noahstewart/IdeaProjects/carcasonne/carcassonne/target/surefire/surefirebooter-20260310164334310_3.jar /Users/noahstewart/IdeaProjects/carcasonne/carcassonne/target/surefire 2026-03-10T16-43-34_118-jvmRun1 surefire-20260310164334310_1tmp surefire_0-20260310164334310_2tmp"/>
+    <property name="user.country" value="GB"/>
+    <property name="sun.boot.library.path" value="C:\Program Files\Java\jdk-21.0.10\bin"/>
+    <property name="sun.java.command" value="C:\Users\Omistaja\AppData\Local\Temp\surefire11061423571207194276\surefirebooter-20260416024903178_3.jar C:\Users\Omistaja\AppData\Local\Temp\surefire11061423571207194276 2026-04-16T02-49-02_796-jvmRun1 surefire-20260416024903178_1tmp surefire_0-20260416024903178_2tmp"/>
     <property name="jdk.debug" value="release"/>
-    <property name="surefire.test.class.path" value="/Users/noahstewart/IdeaProjects/carcasonne/carcassonne/target/test-classes:/Users/noahstewart/IdeaProjects/carcasonne/carcassonne/target/classes:/Users/noahstewart/.m2/repository/org/postgresql/postgresql/42.7.10/postgresql-42.7.10.jar:/Users/noahstewart/.m2/repository/org/checkerframework/checker-qual/3.52.0/checker-qual-3.52.0.jar:/Users/noahstewart/.m2/repository/org/junit/jupiter/junit-jupiter-api/5.14.2/junit-jupiter-api-5.14.2.jar:/Users/noahstewart/.m2/repository/org/opentest4j/opentest4j/1.3.0/opentest4j-1.3.0.jar:/Users/noahstewart/.m2/repository/org/junit/platform/junit-platform-commons/1.14.2/junit-platform-commons-1.14.2.jar:/Users/noahstewart/.m2/repository/org/apiguardian/apiguardian-api/1.1.2/apiguardian-api-1.1.2.jar:/Users/noahstewart/.m2/repository/org/jacoco/jacoco-maven-plugin/0.8.14/jacoco-maven-plugin-0.8.14.jar:/Users/noahstewart/.m2/repository/org/codehaus/plexus/plexus-utils/3.0.24/plexus-utils-3.0.24.jar:/Users/noahstewart/.m2/repository/org/apache/maven/shared/file-management/3.2.0/file-management-3.2.0.jar:/Users/noahstewart/.m2/repository/org/slf4j/slf4j-api/1.7.36/slf4j-api-1.7.36.jar:/Users/noahstewart/.m2/repository/commons-io/commons-io/2.19.0/commons-io-2.19.0.jar:/Users/noahstewart/.m2/repository/org/apache/maven/reporting/maven-reporting-api/3.0/maven-reporting-api-3.0.jar:/Users/noahstewart/.m2/repository/org/apache/maven/doxia/doxia-sink-api/1.0/doxia-sink-api-1.0.jar:/Users/noahstewart/.m2/repository/org/jacoco/org.jacoco.agent/0.8.14/org.jacoco.agent-0.8.14-runtime.jar:/Users/noahstewart/.m2/repository/org/jacoco/org.jacoco.core/0.8.14/org.jacoco.core-0.8.14.jar:/Users/noahstewart/.m2/repository/org/ow2/asm/asm/9.9/asm-9.9.jar:/Users/noahstewart/.m2/repository/org/ow2/asm/asm-commons/9.9/asm-commons-9.9.jar:/Users/noahstewart/.m2/repository/org/ow2/asm/asm-tree/9.9/asm-tree-9.9.jar:/Users/noahstewart/.m2/repository/org/jacoco/org.jacoco.report/0.8.14/org.jacoco.report-0.8.14.jar:/Users/noahstewart/.m2/repository/org/junit/jupiter/junit-jupiter/5.14.0/junit-jupiter-5.14.0.jar:/Users/noahstewart/.m2/repository/org/junit/jupiter/junit-jupiter-params/5.14.0/junit-jupiter-params-5.14.0.jar:/Users/noahstewart/.m2/repository/org/junit/jupiter/junit-jupiter-engine/5.14.0/junit-jupiter-engine-5.14.0.jar:/Users/noahstewart/.m2/repository/org/junit/platform/junit-platform-engine/1.14.0/junit-platform-engine-1.14.0.jar:/Users/noahstewart/.m2/repository/org/openjfx/javafx-graphics/21/javafx-graphics-21.jar:/Users/noahstewart/.m2/repository/org/openjfx/javafx-graphics/21/javafx-graphics-21-mac.jar:/Users/noahstewart/.m2/repository/org/openjfx/javafx-base/21/javafx-base-21.jar:/Users/noahstewart/.m2/repository/org/openjfx/javafx-base/21/javafx-base-21-mac.jar:/Users/noahstewart/.m2/repository/org/openjfx/javafx-fxml/21/javafx-fxml-21.jar:/Users/noahstewart/.m2/repository/org/openjfx/javafx-fxml/21/javafx-fxml-21-mac.jar:/Users/noahstewart/.m2/repository/org/openjfx/javafx-controls/21/javafx-controls-21.jar:/Users/noahstewart/.m2/repository/org/openjfx/javafx-controls/21/javafx-controls-21-mac.jar:"/>
+    <property name="surefire.test.class.path" value="C:\Users\Omistaja\IdeaProjects\carcasonne\carcassonne\target\test-classes;C:\Users\Omistaja\IdeaProjects\carcasonne\carcassonne\target\classes;C:\Users\Omistaja\.m2\repository\org\postgresql\postgresql\42.7.10\postgresql-42.7.10.jar;C:\Users\Omistaja\.m2\repository\org\checkerframework\checker-qual\3.52.0\checker-qual-3.52.0.jar;C:\Users\Omistaja\.m2\repository\org\junit\jupiter\junit-jupiter-api\5.14.2\junit-jupiter-api-5.14.2.jar;C:\Users\Omistaja\.m2\repository\org\opentest4j\opentest4j\1.3.0\opentest4j-1.3.0.jar;C:\Users\Omistaja\.m2\repository\org\junit\platform\junit-platform-commons\1.14.2\junit-platform-commons-1.14.2.jar;C:\Users\Omistaja\.m2\repository\org\apiguardian\apiguardian-api\1.1.2\apiguardian-api-1.1.2.jar;C:\Users\Omistaja\.m2\repository\org\jacoco\jacoco-maven-plugin\0.8.14\jacoco-maven-plugin-0.8.14.jar;C:\Users\Omistaja\.m2\repository\org\codehaus\plexus\plexus-utils\3.0.24\plexus-utils-3.0.24.jar;C:\Users\Omistaja\.m2\repository\org\apache\maven\shared\file-management\3.2.0\file-management-3.2.0.jar;C:\Users\Omistaja\.m2\repository\org\slf4j\slf4j-api\1.7.36\slf4j-api-1.7.36.jar;C:\Users\Omistaja\.m2\repository\commons-io\commons-io\2.19.0\commons-io-2.19.0.jar;C:\Users\Omistaja\.m2\repository\org\apache\maven\reporting\maven-reporting-api\3.0\maven-reporting-api-3.0.jar;C:\Users\Omistaja\.m2\repository\org\apache\maven\doxia\doxia-sink-api\1.0\doxia-sink-api-1.0.jar;C:\Users\Omistaja\.m2\repository\org\jacoco\org.jacoco.agent\0.8.14\org.jacoco.agent-0.8.14-runtime.jar;C:\Users\Omistaja\.m2\repository\org\jacoco\org.jacoco.core\0.8.14\org.jacoco.core-0.8.14.jar;C:\Users\Omistaja\.m2\repository\org\ow2\asm\asm\9.9\asm-9.9.jar;C:\Users\Omistaja\.m2\repository\org\ow2\asm\asm-commons\9.9\asm-commons-9.9.jar;C:\Users\Omistaja\.m2\repository\org\ow2\asm\asm-tree\9.9\asm-tree-9.9.jar;C:\Users\Omistaja\.m2\repository\org\jacoco\org.jacoco.report\0.8.14\org.jacoco.report-0.8.14.jar;C:\Users\Omistaja\.m2\repository\org\junit\jupiter\junit-jupiter\5.14.0\junit-jupiter-5.14.0.jar;C:\Users\Omistaja\.m2\repository\org\junit\jupiter\junit-jupiter-params\5.14.0\junit-jupiter-params-5.14.0.jar;C:\Users\Omistaja\.m2\repository\org\junit\jupiter\junit-jupiter-engine\5.14.0\junit-jupiter-engine-5.14.0.jar;C:\Users\Omistaja\.m2\repository\org\junit\platform\junit-platform-engine\1.14.0\junit-platform-engine-1.14.0.jar;C:\Users\Omistaja\.m2\repository\org\openjfx\javafx-graphics\21\javafx-graphics-21.jar;C:\Users\Omistaja\.m2\repository\org\openjfx\javafx-graphics\21\javafx-graphics-21-win.jar;C:\Users\Omistaja\.m2\repository\org\openjfx\javafx-base\21\javafx-base-21.jar;C:\Users\Omistaja\.m2\repository\org\openjfx\javafx-base\21\javafx-base-21-win.jar;C:\Users\Omistaja\.m2\repository\org\openjfx\javafx-fxml\21\javafx-fxml-21.jar;C:\Users\Omistaja\.m2\repository\org\openjfx\javafx-fxml\21\javafx-fxml-21-win.jar;C:\Users\Omistaja\.m2\repository\org\openjfx\javafx-controls\21\javafx-controls-21.jar;C:\Users\Omistaja\.m2\repository\org\openjfx\javafx-controls\21\javafx-controls-21-win.jar;"/>
     <property name="sun.cpu.endian" value="little"/>
-    <property name="user.home" value="/Users/noahstewart"/>
+    <property name="user.home" value="C:\Users\Omistaja"/>
     <property name="user.language" value="en"/>
     <property name="java.specification.vendor" value="Oracle Corporation"/>
-    <property name="java.version.date" value="2025-10-21"/>
-    <property name="java.home" value="/usr/local/Cellar/openjdk/25.0.1/libexec/openjdk.jdk/Contents/Home"/>
-    <property name="file.separator" value="/"/>
-    <property name="basedir" value="/Users/noahstewart/IdeaProjects/carcasonne/carcassonne"/>
+    <property name="java.version.date" value="2026-01-20"/>
+    <property name="java.home" value="C:\Program Files\Java\jdk-21.0.10"/>
+    <property name="file.separator" value="\"/>
+    <property name="basedir" value="C:\Users\Omistaja\IdeaProjects\carcasonne\carcassonne"/>
     <property name="java.vm.compressedOopsMode" value="Zero based"/>
     <property name="line.separator" value="&#10;"/>
-    <property name="java.specification.name" value="Java Platform API Specification"/>
     <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
-    <property name="apple.awt.application.name" value="ForkedBooter"/>
-    <property name="surefire.real.class.path" value="/Users/noahstewart/IdeaProjects/carcasonne/carcassonne/target/surefire/surefirebooter-20260310164334310_3.jar"/>
+    <property name="java.specification.name" value="Java Platform API Specification"/>
+    <property name="surefire.real.class.path" value="C:\Users\Omistaja\AppData\Local\Temp\surefire11061423571207194276\surefirebooter-20260416024903178_3.jar"/>
+    <property name="user.script" value=""/>
     <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
-    <property name="java.runtime.version" value="25.0.1"/>
-    <property name="user.name" value="noahstewart"/>
-    <property name="stdout.encoding" value="UTF-8"/>
-    <property name="path.separator" value=":"/>
-    <property name="os.version" value="26.2"/>
-    <property name="java.runtime.name" value="OpenJDK Runtime Environment"/>
+    <property name="java.runtime.version" value="21.0.10+8-LTS-217"/>
+    <property name="user.name" value="Omistaja"/>
+    <property name="stdout.encoding" value="Cp1252"/>
+    <property name="path.separator" value=";"/>
+    <property name="os.version" value="10.0"/>
+    <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
     <property name="file.encoding" value="UTF-8"/>
-    <property name="java.vm.name" value="OpenJDK 64-Bit Server VM"/>
-    <property name="java.vendor.version" value="Homebrew"/>
-    <property name="localRepository" value="/Users/noahstewart/.m2/repository"/>
-    <property name="java.vendor.url.bug" value="https://github.com/Homebrew/homebrew-core/issues"/>
-    <property name="java.io.tmpdir" value="/var/folders/_7/r688p72n65j0qw2rpr1k7n040000gn/T/"/>
-    <property name="java.version" value="25.0.1"/>
-    <property name="user.dir" value="/Users/noahstewart/IdeaProjects/carcasonne/carcassonne"/>
-    <property name="os.arch" value="x86_64"/>
+    <property name="java.vm.name" value="Java HotSpot(TM) 64-Bit Server VM"/>
+    <property name="localRepository" value="C:\Users\Omistaja\.m2\repository"/>
+    <property name="java.vendor.url.bug" value="https://bugreport.java.com/bugreport/"/>
+    <property name="java.io.tmpdir" value="C:\Users\Omistaja\AppData\Local\Temp\"/>
+    <property name="java.version" value="21.0.10"/>
+    <property name="user.dir" value="C:\Users\Omistaja\IdeaProjects\carcasonne\carcassonne"/>
+    <property name="os.arch" value="amd64"/>
     <property name="java.vm.specification.name" value="Java Virtual Machine Specification"/>
-    <property name="native.encoding" value="UTF-8"/>
-    <property name="java.library.path" value="/Users/noahstewart/Library/Java/Extensions:/Library/Java/Extensions:/Network/Library/Java/Extensions:/System/Library/Java/Extensions:/usr/lib/java:."/>
+    <property name="sun.os.patch.level" value=""/>
+    <property name="native.encoding" value="Cp1252"/>
+    <property name="java.library.path" value="C:\Program Files\Java\jdk-21.0.10\bin;C:\WINDOWS\Sun\Java\bin;C:\WINDOWS\system32;C:\WINDOWS;C:\Program Files\Common Files\Oracle\Java\javapath;C:\Program Files (x86)\Razer\ChromaBroadcast\bin;C:\Program Files\Razer\ChromaBroadcast\bin;C:\Python313\Scripts\;C:\Python313\;C:\Program Files\AdoptOpenJDK\jre-11.0.11.9-hotspot\bin;C:\Program Files (x86)\AdoptOpenJDK\jre-8.0.292.10-hotspot\bin;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Windows\System32\OpenSSH\;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\Program Files\Git\cmd;C:\Program Files\NVIDIA Corporation\NVIDIA App\NvDLISR;C:\Program Files\nodejs\;C:\ProgramData\chocolatey\bin;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;C:\Users\Omistaja\AppData\Local\Programs\Python\Launcher\;C:\Users\Omistaja\AppData\Local\Microsoft\WindowsApps;c:\ytdl;C:\Users\Omistaja\AppData\Roaming\npm;C:\Users\Omistaja\AppData\Local\Programs\Microsoft VS Code\bin;C:\Program Files\Kubernetes\Minikube;C:\minikube;C:\Program Files\Java\jdk-21.0.10\bin;C:\Program Files\Maven\apache-maven-3.9.12\bin\mvn\bin;C:\Program Files\Maven\apache-maven-3.9.12\bin;C:\Program Files\Docker\Docker\resources\bin;C:\Program Files\SonarScanner\sonar-scanner-8.0.1.6346-windows-x64\bin;C:\Users\Omistaja\AppData\Local\Programs\Python\Launcher\;C:\Users\Omistaja\AppData\Local\Microsoft\WindowsApps;c:\ytdl;C:\Users\Omistaja\AppData\Roaming\npm;C:\Users\Omistaja\AppData\Local\Programs\Microsoft VS Code\bin;;."/>
     <property name="java.vm.info" value="mixed mode, sharing"/>
-    <property name="stderr.encoding" value="UTF-8"/>
-    <property name="java.vendor" value="Homebrew"/>
-    <property name="java.vm.version" value="25.0.1"/>
-    <property name="stdin.encoding" value="UTF-8"/>
-    <property name="sun.io.unicode.encoding" value="UnicodeBig"/>
-    <property name="java.class.version" value="69.0"/>
+    <property name="stderr.encoding" value="Cp1252"/>
+    <property name="java.vendor" value="Oracle Corporation"/>
+    <property name="java.vm.version" value="21.0.10+8-LTS-217"/>
+    <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
+    <property name="java.class.version" value="65.0"/>
   </properties>
-  <testcase name="Test" classname="carcassonne.ServiceTest.SerializationTest" time="0.078">
-    <system-out><![CDATA[T
-T
+  <testcase name="Test" classname="carcassonne.ServiceTest.SerializationTest" time="0.108">
+    <system-out><![CDATA[H
+H
 ]]></system-out>
   </testcase>
   <testcase name="Test2" classname="carcassonne.ServiceTest.SerializationTest" time="0">
     <skipped message="public void carcassonne.ServiceTest.SerializationTest.Test2() is @Disabled"/>
+  </testcase>
+  <testcase name="Test3" classname="carcassonne.ServiceTest.SerializationTest" time="0">
+    <skipped message="public void carcassonne.ServiceTest.SerializationTest.Test3() is @Disabled"/>
   </testcase>
 </testsuite>

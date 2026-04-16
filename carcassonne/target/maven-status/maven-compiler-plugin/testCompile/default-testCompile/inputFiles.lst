@@ -1,7 +1,10 @@
-/Users/noahstewart/IdeaProjects/carcasonne/carcassonne/src/test/java/carcassonne/ModelTest/TileTest.java
-/Users/noahstewart/IdeaProjects/carcasonne/carcassonne/src/test/java/carcassonne/ServiceTest/SerializationTest.java
-/Users/noahstewart/IdeaProjects/carcasonne/carcassonne/src/test/java/carcassonne/ModelTest/GameTest.java
-/Users/noahstewart/IdeaProjects/carcasonne/carcassonne/src/test/java/carcassonne/ModelTest/SpotTest.java
-/Users/noahstewart/IdeaProjects/carcasonne/carcassonne/src/test/java/carcassonne/ModelTest/BoardTest.java
-/Users/noahstewart/IdeaProjects/carcasonne/carcassonne/src/test/java/carcassonne/ModelTest/PointCalculationTest.java
-/Users/noahstewart/IdeaProjects/carcasonne/carcassonne/src/test/java/carcassonne/ModelTest/PlayerTest.java
+C:\Users\Omistaja\IdeaProjects\carcasonne\carcassonne\src\test\java\carcassonne\ModelTest\MeepleTest.java
+C:\Users\Omistaja\IdeaProjects\carcasonne\carcassonne\src\test\java\carcassonne\ModelTest\GameTest.java
+C:\Users\Omistaja\IdeaProjects\carcasonne\carcassonne\src\test\java\carcassonne\ModelTest\PointCalculationTest.java
+C:\Users\Omistaja\IdeaProjects\carcasonne\carcassonne\src\test\java\carcassonne\ModelTest\SpotTest.java
+C:\Users\Omistaja\IdeaProjects\carcasonne\carcassonne\src\test\java\carcassonne\ModelTest\TileTest.java
+C:\Users\Omistaja\IdeaProjects\carcasonne\carcassonne\src\test\java\carcassonne\ModelTest\UserTest.java
+C:\Users\Omistaja\IdeaProjects\carcasonne\carcassonne\src\test\java\carcassonne\ModelTest\AvailableSpotsTest.java
+C:\Users\Omistaja\IdeaProjects\carcasonne\carcassonne\src\test\java\carcassonne\ServiceTest\SerializationTest.java
+C:\Users\Omistaja\IdeaProjects\carcasonne\carcassonne\src\test\java\carcassonne\ModelTest\BoardTest.java
+C:\Users\Omistaja\IdeaProjects\carcasonne\carcassonne\src\test\java\carcassonne\ModelTest\PlayerTest.java

@@ -1,16 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: carcassonne.ModelTest.PlayerTest
 -------------------------------------------------------------------------------
-Tests run: 4, Failures: 1, Errors: 0, Skipped: 0, Time elapsed: 0.015 s <<< FAILURE! - in carcassonne.ModelTest.PlayerTest
-carcassonne.ModelTest.PlayerTest.testGets  Time elapsed: 0.002 s  <<< FAILURE!
-org.opentest4j.AssertionFailedError: Wrong user ==> expected: <user> but was: <null>
-	at org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)
-	at org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)
-	at org.junit.jupiter.api.AssertEquals.failNotEqual(AssertEquals.java:197)
-	at org.junit.jupiter.api.AssertEquals.assertEquals(AssertEquals.java:182)
-	at org.junit.jupiter.api.Assertions.assertEquals(Assertions.java:1156)
-	at carcassonne.ModelTest.PlayerTest.testGets(PlayerTest.java:19)
-	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
-	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
-	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
-
+Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.017 s - in carcassonne.ModelTest.PlayerTest
