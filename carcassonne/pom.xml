@@ -9,6 +9,7 @@
   <url>http://maven.apache.org</url>
 
   <properties>
+    <sonar.projectKey>carcassonne</sonar.projectKey>
     <java.version>21</java.version>
     <javafx.version>21</javafx.version>
   </properties>
