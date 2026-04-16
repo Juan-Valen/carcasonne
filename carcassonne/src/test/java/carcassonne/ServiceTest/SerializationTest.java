@@ -17,7 +17,7 @@ import java.sql.Blob;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-public class SerializationTest {
+class SerializationTest {
     Game game = new Game();
 
     @DisplayName("Serialize and deserialize Game model")

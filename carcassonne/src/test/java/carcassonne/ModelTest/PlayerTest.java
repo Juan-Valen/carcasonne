@@ -59,4 +59,10 @@ public class PlayerTest {
 
         assertEquals(1, player.getMeepleCount());
     }
+
+    @Test
+    void testGetUser() {
+        Player player = new Player(new User(1, "TestUser"));
+        assertEquals("TestUser", player.getUser().getUsername());
+    }
 }

@@ -50,4 +50,27 @@ public class TileTest {
 
         assertThrows(IndexOutOfBoundsException.class, () -> tile.getSideType(4));
     }
+
+    @Test
+    void testPaneAndContructor() {
+        Tile tile = new Tile('A', null, null);
+        assertEquals(null, tile.getPane());
+    }
+
+    @Test
+    void testGetSideTypeThrowsException() {
+        TileSide[] sides = { TileSide.FIELD, TileSide.FIELD, TileSide.FIELD, TileSide.FIELD };
+        Tile tile = new Tile('B', sides); // Assuming a standard constructor exists
+        // Test lower bound violation
+        IndexOutOfBoundsException lowException = assertThrows(IndexOutOfBoundsException.class, () -> {
+            tile.getSideType(-1);
+        });
+        assertEquals("Side must be in range 0 to 3", lowException.getMessage());
+        // Test upper bound violation
+        IndexOutOfBoundsException highException = assertThrows(IndexOutOfBoundsException.class, () -> {
+            tile.getSideType(4);
+        });
+        assertEquals("Side must be in range 0 to 3", highException.getMessage());
+
+    }
 }

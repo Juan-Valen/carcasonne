@@ -7,6 +7,9 @@ import org.junit.jupiter.api.Test;
 
 import carcassonne.Model.Game;
 import carcassonne.Model.Tile;
+import carcassonne.Model.Player;
+import carcassonne.Model.Board;
+import carcassonne.Model.Spot;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -70,5 +73,70 @@ public class GameTest {
         // Remove the meeple
         game.placeMeeple(-1);
         assertNull(tile.getMeeple(), "Meeple should be removed from tile");
+    }
+
+    @Test
+    void testGetPlayersMeepleCount() {
+        int[] counts = game.getPlayersMeepleCount();
+
+        // Assert
+        assertEquals(2, counts.length);
+        assertEquals(7, counts[0]);
+        assertEquals(7, counts[1]);
+    }
+
+    @Test
+    void testGetPlayersScores() {
+        Player[] players = game.getPlayers();
+        players[0].addPoints(10);
+        players[1].addPoints(25);
+
+        int[] scores = game.getPlayersScores();
+
+        // Assert
+        assertEquals(10, scores[0]);
+
+        assertEquals(25, scores[1]);
+
+    }
+
+    @Test
+    void testHasPlacedTilesLogic() {
+        assertFalse(game.hasPlacedTiles(), "Should be false when only the starting spot exists");
+        game.placeTile(72, 72, null);
+        assertTrue(game.hasPlacedTiles(), "Should be true after the first tile is placed");
+    }
+
+    @Test
+    void testEndGameLogic() {
+        assertFalse(game.endGame(), "Game should not end while deck has tiles");
+    }
+
+    @Test
+    void testGetMinMaxDelegation() {
+        // Verify the game correctly fetches the bounding box from the board
+        Board b = game.getBoard();
+        Spot min = game.getMin();
+        Spot max = game.getMax();
+
+        assertNotNull(min);
+        assertNotNull(max);
+
+        assertEquals(b.getMinSpot(), min, "Game should delegate getMin to Board");
+        assertEquals(b.getMaxSpot(), max, "Game should delegate getMax to Board");
+
+    }
+
+    @Test
+    void testNullPlayerHandling() {
+        Player[] players = game.getPlayers();
+        players[1] = null;
+
+        int[] scores = game.getPlayersScores();
+        int[] meeples = game.getPlayersMeepleCount();
+
+        assertEquals(0, scores[1], "Null player should result in 0 score");
+        assertEquals(0, meeples[1], "Null player should result in 0 meeples");
+
     }
 }
