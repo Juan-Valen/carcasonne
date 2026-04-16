@@ -23,7 +23,7 @@ public class databaseService {
     private static databaseService instance = null;
     private static final String URL = "jdbc:postgresql://localhost:5432/carcassonne";
     private static final String USER = "carcas";
-    private static final String PASSWORD = "carcassonne1";
+    private static final String PASSWORD = System.getenv("APP_PASSWORD");
 
     private databaseService() {
     }
