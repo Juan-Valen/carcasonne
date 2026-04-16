@@ -15,15 +15,15 @@ public class Game implements Serializable {
     private int game_id;
     private boolean online;
     private Date updated_date;
-    /// List of the remaining unused tiles
+    // List of the remaining unused tiles
     private List<Tile> deck = new ArrayList<>();
-    /// Indexes whose player's turn it is
+    // Indexes whose player's turn it is
     private int activePlayer = 0;
-    /// List of all the players
+    // List of all the players
     private Player[] players = new Player[2];
-    /// Current state of the game board
+    // Current state of the game board
     private Board board = new Board();
-    /// Random number generator for drawing tiles
+    // Random number generator for drawing tiles
     Random rand = new Random();
 
     private Map<Character, TileSide[]> tiles = Map.ofEntries(
