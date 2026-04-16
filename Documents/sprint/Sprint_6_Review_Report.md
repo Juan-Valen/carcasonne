@@ -21,5 +21,5 @@ Testing the features of the product and see if it still aligns with the origin p
 |:-------:|:--------------------:|:-------------------------------------------------------|:-------------:|
 | Juan    |          12           | database localization implementation, Fix Sonar Qube security issues, Update diagrams to implement localization, Scrum master |   Submited    |
 | Noah    |          12           | database localization implementation, Fix Sonar Qube test coverage, Acceptance test planning    |   Submited    |
-| Nooa    |          12           | database localization implementation, Fix Sonar Qube test coverage, Sonar Qube report  |   Submited    |
+| Nooa    |          8            | database localization implementation, Sonar Qube code review report  |   Submited    |
 | Raphael |          8            | database localization implementation, Assisted with Sonar Qube installation  |   Submited    |
