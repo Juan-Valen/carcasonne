@@ -4,7 +4,7 @@
 
 | Test Case | Test engineer 1 | Test engineer 2 | Test engineer 3 | Test engineer 4 |
 |:-------:|:--------------------:|:------------:|:----:|:-------------:|
-| Player can place a tile to the grid | PASS |  |  |  |
+| 1. Player can place a tile to the grid | PASS |  |  |  |
 | 2. Player can rotate the tile to any orientation | PASS |  |  |  |
 | 3. Player can see all placeable cells in the grid | FAILED |  |  |  |
 | 4. Player can see how many Meeples they have | PASS |  |  |  |
