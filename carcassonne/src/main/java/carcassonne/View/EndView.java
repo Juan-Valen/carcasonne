@@ -48,7 +48,7 @@ public class EndView extends View {
 
         for (int i = 0; i < sortedPlayers.length; i++) {
             Player player = sortedPlayers[i];
-            Label label = new Label("#" + (i + 1) + "  " + controller.getText("player") + " " + (i + 1) + ": " + player.getPoints() + " " + controller.getText("pts"));
+            Label label = new Label("#" + (i + 1) + "  " + controller.getText("player") + " " + (i + 1) + ": " + player.getPoints() + " " + controller.getText("game.end.pts"));
             scoreBox.getChildren().add(label);
         }
     }
