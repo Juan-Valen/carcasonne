@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         DOCKERHUB_CREDENTIALS_ID = 'MyDockerAccount'
-        DOCKERHUB_REPO = 'juanvalenzuela101/carcassonne_v1_2026'
+        DOCKERHUB_REPO = 'nooav/carcassonne'
         DOCKER_IMAGE_TAG = 'latest'
     }
     stages {
@@ -43,7 +43,7 @@ pipeline {
             }
         }
 
-        stage('Push Docker Image to Docker Hub') {
+        /*stage('Push Docker Image to Docker Hub') {
             steps {
                 dir('carcassonne') {
                     script {
@@ -53,6 +53,6 @@ pipeline {
                     }
                 }
             }
-        }
+        }*/
     }
 }
