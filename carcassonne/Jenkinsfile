@@ -51,6 +51,18 @@ pipeline {
             }
         }
 
+        stage('Prepare Dependencies') {
+            steps {
+                script {
+                    if (isUnix()) {
+                        sh 'mvn -f carcassonne/pom.xml dependency:copy-dependencies'
+                    } else {
+                        bat 'mvn -f carcassonne/pom.xml dependency:copy-dependencies'
+                    }
+                }
+            }
+        }
+
         stage('Debug') {
             steps {
                 script {
