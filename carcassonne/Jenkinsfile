@@ -2,6 +2,7 @@ pipeline {
     agent any
 
     environment {
+        SONARQUBE_SERVER = 'carcassonneSonarQube'
         DOCKERHUB_CREDENTIALS_ID = 'MyDockerAccount'
         DOCKERHUB_REPO = 'nooav/carcassonne'
         DOCKER_IMAGE_TAG = 'latest'
@@ -82,7 +83,7 @@ pipeline {
                         withSonarQubeEnv('carcassonneSonarQube') {
                             sh """
                              ${tool 'SonarScanner'}/bin/sonar-scanner \
-                             -Dsonar.projectKey=carcassonneSonarQube \
+                             -Dsonar.projectKey=SONARQUBE_SERVER \
                              -Dsonar.sources=carcassonne/src/main/java \
                              -Dsonar.tests=carcassonne/src/test/java \
                              -Dsonar.projectName=carcassonneSonarQube \
@@ -97,7 +98,7 @@ pipeline {
                         withSonarQubeEnv('carcassonneSonarQube') {
                             bat """
                              ${tool 'SonarScanner'}\\bin\\sonar-scanner ^
-                             -Dsonar.projectKey=carcassonneSonarQube ^
+                             -Dsonar.projectKey=SONARQUBE_SERVER ^
                              -Dsonar.sources=carcassonne/src/main/java ^
                              -Dsonar.tests=carcassonne/src/test/java ^
                              -Dsonar.projectName=carcassonneSonarQube ^
