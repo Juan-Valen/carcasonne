@@ -71,8 +71,8 @@ pipeline {
                             sh """
                              ${tool 'SonarScanner'}/bin/sonar-scanner \
                              -Dsonar.projectKey=carcassonneSonarQube \
-                             -Dsonar.sources=carcassonne/src/main \
-                             -Dsonar.tests=carcassonne/src/test \
+                             -Dsonar.sources=carcassonne/src/main/java \
+                             -Dsonar.tests=carcassonne/src/test/java \
                              -Dsonar.projectName=carcassonneSonarQube \
                              -Dsonar.host.url=http://localhost:9000 \
                              -Dsonar.java.binaries=carcassonne/target/classes \
@@ -84,8 +84,8 @@ pipeline {
                             bat """
                              ${tool 'SonarScanner'}\\bin\\sonar-scanner ^
                              -Dsonar.projectKey=carcassonneSonarQube ^
-                             -Dsonar.sources=carcassonne/src/main ^
-                             -Dsonar.tests=carcassonne/src/test ^
+                             -Dsonar.sources=carcassonne/src/main/java ^
+                             -Dsonar.tests=carcassonne/src/test/java ^
                              -Dsonar.projectName=carcassonneSonarQube ^
                              -Dsonar.host.url=http://localhost:9000 ^
                              -Dsonar.java.binaries=carcassonne/target/classes ^
