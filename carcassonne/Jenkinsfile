@@ -76,6 +76,8 @@ pipeline {
                              -Dsonar.projectName=carcassonneSonarQube \
                              -Dsonar.host.url=http://localhost:9000 \
                              -Dsonar.java.binaries=carcassonne/target/classes \
+                             -Dsonar.java.libraries=carcassonne/target/dependency/*.jar \
+                             -Dsonar.java.test.libraries=carcassonne/target/dependency/*.jar \
                              -Dsonar.coverage.jacoco.xmlReportPaths=carcassonne/target/site/jacoco/jacoco.xml
                              """
                         }
@@ -89,6 +91,8 @@ pipeline {
                              -Dsonar.projectName=carcassonneSonarQube ^
                              -Dsonar.host.url=http://localhost:9000 ^
                              -Dsonar.java.binaries=carcassonne/target/classes ^
+                             -Dsonar.java.libraries=carcassonne/target/dependency/*.jar ^
+                             -Dsonar.java.test.libraries=carcassonne/target/dependency/*.jar ^
                              -Dsonar.coverage.jacoco.xmlReportPaths=carcassonne/target/site/jacoco/jacoco.xml
                              """
                         }
