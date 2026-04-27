@@ -64,18 +64,6 @@ pipeline {
             }
         }
 
-        stage('Debug') {
-            steps {
-                script {
-                    if (isUnix()) {
-                        sh 'ls -R carcassonne\\target'
-                    } else {
-                        bat 'dir carcassonne\\target'
-                    }
-                }
-            }
-        }
-
          stage('SonarQube Analysis') {
             steps {
                 script {
