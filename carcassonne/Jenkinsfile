@@ -9,18 +9,31 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                sh 'mvn -f carcassonne/pom.xml clean install' // sh for linux and ios
+                script {
+                    if (isUnix()) {
+                        sh 'mvn -f carcassonne/pom.xml clean install'
+                    } else {
+                        bat 'mvn -f carcassonne\\pom.xml clean install'
+                    }
+                }
             }
         }
         stage('Test') {
             steps {
-                sh 'mvn -f carcassonne/pom.xml test'
-                
+                if (isUnix()) {
+                    sh 'mvn -f carcassonne/pom.xml test'
+                } else {
+                    bat 'mvn -f carcassonne/pom.xml test'
+                }
             }
         }
         stage('Code Coverage') {
             steps {
-                sh 'mvn -f carcassonne/pom.xml jacoco:report'
+                if (isUnix()) {
+                    sh 'mvn -f carcassonne/pom.xml jacoco:report'
+                } else {
+                    bat 'mvn -f carcassonne/pom.xml jacoco:report'
+                }
             }
         }
         stage('Publish Test Results') {
@@ -36,16 +49,30 @@ pipeline {
 
          stage('SonarQube Analysis') {
             steps {
-            withSonarQubeEnv('carcassonneSonarQube') {
-                bat """
-                 ${tool 'SonarScanner'}\\bin\\sonar-scanner ^
-                 -Dsonar.projectKey=carcassonneSonarQube ^
-                 -Dsonar.sources=src/main ^
-                 -Dsonar.tests=src/test ^
-                 -Dsonar.projectName=carcassonneSonarQube ^
-                 -Dsonar.host.url=http://localhost:9000 ^
-                 -Dsonar.java.binaries=target/classes
-                 """
+                if (isUnix()) {
+                    withSonarQubeEnv('carcassonneSonarQube') {
+                    sh """
+                     ${tool 'SonarScanner'}/bin/sonar-scanner \
+                     -Dsonar.projectKey=carcassonneSonarQube \
+                     -Dsonar.sources=src/main \
+                     -Dsonar.tests=src/test \
+                     -Dsonar.projectName=carcassonneSonarQube \
+                     -Dsonar.host.url=http://localhost:9000 \
+                     -Dsonar.java.binaries=target/classes
+                     """
+                }
+                } else {
+                    withSonarQubeEnv('carcassonneSonarQube') {
+                        bat """
+                         ${tool 'SonarScanner'}\\bin\\sonar-scanner ^
+                         -Dsonar.projectKey=carcassonneSonarQube ^
+                         -Dsonar.sources=src/main ^
+                         -Dsonar.tests=src/test ^
+                         -Dsonar.projectName=carcassonneSonarQube ^
+                         -Dsonar.host.url=http://localhost:9000 ^
+                         -Dsonar.java.binaries=target/classes
+                         """
+                    }
                 }
             }
          }
