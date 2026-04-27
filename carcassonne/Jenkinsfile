@@ -63,7 +63,7 @@ pipeline {
                              -Dsonar.tests=carcassonne/src/test \
                              -Dsonar.projectName=carcassonneSonarQube \
                              -Dsonar.host.url=http://localhost:9000 \
-                             -Dsonar.java.binaries=target/classes
+                             -Dsonar.java.binaries=carcassonne/target/classes
                              """
                         }
                     } else {
@@ -75,7 +75,7 @@ pipeline {
                              -Dsonar.tests=carcassonne/src/test ^
                              -Dsonar.projectName=carcassonneSonarQube ^
                              -Dsonar.host.url=http://localhost:9000 ^
-                             -Dsonar.java.binaries=target/classes
+                             -Dsonar.java.binaries=carcassonne/target/classes
                              """
                         }
                     }
