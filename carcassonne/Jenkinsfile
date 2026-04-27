@@ -55,9 +55,9 @@ pipeline {
             steps {
                 script {
                     if (isUnix()) {
-                        sh 'ls -R carcassonne\\target\\site\\jacoco'
+                        sh 'ls -R carcassonne\\target'
                     } else {
-                        bat 'dir carcassonne\\target\\site\\jacoco'
+                        bat 'dir carcassonne\\target'
                     }
                 }
             }
