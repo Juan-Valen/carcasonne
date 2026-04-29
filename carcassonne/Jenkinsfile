@@ -115,6 +115,15 @@ pipeline {
             steps {
                 dir('carcassonne') {
                     script {
+                        withCredentials([
+                            usernamePassword(
+                                credentialsId: 'MyDockerAccount',
+                                usernameVariable: 'DOCKER_USER',
+                                passwordVariable: 'DOCKER_PASS'
+                            )
+                        ]) {
+                            sh 'echo Credentials found'
+                        }
                         docker.withRegistry('https://index.docker.io/v1/', 'MyDockerAccount') {
                             docker.image("${DOCKERHUB_REPO}:${DOCKER_IMAGE_TAG}").push()
                         }
