@@ -120,7 +120,7 @@ pipeline {
                                         passwordVariable: 'DOCKER_PASS'
                                     )
                                 ]) {
-                                    sh 'echo Credentials found'
+                                    bat 'echo Credentials found'
                                 }
 }
 }
