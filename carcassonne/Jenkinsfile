@@ -111,20 +111,6 @@ pipeline {
             }
         }
 
-        stage('debug') {
-        steps {
-        withCredentials([
-                                    usernamePassword(
-                                        credentialsId: 'MyDockerAccount',
-                                        usernameVariable: 'DOCKER_USER',
-                                        passwordVariable: 'DOCKER_PASS'
-                                    )
-                                ]) {
-                                    bat 'echo Credentials found'
-                                }
-}
-}
-
         stage('Push Docker Image to Docker Hub') {
             steps {
                 dir('carcassonne') {
