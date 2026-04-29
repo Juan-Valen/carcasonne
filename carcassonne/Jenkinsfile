@@ -3,8 +3,8 @@ pipeline {
 
     environment {
         SONARQUBE_SERVER = 'carcassonneSonarQube'
-        DOCKERHUB_CREDENTIALS_ID = 'MyDockerAccount'
-        DOCKERHUB_REPO = 'carcassonneDockerHubRepo'
+        DOCKERHUB_CREDENTIALS_ID = credentials('MyDockerAccount')
+        DOCKERHUB_REPO = credentials('carcassonneDockerHubRepo')
         DOCKER_IMAGE_TAG = 'latest'
     }
     stages {
