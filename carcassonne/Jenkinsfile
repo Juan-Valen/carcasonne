@@ -3,7 +3,6 @@ pipeline {
 
     environment {
         SONARQUBE_SERVER = 'carcassonneSonarQube'
-        DOCKERHUB_CREDENTIALS_ID = credentials('MyDockerAccount')
         DOCKERHUB_REPO = credentials('carcassonneDockerHubRepo')
         DOCKER_IMAGE_TAG = 'latest'
     }
@@ -116,7 +115,7 @@ pipeline {
             steps {
                 dir('carcassonne') {
                     script {
-                        docker.withRegistry('https://index.docker.io/v1/', DOCKERHUB_CREDENTIALS_ID) {
+                        docker.withRegistry('https://index.docker.io/v1/', 'MyDockerAccount') {
                             docker.image("${DOCKERHUB_REPO}:${DOCKER_IMAGE_TAG}").push()
                         }
                     }
