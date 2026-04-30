@@ -21,7 +21,7 @@ For example:
 ```bash
 docker run --name carcassonne-psql \
 -e POSTGRES_PASSWORD=mysecretpassword \
--v C:\Users\joe\Documents\config\init.sql:/docker-entrypoint-initdb.d/init.sql \
+-v C:\..\path-to-carcassonne\..\config\init.sql:/docker-entrypoint-initdb.d/init.sql \
 -p 5432:5432 -d postgres:18-alpine
 ```
 

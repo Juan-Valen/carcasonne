@@ -2,25 +2,42 @@ pipeline {
     agent any
 
     environment {
-        DOCKERHUB_CREDENTIALS_ID = 'MyDockerAccount'
-        DOCKERHUB_REPO = 'juanvalenzuela101/carcassonne_v1_2026'
+        SONARQUBE_SERVER = 'carcassonneSonarQube'
+        DOCKERHUB_REPO = credentials('carcassonneDockerHubRepo')
         DOCKER_IMAGE_TAG = 'latest'
     }
     stages {
         stage('Build') {
             steps {
-                sh 'mvn -f carcassonne/pom.xml clean install' // sh for linux and ios
+                script {
+                    if (isUnix()) {
+                        sh 'mvn -f carcassonne/pom.xml clean install'
+                    } else {
+                        bat 'mvn -f carcassonne\\pom.xml clean install'
+                    }
+                }
             }
         }
         stage('Test') {
             steps {
-                sh 'mvn -f carcassonne/pom.xml test'
-                
+                script {
+                    if (isUnix()) {
+                        sh 'mvn -f carcassonne/pom.xml test'
+                    } else {
+                        bat 'mvn -f carcassonne/pom.xml test'
+                    }
+                }
             }
         }
         stage('Code Coverage') {
             steps {
-                sh 'mvn -f carcassonne/pom.xml jacoco:report'
+                script {
+                    if (isUnix()) {
+                        sh 'mvn -f carcassonne/pom.xml jacoco:report'
+                    } else {
+                        bat 'mvn -f carcassonne/pom.xml jacoco:report'
+                    }
+                }
             }
         }
         stage('Publish Test Results') {
@@ -33,6 +50,57 @@ pipeline {
                 jacoco()
             }
         }
+
+        stage('Prepare Dependencies') {
+            steps {
+                script {
+                    if (isUnix()) {
+                        sh 'mvn -f carcassonne/pom.xml dependency:copy-dependencies'
+                    } else {
+                        bat 'mvn -f carcassonne/pom.xml dependency:copy-dependencies'
+                    }
+                }
+            }
+        }
+
+         stage('SonarQube Analysis') {
+            steps {
+                script {
+                    if (isUnix()) {
+                        withSonarQubeEnv('carcassonneSonarQube') {
+                            sh """
+                             ${tool 'SonarScanner'}/bin/sonar-scanner \
+                             -Dsonar.projectKey=SONARQUBE_SERVER \
+                             -Dsonar.sources=carcassonne/src/main/java \
+                             -Dsonar.tests=carcassonne/src/test/java \
+                             -Dsonar.projectName=carcassonneSonarQube \
+                             -Dsonar.host.url=http://localhost:9000 \
+                             -Dsonar.java.binaries=carcassonne/target/classes \
+                             -Dsonar.java.libraries=carcassonne/target/dependency/*.jar \
+                             -Dsonar.java.test.libraries=carcassonne/target/dependency/*.jar \
+                             -Dsonar.coverage.jacoco.xmlReportPaths=carcassonne/target/site/jacoco/jacoco.xml
+                             """
+                        }
+                    } else {
+                        withSonarQubeEnv('carcassonneSonarQube') {
+                            bat """
+                             ${tool 'SonarScanner'}\\bin\\sonar-scanner ^
+                             -Dsonar.projectKey=SONARQUBE_SERVER ^
+                             -Dsonar.sources=carcassonne/src/main/java ^
+                             -Dsonar.tests=carcassonne/src/test/java ^
+                             -Dsonar.projectName=carcassonneSonarQube ^
+                             -Dsonar.host.url=http://localhost:9000 ^
+                             -Dsonar.java.binaries=carcassonne/target/classes ^
+                             -Dsonar.java.libraries=carcassonne/target/dependency/*.jar ^
+                             -Dsonar.java.test.libraries=carcassonne/target/dependency/*.jar ^
+                             -Dsonar.coverage.jacoco.xmlReportPaths=carcassonne/target/site/jacoco/jacoco.xml
+                             """
+                        }
+                    }
+                }
+            }
+         }
+
         stage('Build Docker Image') {
             steps {
                 dir('carcassonne') {
@@ -47,7 +115,7 @@ pipeline {
             steps {
                 dir('carcassonne') {
                     script {
-                        docker.withRegistry('https://index.docker.io/v1/', DOCKERHUB_CREDENTIALS_ID) {
+                        docker.withRegistry('https://index.docker.io/v1/', 'MyDockerAccount') {
                             docker.image("${DOCKERHUB_REPO}:${DOCKER_IMAGE_TAG}").push()
                         }
                     }
