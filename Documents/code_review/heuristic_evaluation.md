@@ -1,5 +1,5 @@
 # Heuristic Evaluation
-
+Add descipthion
 |  No  | Heuristic | Description of the Issue | Screenshot | Severity | Suggested Improvement |
 |:----:|:---------:|:------------------------:|:----------:|:------------:|:-------------:|
 | 1 | H1-1: simple & natural dialog | Missing explanation about the meaning of the circles (Meeples). | | 2  |  Add a title or create an info page with the information. |
