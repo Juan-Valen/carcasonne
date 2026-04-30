@@ -4,8 +4,8 @@
 |:----:|:---------:|:------------------------:|:----------:|:------------:|:-------------:|
 | 1 | H1-1: simple & natural dialog | Missing explanation about the meaning of the circles (Meeples). | | 2  |  Add a title or create an info page with the information. |
 | 2 | H1-1: simple & natural dialog | Saved games list is missing title. | | 2  |  Add title to saved games list. |
-| 3 | H1-2: Speak the users’ language |  | | 0  |   |
-| 4 | H1-3: Minimize users’ memory load |  | | 0  |   |
+| 3 | H1-2: Speak the users’ language | The formatting of arabic numerals is not culturally translated. | | 2  |  Translate arabic numerals and adjust their placement by language. |
+| 4 | H1-3: Minimize users’ memory load |  Total tile count is not displayed while playing.  | | 3  | Display remaining tile count.  |
 | 5 | H1-4: Consistency | The password feild is visible when typing which is not cosistent with regular websites. | | 2  | Replace the text with circles.  |
 | 6 | H1-5: Feedback | Player could try to place a tile where the game doesn't allow it and nothing happens | | 2  |  Add a small message on the corner of the screen "Not possible to place tile here".  |
 | 7 | H1-6: Clearly marked exits | There is no way to close the App from the start screen, except for the operating systems own GUI. | | 1  |  Add a way to close the app from within the application.  |
