@@ -1,145 +1,258 @@
 |  ID  | Product Backlog Item  |
 |:----:|:----:|
-| PB‑01 | Tiles can be created using modular tile superclass |
-| PB‑02 | Tiles can be added to a backend grid |
-| PB‑03 | Game checks which grid spaces a tile can be placed
-on |
-| PB‑04 | Frontend receives placeable tiles from backend |
-| PB‑05 | Frontend displays the current grid |
-| PB‑06 | Frontend displays the next tile |
-| PB‑07 | Next tile can be rotated from frontend |
-| PB‑08 | Frontend main menu |
-| PB‑09 | Game state can be saved |
-| PB‑10 | Game state can be saved to database |
+| PB‑01 | Player can place a tile to the grid |
+| PB‑02 | Player can rotate the tile to any orientation |
+| PB‑03 | Player can see all placeable cells in the grid |
+| PB‑04 | Player can see how many Meeples they have |
+| PB‑05 | Player can create an account |
+| PB‑06 | Player can save a game state |
+| PB‑07 | Player can load a game state |
+| PB‑08 | Player can place a Meeple into the tile |
+| PB‑09 | Player can login |
+| PB‑10 | Player can finish the game and see the results |
 
 # Functional Acceptance Tests
 
-## AT‑F‑01: Modular Tile Creation
+## AT‑F‑01: Tile placement
 Related Backlog: PB‑01.
 
 Description:
-Verify that tiles can be instantiated using the modular tile superclass.
+Player can place a tile to the grid.
 
 Preconditions:
-- Tile superclass is implemented
+- The app has been launched.
 
 Test Steps:
-1. Create a new tile instance from the superclass
-2. Assign specific tile attributes (shape, orientation)
+1. Press "New Game".
+2. Select yellow cells.
 
 Expected Result:
-- Tile instance is successfully created
-- Tile properties match assigned values
-## AT‑F‑02: Add Tile to Backend Grid
+1. Redirected to game screen.
+2. Tile is placed in the clicked cell.
+
+## AT‑F‑02: Tile rotation
 Related Backlog: PB‑02.
 
 Description:
-Verify tiles can be added to the backend game grid.
+Player can rotate the tile to any orientation.
 
 Test Steps:
-1. Select a valid grid position
-2. Submit tile placement to backend
+1. Press "New Game".
+2. Press "Rotate tile".
+3. Press "Rotate tile".
+4. Press "Rotate tile".
+5. Press "Rotate tile".
 
 Expected Result:
-- Tile is added to the backend grid
-- Grid state updates correctly
+1. Redirected to game screen.
+2. Tile rotates 90 degrees clockwise to orientation 90.
+3. Tile rotates 90 degrees clockwise to orientation 180.
+4. Tile rotates 90 degrees clockwise to orientation 270.
+5. Tile rotates 90 degrees clockwise back to orientation 0.
 
-## AT‑F‑03: Validate Placeable Grid Spaces
+
+
+## AT‑F‑03: 
 Related Backlog: PB‑03.
 
 Description:
-Verify the game correctly determines valid placement locations.
+Player can see all placeable cells in the grid.
+
+Preconditions:
+- The app has been launched.
 
 Test Steps:
-1. Select a tile
-2. Request valid grid positions from backend
+1. Press “New Game”.
+2. Place a tile.
+
 
 Expected Result:
-- Only valid grid spaces are returned
-- Invalid placements are excluded
-## AT‑F‑04: Frontend Receives Valid Placement Data
+1. Redirected to game screen.
+2. yelllow cells indicating placeable spots appear.
+
+
+
+## AT‑F‑04: 
 Related Backlog: PB‑04.
 
 Description:
-Verify backend sends placeable tile positions to frontend.
+Player can see how many Meeples they have.
+
+Preconditions:
+- The app has been launched.
 
 Test Steps:
-1. Request placement options from frontend
-2. Backend responds with valid positions
+1. Press “New Game”.
+
 
 Expected Result:
-- Frontend receives correct placement data
-- Data matches backend validation
-## AT‑F‑06: Display Current Grid
+1. Redirected to game screen and there are colored circles indicating the amount of Meeples
+
+## AT‑F‑05: 
 Related Backlog: PB‑05.
 
 Description:
-Verify the frontend displays the updated game grid.
+Player can create an account.
+
+Preconditions:
+- The app has been launched.
+
+Test Steps:
+1. Press “Login”.
+2. Press “create new account”.
+3. Enter username “user123”.
+4. Enter password “UserPass123”.
+5. Press “Create”.
+
 
 Expected Result:
-- Grid matches backend state
-- Tile positions render correctly
-## AT‑F‑07: Display Next Tile
+1. Redirected to Login screen.
+2. Create new account screen will be shown.
+3. Username input cell displays “user123”.
+4. Password input cell displays “UserPass123”.
+5. Redirected to Main menu screen while login in with the new user.
+
+
+## AT‑F‑06: Save game
 Related Backlog: PB‑06.
 
 Description:
-Verify the next tile is visible to the player.
+Player can save a game state.
+
+Preconditions:
+- The app has been launched.
+
+Test Steps:
+1. Press “Login”.
+2. Enter username “carcassonne”.
+3. Enter password “password”.
+4. Press “Login”.
+5. Press “New Game”.
+6. Press yellow cell.
+7. Press “save & quit”.
+8. Press “Saved Games”.
+
 
 Expected Result:
-- Next tile appears in designated UI area
-- Displayed tile matches backend queue
-## AT‑F‑08: Rotate Next Tile
+1. Redirected to Login screen
+2. Username input cell displays “carcassonne”.
+3. Password input cell displays “password”.
+4. Redirected to Main menu screen.
+5. Redirected to game screen.
+6. Tile is placed in the grid.
+7. Redirected to Main menu screen.
+8. Redirected to screen with the previously saved game.
+
+
+## AT‑F‑07: Load game
 Related Backlog: PB‑07.
 
 Description:
-Verify the player can rotate the next tile.
+Player can load a game state.
+
+Preconditions:
+- The app has been launched.
 
 Test Steps:
-1. Select rotate action
-2. Observe tile orientation
+1. Press “Login”.
+2. Enter username “carcassonne”.
+3. Enter password “password”.
+4. Press “Login”.
+5. Press “New Game”.
+6. Press yellow cell.
+7. Press “save & quit”.
+8. Press “Saved Games”.
+9. Press on the game with id “1”.
+
 
 Expected Result:
-- Tile rotation updates correctly
-- Rotation is reflected visually
-## AT‑F‑09: Main Menu Navigation
+1. Redirected to Login screen.
+2. Username input cell displays “carcassonne”.
+3. Password input cell displays “password”.
+4. Redirected to Main menu screen.
+5. Redirected to game screen.
+6. Tile is placed in the grid.
+7. Redirected to Main menu screen.
+8. Redirected to screen with the previously saved game.
+9. Redirected to game screen and player can see the same tile that was placed previously.
+
+
+## AT‑F‑08: Place Meeple
 Related Backlog: PB‑08.
 
 Description:
-Verify frontend main menu functionality.
+Player can place a Meeple into the tile.
+
+Preconditions:
+- The app has been launched.
+
+Test Steps:
+1. Press “New Game”
+2. Press on a colored circle in the tile
+3. Press yellow cell
+
 
 Expected Result:
-- Menu loads successfully
-- Navigation options respond correctly
-## AT‑F‑10: Save Game State
+1. Redirected to game screen
+2. The pressed circle changes to a brighter color indicating that a Meeple has been placed there
+3. Tile is placed in the grid with the Meeple been shown as a colored circle and player Meeple count is reduced
+
+
+## AT‑F‑09: Login
 Related Backlog: PB‑09.
 
 Description:
-Verify the game state can be saved.
+Player can login.
+
+Preconditions:
+- The app has been launched.
+
+Test Steps:
+1. Press “Login”
+2. Enter username “carcassonne”
+3. Enter password “password”
+4. Press “Login”
+
 
 Expected Result:
-- Current grid, score, and tile state are captured
-## AT‑F‑11: Save Game State to Database
+1. Redirected to Login screen
+2. Username input cell displays “carcassonne”
+3. Password input cell displays “password”
+4. Redirected to Main menu screen and “Change user” button appears
+
+
+## AT‑F‑10: 
 Related Backlog: PB‑10.
 
 Description:
-Verify saved game state persists in database.
+Player can finish the game and see the results.
+
+Preconditions:
+- The app has been launched.
+
+Test Steps:
+1. Press “New Game”.
+2. Press yellow cell or “rotate tile” button if yellow cells aren’t shown on the grid.
+
 
 Expected Result:
-- Game state is retrievable after reload
-- No data loss occurs
+1. Redirected to game screen.
+2. Tile is placed in the grid or last tile is placed and Score screen appears.
+
+
 # Metrics
-## AT‑P‑01: Tile Placement Response Time
-Related Backlog: PB‑02, PB‑03.
+## Results
+### Results 23.4.2026
 
-Expected Result:
-- Placement validation occurs within 1 second
-## AT‑P‑02: Frontend‑Backend Sync
-Related Backlog: PB‑04, PB‑05.
-
-Expected Result:
-- No visible desynchronization between views
-## AT‑P‑03: Game State Persistence
-Related Backlog: PB‑09, PB‑10.
-
-Expected Result:
-- Saved games load consistently without corruption
+| ID     |                     Test Case                      | Test engineer 1 | Test engineer 2 | Test engineer 3 | Test engineer 4 |
+|:------:|:--------------------------------------------------:|:---------------:|:---------------:|:---------------:|:---------------:|
+| PB‑01  |  Player can place a tile to the grid               |      PASS       |      PASS       |      PASS       |      PASS       |
+| PB‑02  |  Player can rotate the tile to any orientation     |      PASS       |      PASS       |      PASS       |      PASS       |
+| PB‑03  |  Player can see all placeable cells in the grid    |     FAILED      |      PASS       |      PASS       |      PASS       |
+| PB‑04  |  Player can see how many Meeples they have         |      PASS       |      PASS       |      PASS       |      PASS       |
+| PB‑05  |  Player can create an account                      |     FAILED      |     FAILED      |     FAILED      |     FAILED      |
+| PB‑06  |  Player can save a game state                      |      PASS       |      PASS       |      PASS       |      PASS       |
+| PB‑07  |  Player can load a game state                      |      PASS       |      PASS       |      PASS       |      PASS       |
+| PB‑08  |  Player can place a Meeple into the tile           |      PASS       |      PASS       |      PASS       |      PASS       |
+| PB‑09  |  Player can login                                  |     FAILED      |      PASS       |      PASS       |      PASS       |
+| PB‑10  |  Player can finish the game and see the results    |      PASS       |      PASS       |      PASS       |     FAILED      |
