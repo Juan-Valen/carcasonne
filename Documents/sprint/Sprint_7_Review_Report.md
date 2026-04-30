@@ -2,6 +2,7 @@
 
 ### Jenkins & Docker Builds
 Successfully build the project in Docker using Jenkins Pipeline
+![deployment-evidence.png](../img/deployment-evidence.png)
 
 ### SonarQube Report
 Generated SonarQube report (Attention to Security > E. Needs improvement)
