@@ -10,24 +10,28 @@ import javafx.util.StringConverter;
 
 public class StartView extends View {
 
+    @FXML
     public Button loginButton;
+    @FXML
     public ComboBox<String> langComboBox;
+    @FXML
     public Button btnNewGame;
-    GameController gameController = GameController.getInstance();
-
-    App mainApp = App.getInstance();
-
+    @FXML
     Button savedGamesButton;
-    private String selectedLanguageCode = "en";
-
     @FXML
     public VBox rootContainer;
-
     @FXML
     public Label enterPlayerNumPrompt;
-
     @FXML
     public Spinner<Integer> playerNumSpinner;
+    
+    GameController gameController = GameController.getInstance();
+    App mainApp = App.getInstance();
+    private String selectedLanguageCode = "en";
+
+
+
+
 
     @FXML
     protected void initialize() {
