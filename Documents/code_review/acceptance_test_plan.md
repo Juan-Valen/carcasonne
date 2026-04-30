@@ -1,3 +1,5 @@
+# Summary Table
+
 |  ID  | Product Backlog Item  |
 |:----:|:----:|
 | PB‑01 | Player can place a tile to the grid |
