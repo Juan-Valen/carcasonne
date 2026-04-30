@@ -11,8 +11,11 @@ import javafx.scene.control.TextField;
 
 public class LoginView extends View {
 
+    @FXML
     public Label errorLabel;
+    @FXML
     public Button btnLogin;
+    @FXML
     public Button btnBack;
     @FXML
     private TextField userNameField;
