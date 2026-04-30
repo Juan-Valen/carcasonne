@@ -20,9 +20,19 @@ import java.util.function.Consumer;
 
 public class GameView extends View {
 
+    @FXML
+    public Button btnRotateTile;
+    @FXML
+    private ScrollPane gridScreen;
+    @FXML
+    public StackPane nextTilePane;
+    @FXML
+    public VBox playerUiBox;
+    @FXML
+    public Button quitButton;
+    
     // Reference to game controller
     private final GameController controller = GameController.getInstance();
-    public Button btnRotateTile;
     private boolean layoutRetryScheduled = false;
     private double cellPortionOfScreen = 0.1; // Portion of the screen width that the one cell in the grid takes up when
                                               // using dynamic cell size instead of tile image size (0.0 to 1.0)
@@ -80,17 +90,9 @@ public class GameView extends View {
 
     private int gridSize = 144; // Default grid size
 
-    @FXML
-    private ScrollPane gridScreen;
 
-    @FXML
-    public StackPane nextTilePane;
 
-    @FXML
-    public VBox playerUiBox;
 
-    @FXML
-    public Button quitButton;
 
     @Override
     protected void onAfterStageAvailable() {
