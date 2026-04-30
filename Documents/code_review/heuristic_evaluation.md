@@ -6,8 +6,8 @@
 | 2 | H1-1: simple & natural dialog | Saved games list is missing title. | | 2  |  Add title to saved games list. |
 | 3 | H1-2: Speak the users’ language |  | | 0  |   |
 | 4 | H1-3: Minimize users’ memory load |  | | 0  |   |
-| 5 | H1-4: Consistency |  | | 0  |   |
-| 6 | H1-5: Feedback |  | | 0  |   |
+| 5 | H1-4: Consistency | The password feild is visible when typing which is not cosistent with regular websites. | | 2  | Replace the text with circles.  |
+| 6 | H1-5: Feedback | Player could try to place a tile where the game doesn't allow it and nothing happens | | 2  |  Add a small message on the corner of the screen "Not possible to place tile here".  |
 | 7 | H1-6: Clearly marked exits | There is no way to close the App from the start screen, except for the operating systems own GUI. | | 1  |  Add a way to close the app from within the application.  |
 | 8 | H1-7: Shortcuts | Press enter to load selected game. | | 2  |  Create shortcut. |
 | 9 | H1-7: Shortcuts | Press enter to submit login form. | | 2  | Create shortcut.  |
