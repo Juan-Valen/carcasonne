@@ -1,4 +1,4 @@
-## Sprint 6 Review Report
+## Sprint 7 Review Report
 
 ### Jenkins & Docker Builds
 Successfully build the project in Docker using Jenkins Pipeline
