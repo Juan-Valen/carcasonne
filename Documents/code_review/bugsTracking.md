@@ -21,9 +21,9 @@
 ## Bug list
 | Bug ID | Description | Importance  | Status | Assigned |
 |:------:|:------------|:-----------:|:------:|:--------:|
-| UWF_UNWRITTEN_PUBLIC_OR_PROTECTED_FIELD	| Unwritten public or protected field: carcassonne.View.LoginView.btnBack — LoginView.java line 25 | Medium	|Open	| Juan |
-| UWF_UNWRITTEN_PUBLIC_OR_PROTECTED_FIELD	|	Unwritten public or protected field: carcassonne.View.LoginView.btnLogin — LoginView.java line 26 |	Medium	|	Open	|	Juan	|
-| UWF_UNWRITTEN_PUBLIC_OR_PROTECTED_FIELD	|	Unwritten public or protected field: carcassonne.View.LoginView.errorLabel — LoginView.java line 45 |	Medium	|	Open	|	Juan	|
+| UWF_UNWRITTEN_PUBLIC_OR_PROTECTED_FIELD	| Unwritten public or protected field: carcassonne.View.LoginView.btnBack — LoginView.java line 25 | Medium	|Done	| Juan |
+| UWF_UNWRITTEN_PUBLIC_OR_PROTECTED_FIELD	|	Unwritten public or protected field: carcassonne.View.LoginView.btnLogin — LoginView.java line 26 |	Medium	|	Done	|	Juan	|
+| UWF_UNWRITTEN_PUBLIC_OR_PROTECTED_FIELD	|	Unwritten public or protected field: carcassonne.View.LoginView.errorLabel — LoginView.java line 45 |	Medium	|	Done	|	Juan	|
 | NP_UNWRITTEN_PUBLIC_OR_PROTECTED_FIELD |	Read of unwritten public or protected field langComboBox in carcassonne.View.StartView.initialize() — StartView.java line 37 |	Medium	|	Open	|	Nooa	|
 | NP_UNWRITTEN_PUBLIC_OR_PROTECTED_FIELD |	Read of unwritten public or protected field loginButton in carcassonne.View.StartView.onViewShow() — StartView.java line 89	|	Medium	|	Open	|	Nooa	|
 | NP_UNWRITTEN_PUBLIC_OR_PROTECTED_FIELD |	Read of unwritten public or protected field btnNewGame in carcassonne.View.StartView.setLang() — StartView.java line 127	|	Medium	|	Open	|	Noah	|
