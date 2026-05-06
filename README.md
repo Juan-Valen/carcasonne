@@ -80,7 +80,7 @@ The app uses a database translation table that is initialized along with other d
 
 The script creates the table and inserts all the translations (containing a language ID, an english key and the given languages translation)
 
-## 7. Jenkins and SonarQube
+## 7. Quality Assurance
 The project is set up with Jenkins and SonarQube for continuous integration and code quality analysis.  
 The Jenkins pipeline is defined in the [Jenkinsfile](./carcassonne/Jenkinsfile)
 The setup guide for the Jenkins pipeline can be found in the [Jenkins setup instructions](./Jenkins-setup.md)
