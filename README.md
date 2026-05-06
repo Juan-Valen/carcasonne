@@ -91,7 +91,7 @@ The script creates the table and inserts all the translations (containing a lang
 The project is set up with Jenkins and SonarQube for continuous integration and code quality analysis.  
 The Jenkins pipeline is defined in the [Jenkinsfile](./carcassonne/Jenkinsfile)
 The setup guide for the Jenkins pipeline can be found in the [Jenkins setup instructions](./Jenkins-setup.md)  
-We also did [acceptance test](./Documents/diagram/Acceptance%20Test%20Planning.pdf) and the results can be found [here](./Documents/diagram/acceptance_test_results.md)
+We also did [acceptance test and results](./Documents/code_review/acceptance_test_plan.md).
 
 ## 8. Sprints Details
 Here is a quick look around of the eight (8) sprints
