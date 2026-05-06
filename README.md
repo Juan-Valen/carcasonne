@@ -2,8 +2,9 @@
 Software version of the game Carcasonne.
 
 ## 1. Brief Summary
-This project was carried out by the four contributors as part of the Software Engineering Project 1 course.  
-During it, the work was separated into four sprints where we created a state-of-the-art replica of the board game Carcassonne.  
+This project was carried out by the four (4) contributors as part of the Software Engineering Project 1 and 2 course.  
+We have used Agile methodology throughout the development of the app.  
+During it, the work was separated into eight (8) sprints of two (2) weeks each where we created a state-of-the-art replica of the board game Carcassonne.  
 The project can be fully run on docker as it was an objetive of the course.  
 <a id="professor"></a>Professor : [Amir Dirin](https://github.com/ADirin).  
 <a id="contributors"></a>Contributors : 
@@ -28,9 +29,11 @@ The project relies on the listed technologies to run :
 
 ## 3. Database Diagrams
 ### Entity relationship diagram
-![Entity relationship diagram](./Documents/img/entity_relationship.png)  
+![Entity relationship diagram](./Documents/img/entity_relationship.png)
 ### Relational schema diagram
 ![Relational schema diagram](./Documents/img/relational_schema.png)
+This database diagrams show how the data is stored and linked in the database.  
+The two (2) main parts are the localization on top and the saved games at the bottom of each diagram.
 
 ## 4. Software architecture
 The [Class diagram](./Documents/diagram/software_architecture.md) can be described as follows,  
@@ -80,10 +83,22 @@ The app uses a database translation table that is initialized along with other d
 
 The script creates the table and inserts all the translations (containing a language ID, an english key and the given languages translation)
 
-## 7. Jenkins and SonarQube
+## 7. Quality assurance
 The project is set up with Jenkins and SonarQube for continuous integration and code quality analysis.  
 The Jenkins pipeline is defined in the [Jenkinsfile](./carcassonne/Jenkinsfile)
-The setup guide for the Jenkins pipeline can be found in the [Jenkins setup instructions](./Jenkins-setup.md)
+The setup guide for the Jenkins pipeline can be found in the [Jenkins setup instructions](./Jenkins-setup.md)  
+We also did [acceptance test](./Documents/diagram/Acceptance%20Test%20Planning.pdf) and the results can be found [here](./Documents/diagram/acceptance_test_results.md)
 
-## 8. Acknowledgments
+## 8. Sprints Details
+Here is a quick look around of the eight (8) sprints
+* #### Sprint 1 : [*Project Planning & Vision*](./Documents/sprint/Sprint_1_Review_Report.md)  
+* #### Sprint 2 : [*Requirements & Database*](./Documents/sprint/Sprint_2_Review_Report.md)  
+* #### Sprint 3 : [*UI Implementation & CI*](./Documents/sprint/Sprint_3_Review_Report.md)  
+* #### Sprint 4 : [*Docker Containerization*](./Documents/sprint/Sprint_4_Review_Report.md)  
+* #### Sprint 5 : [*UI Localization & Kubernetes*](./Documents/sprint/Sprint_5_Review_Report.md)  
+* #### Sprint 6 : [*Database Localization*](./Documents/sprint/Sprint_6_Review_Report.md)  
+* #### Sprint 7 : [*Quality Assurance*](./Documents/sprint/Sprint_7_Review_Report.md)  
+* #### Sprint 8 : [*Documentation & Finalization*](./Documents/sprint/Sprint_8_Review_Report.md)  
+
+## 9. Acknowledgments
 > Thank you to all the [contributors](#contributors) and [teacher](#professor)

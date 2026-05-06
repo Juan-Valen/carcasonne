@@ -7,7 +7,7 @@ Complete course tasks.
 Write technical documentation.
 Write app's back-end and testing.
 Write app's front-end working prototype.
-Write database intructions and tables.
+Write database instructions and tables.
 Implement JaCoCo.
 ### Demo Summary
 Visual proof of concept of the program UI.
@@ -17,13 +17,13 @@ There is a clear idea of the final product.
 
 ### What Could Be Improved
 Allocate more time to working on the project, not just course assignments. <br>
-Complete assignments more urgently and communicate responsibilties more clearly.
+Complete assignments more urgently and communicate responsibilities more clearly.
 
 ### Next Sprint Focus
 Connecting the front-end and back-end.
 Writing the APIs and web-socket.
 
-## A table to demonstrate the time spent by each memeber during the sprint
+## A table to demonstrate the time spent by each member during the sprint
 Nooa 18 hours team meeting + UI working prototype.
 <br>
 Noah 12 hours team meeting + technical writing + JavaCoCo.
