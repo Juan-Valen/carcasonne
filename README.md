@@ -26,17 +26,21 @@ The project relies on the listed technologies to run :
   * Docker
   * SonarQube
   * Kubernetes (W.I.P.)
+### Development deployment diagram
+![Development deployment diagram](./Documents/img/Development_deployment_diagram.jpeg)
+
+This deployment diagram shows how the technologies are used during development.
 
 ## 3. Database Diagrams
-### Entity relationship diagram
-![Entity relationship diagram](./Documents/img/entity_relationship.png)
-### Relational schema diagram
-![Relational schema diagram](./Documents/img/relational_schema.png)
-This database diagrams show how the data is stored and linked in the database.  
-The two (2) main parts are the localization on top and the saved games at the bottom of each diagram.
+This database diagrams show how the user data, saved games and translations are stored.
+The two (2) main parts in the [database diagram](./Documents/diagram/database-design.md) are the localization on top and the saved games at the bottom of each diagram.
 
 ## 4. Software architecture
-The [Class diagram](./Documents/diagram/software_architecture.md) can be described as follows,  
+The following software architecture uses an MVC model with Services as it is further explained in the [software architecture document](./Documents/diagram/software_architecture.md) and seen in the class diagram bellow.
+
+![Class diagram](./Documents/img/carcassonne_class.png)
+
+The Class diagram can be described as follows,  
 The user interacts with the game.  
 The user can connect to the game.  
 The user, once connected, can start a game, play using the different functionalities and save it.  
