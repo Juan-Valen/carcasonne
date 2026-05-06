@@ -19,6 +19,7 @@ public class EndView extends View {
 
     @FXML
     public VBox scoreBox;
+    @FXML
     public Button btnBack;
 
     @FXML
