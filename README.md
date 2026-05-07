@@ -51,6 +51,11 @@ The game can also interact with the database by saving or retrieving past or cur
 
 ### Run the app using docker compose
 Create an environment variable called "APP_PASSWORD" with the value of "carcassonne1".  
+
+When running **linux** run the command before running docker:  
+```bash
+xhost +local:docker
+```
 Then run the following command:  
 ```bash
 docker compose up --build -d
