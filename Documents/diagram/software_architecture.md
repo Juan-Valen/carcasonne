@@ -45,4 +45,5 @@ The game controller acts as the menu for the game. It gives the option of starti
 a new game, save a current game and access the saved games to continue
 playing.
 ## Package diagram
+The project uses the MVC project with Services. The services is been used by a model and a controller alike. The Controller manages the communication with the view and Models.  
 ![Carcassone_package_diagram](../img/package_diagram.png)
